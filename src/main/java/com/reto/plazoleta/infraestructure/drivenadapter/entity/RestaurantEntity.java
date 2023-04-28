@@ -1,0 +1,28 @@
+package com.reto.plazoleta.infraestructure.drivenadapter.entity;
+
+import lombok.*;
+
+import javax.persistence.*;
+
+@AllArgsConstructor // para que funcione las validaciones
+@NoArgsConstructor
+@Entity
+@Table(name = "restaurant")
+@Data
+public class RestaurantEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idRestaurant;
+    @Column
+    private String name;
+    @Column
+    private String address;
+    @Column
+    private String phone;
+    @Column
+    private String urlLogo;
+    @Column
+    private Long  nit;
+    @Column
+    private Long idOwner;
+}
