@@ -33,7 +33,7 @@ public class ControllerAdvisor {
     @ExceptionHandler(InvalidDataException.class)
     public ResponseEntity<Map<String, String>> handleInvalidDataException(
             InvalidDataException ignoredInvalidDataException) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.INVALID_DATA.getMessage()));
     }
 
