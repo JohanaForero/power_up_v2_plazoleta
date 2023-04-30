@@ -24,8 +24,6 @@ import java.util.stream.Collectors;
 public class JwtProvider {
 
     private final IUserVerifierToken userVerifierToken;
-
-    private static final Long ACCESS_TOKEN_VALIDITY_SECONDS = 2_592_000L;
     private static final String ACCESS_TOKEN_SECRET = "8y/B?E(G+KbPeShVmYq3t6w9z$C&F)J@";
 
     public UsernamePasswordAuthenticationToken getAuthentication(String token) {
