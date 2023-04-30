@@ -2,6 +2,10 @@ package com.reto.plazoleta.infraestructure.exceptionhandler;
 
 import com.reto.plazoleta.domain.exception.EmptyFieldsException;
 import com.reto.plazoleta.domain.exception.InvalidDataException;
+import com.reto.plazoleta.infraestructure.configuration.security.exception.AuthenticationFailedException;
+import com.reto.plazoleta.infraestructure.configuration.security.exception.PermissionDeniedException;
+import com.reto.plazoleta.infraestructure.configuration.security.exception.TokenInvalidException;
+import com.reto.plazoleta.infraestructure.configuration.security.exception.UserDoesNotExistException;
 import com.reto.plazoleta.infraestructure.exception.NoDataFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +39,34 @@ public class ControllerAdvisor {
             InvalidDataException ignoredInvalidDataException) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.INVALID_DATA.getMessage()));
+    }
+
+    @ExceptionHandler(AuthenticationFailedException.class)
+    public ResponseEntity<Map<String, String>> handleAuthenticationFailedException(
+            AuthenticationFailedException ignoredAuthenticationFailedException) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.AUTHENTICATION_FAILED.getMessage()));
+    }
+
+    @ExceptionHandler(PermissionDeniedException.class)
+    public ResponseEntity<Map<String, String>> handlePermissionDeniedException(
+            PermissionDeniedException ignoredPermissionDeniedException) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.PERMISSION_DENIED.getMessage()));
+    }
+
+    @ExceptionHandler(TokenInvalidException.class)
+    public ResponseEntity<Map<String, String>> handleTokenInvalidException(
+            TokenInvalidException ignoredTokenInvalidException) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.TOKEN_INVALID.getMessage()));
+    }
+
+    @ExceptionHandler(UserDoesNotExistException.class)
+    public ResponseEntity<Map<String, String>> handleUserDoesNotExistException(
+            UserDoesNotExistException ignoredUserDoesNotExistException) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.USER_DOES_NOT_EXIST.getMessage()));
     }
 
 }

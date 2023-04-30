@@ -15,9 +15,9 @@ public class OpenApiConfiguration {
         return new OpenAPI()
                 .components(new Components())
                 .info(new Info()
-                        .title("reto plazoleta")
-                        .version("")
-                        .description("")
+                        .title("Reto Plazoleta")
+                        .version("1.0")
+                        .description("Administrador de restaurantes platos y pedidos")
                         .termsOfService("http://swagger.io/terms/")
                         .license(new License().name("Apache 2.0").url("http://springdoc.org"))
                 );

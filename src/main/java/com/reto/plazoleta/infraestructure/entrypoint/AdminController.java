@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,10 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/micro-small-square/restaurant")
-public class AdminPlazoleta {
+public class AdminController {
 
     private final IAdminService adminService;
 
+    @PreAuthorize(value = "hasRole('ADMINISTRADOR')")
     @Operation(summary = "Add a new Restaurant")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Restaurant created", content = @Content),
