@@ -1,4 +1,4 @@
-package com.reto.plazoleta.application.dto;
+package com.reto.plazoleta.application.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;

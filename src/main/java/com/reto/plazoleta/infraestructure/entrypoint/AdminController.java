@@ -1,6 +1,6 @@
 package com.reto.plazoleta.infraestructure.entrypoint;
 
-import com.reto.plazoleta.application.dto.RequestToCreateRestaurantDto;
+import com.reto.plazoleta.application.dto.request.RequestToCreateRestaurantDto;
 import com.reto.plazoleta.application.handler.IAdminService;
 import com.reto.plazoleta.infraestructure.drivenadapter.gateways.IUserGateway;
 import com.reto.plazoleta.infraestructure.drivenadapter.gateways.User;

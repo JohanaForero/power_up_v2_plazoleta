@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface IDishPersistencePort {
     DishModel saveDish(DishModel dishModel);
-    List<DishModel> getAllDishs();
+
 
 }
