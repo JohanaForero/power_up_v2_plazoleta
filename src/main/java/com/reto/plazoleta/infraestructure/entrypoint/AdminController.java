@@ -30,7 +30,6 @@ public class AdminController {
     private final IAdminService adminService;
     private final IUserGateway userGateway;
 
-
     @Operation(summary = "Add a new Restaurant")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Restaurant created", content = @Content),

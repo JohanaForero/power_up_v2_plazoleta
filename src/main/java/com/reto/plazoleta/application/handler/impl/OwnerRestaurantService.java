@@ -1,6 +1,7 @@
 package com.reto.plazoleta.application.handler.impl;
 
-import com.reto.plazoleta.application.dto.request.DishRequestDto;
+import com.reto.plazoleta.application.dto.request.CreateDishRequestDto;
+import com.reto.plazoleta.application.dto.request.UpdateDishRequestDto;
 import com.reto.plazoleta.application.handler.IOwnerRestaurantService;
 import com.reto.plazoleta.application.mapper.requestmapper.IDishRequestMapper;
 import com.reto.plazoleta.domain.api.IOwnerRestaurantServicePort;
@@ -17,9 +18,11 @@ public class OwnerRestaurantService implements IOwnerRestaurantService {
     private final IOwnerRestaurantServicePort ownerRestaurantServicePort;
     private final IDishRequestMapper dishRequestMapper;
 
-
     @Override
-    public void saveDish(DishRequestDto dishRequestDto) {
-        ownerRestaurantServicePort.saveDish(dishRequestMapper.toDishModel(dishRequestDto));
+    public void saveDish(CreateDishRequestDto createDishRequestDto) {
+        ownerRestaurantServicePort.saveDish(dishRequestMapper.toDishModel(createDishRequestDto));
+    }
+    public void updateDish(UpdateDishRequestDto updateDishRequestDto) {
+        ownerRestaurantServicePort.updateDish(dishRequestMapper.toDishModel(updateDishRequestDto));
     }
 }

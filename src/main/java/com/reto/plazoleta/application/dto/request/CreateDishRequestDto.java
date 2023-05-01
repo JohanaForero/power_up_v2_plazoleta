@@ -1,6 +1,6 @@
 package com.reto.plazoleta.application.dto.request;
 
-public class DishRequestDto {
+public class CreateDishRequestDto {
     private String name;
 
     public String getName() {
