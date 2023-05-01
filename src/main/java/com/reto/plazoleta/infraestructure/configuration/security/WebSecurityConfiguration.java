@@ -30,7 +30,7 @@ public class WebSecurityConfiguration {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/swagger-resources/**",
-                                "/v3/api-docs/**").permitAll()
+                                "/v3/api-docs/**", "/services-Owner-restaurant/").permitAll()
                         .anyRequest()
                         .authenticated())
                 .sessionManagement( httpSecuritySessionManagementConfigurer ->

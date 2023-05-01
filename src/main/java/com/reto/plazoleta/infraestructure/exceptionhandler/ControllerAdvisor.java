@@ -1,5 +1,6 @@
 package com.reto.plazoleta.infraestructure.exceptionhandler;
 
+import com.reto.plazoleta.domain.exception.DishNotExistsException;
 import com.reto.plazoleta.domain.exception.EmptyFieldsException;
 import com.reto.plazoleta.domain.exception.InvalidDataException;
 import com.reto.plazoleta.infraestructure.configuration.security.exception.AuthenticationFailedException;
@@ -75,6 +76,13 @@ public class ControllerAdvisor {
             RoleUnauthorizedException ignoredRoleUnauthorizedException) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ROLE_UNAUTHORIZED.getMessage()));
+    }
+
+    @ExceptionHandler(DishNotExistsException.class)
+    public ResponseEntity<Map<String, String>> handleDishNotExistsException(
+            DishNotExistsException ignoredDishNotExistsException) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.DISH_NOT_EXISTS.getMessage()));
     }
 
 }

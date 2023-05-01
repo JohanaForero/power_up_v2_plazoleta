@@ -9,6 +9,7 @@ public interface IDishServicePort {
     void saveDish(DishModel dishModel);
 
     List<DishModel> getAllDishs();
+    void updateDish(DishModel dishModel);
 
 
 }

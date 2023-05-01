@@ -8,7 +8,8 @@ public enum ExceptionResponse {
     PERMISSION_DENIED("Permission denied you are not authorized to use this service"),
     TOKEN_INVALID("Username or role in the token is invalid"),
     USER_DOES_NOT_EXIST("User not found"),
-    ROLE_UNAUTHORIZED("The user id does not have the required role to use this action");
+    ROLE_UNAUTHORIZED("The user id does not have the required role to use this action"),
+    DISH_NOT_EXISTS("The dish does not exist");
 
     private final String message;
 
