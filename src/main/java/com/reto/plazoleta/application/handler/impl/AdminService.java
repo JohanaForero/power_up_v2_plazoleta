@@ -1,6 +1,6 @@
 package com.reto.plazoleta.application.handler.impl;
 
-import com.reto.plazoleta.application.dto.RequestToCreateRestaurantDto;
+import com.reto.plazoleta.application.dto.request.RequestToCreateRestaurantDto;
 import com.reto.plazoleta.application.handler.IAdminService;
 import com.reto.plazoleta.application.mapper.requestmapper.IRestaurantRequestMapper;
 import com.reto.plazoleta.domain.api.IAdminUseCasePort;

@@ -19,6 +19,7 @@ public class DishModel {
         this.stateDish = stateDish;
     }
 
+
     public Integer getIdDish() {
         return idDish;
     }
