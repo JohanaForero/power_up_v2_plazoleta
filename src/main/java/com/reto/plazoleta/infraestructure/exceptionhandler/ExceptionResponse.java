@@ -7,7 +7,8 @@ public enum ExceptionResponse {
     AUTHENTICATION_FAILED("Failed to parse JWT token"),
     PERMISSION_DENIED("Permission denied you are not authorized to use this service"),
     TOKEN_INVALID("Username or role in the token is invalid"),
-    USER_DOES_NOT_EXIST("User not found");
+    USER_DOES_NOT_EXIST("User not found"),
+    ROLE_UNAUTHORIZED("The user id does not have the required role to use this action");
 
     private final String message;
 

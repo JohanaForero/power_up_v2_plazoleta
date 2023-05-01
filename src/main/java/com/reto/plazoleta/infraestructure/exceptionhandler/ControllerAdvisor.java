@@ -7,6 +7,7 @@ import com.reto.plazoleta.infraestructure.configuration.security.exception.Permi
 import com.reto.plazoleta.infraestructure.configuration.security.exception.TokenInvalidException;
 import com.reto.plazoleta.infraestructure.configuration.security.exception.UserDoesNotExistException;
 import com.reto.plazoleta.infraestructure.exception.NoDataFoundException;
+import com.reto.plazoleta.infraestructure.exception.RoleUnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -67,6 +68,13 @@ public class ControllerAdvisor {
             UserDoesNotExistException ignoredUserDoesNotExistException) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.USER_DOES_NOT_EXIST.getMessage()));
+    }
+
+    @ExceptionHandler(RoleUnauthorizedException.class)
+    public ResponseEntity<Map<String, String>> handleRoleUnauthorizedException(
+            RoleUnauthorizedException ignoredRoleUnauthorizedException) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ROLE_UNAUTHORIZED.getMessage()));
     }
 
 }

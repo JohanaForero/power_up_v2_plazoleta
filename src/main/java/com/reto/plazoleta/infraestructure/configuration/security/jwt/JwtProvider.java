@@ -27,7 +27,6 @@ public class JwtProvider {
     private static final String ACCESS_TOKEN_SECRET = "8y/B?E(G+KbPeShVmYq3t6w9z$C&F)J@";
 
     public UsernamePasswordAuthenticationToken getAuthentication(String token) {
-        userVerifierToken.isValidTokenUser(token);
         try {
             JWT jwt = JWTParser.parse(token);
             JWTClaimsSet claims = jwt.getJWTClaimsSet();
@@ -42,8 +41,9 @@ public class JwtProvider {
     }
 
     public boolean validateToken(String token) {
+        userVerifierToken.isValidTokenUser(token);
         try {
-            Jwts.parser().setSigningKey(ACCESS_TOKEN_SECRET.getBytes()).parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(ACCESS_TOKEN_SECRET.getBytes()).build().parseClaimsJws(token);
             return true;
         } catch (MalformedJwtException e) {
             throw new TokenInvalidException("malformed token");

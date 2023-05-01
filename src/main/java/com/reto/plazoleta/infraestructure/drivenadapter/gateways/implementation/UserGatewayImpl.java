@@ -1,37 +1,35 @@
-package com.reto.plazoleta.infraestructure.configuration.security.jwt.implementation;
+package com.reto.plazoleta.infraestructure.drivenadapter.gateways.implementation;
 
-import com.reto.plazoleta.infraestructure.configuration.security.exception.PermissionDeniedException;
-import com.reto.plazoleta.infraestructure.configuration.security.exception.TokenInvalidException;
 import com.reto.plazoleta.infraestructure.configuration.security.exception.UserDoesNotExistException;
-import com.reto.plazoleta.infraestructure.configuration.security.jwt.IUserVerifierToken;
+import com.reto.plazoleta.infraestructure.drivenadapter.gateways.IUserGateway;
+import com.reto.plazoleta.infraestructure.drivenadapter.gateways.User;
+import com.reto.plazoleta.infraestructure.exception.UserInTokenIsInvalidException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-
 @Service
-public class UserVerifierToken implements IUserVerifierToken {
+public class UserGatewayImpl implements IUserGateway {
 
     private static final String BASE_URL = "http://localhost:8090/user-micro/user/";
     WebClient webClient = WebClient.builder().baseUrl(BASE_URL).build();
 
     @Override
-    public void isValidTokenUser( String token) {
-        webClient.get()
-                .uri( uriBuilder -> uriBuilder.path("verifier").build())
+    public User getUserById(Long idUser, String token) {
+        return webClient.get().uri(uriBuilder -> uriBuilder.path("verifier")
+                        .queryParam("iduser", idUser)
+                        .build())
                 .header(HttpHeaders.AUTHORIZATION, token)
-                .exchangeToMono( clientResponse  -> {
+                .exchangeToMono( clientResponse -> {
                     if(clientResponse.statusCode().is2xxSuccessful()) {
-                        return  Mono.empty();
+                        return clientResponse.bodyToMono(User.class);
                     } else if(clientResponse.statusCode().equals(HttpStatus.UNAUTHORIZED)) {
-                        return Mono.error(new TokenInvalidException("Username or role in the token is invalid"));
+                        return Mono.error(new UserInTokenIsInvalidException("Username or role in the token is invalid"));
                     } else if (clientResponse.statusCode().equals(HttpStatus.NOT_FOUND)) {
                         return Mono.error(new UserDoesNotExistException("User not found"));
-                    } else if (clientResponse.statusCode().equals(HttpStatus.FORBIDDEN)) {
-                        return Mono.error(new PermissionDeniedException("Permission denied you are not authorized to use this service"));
-                    }else {
+                    } else {
                         return clientResponse.createException().flatMap(Mono::error);
                     }
                 })

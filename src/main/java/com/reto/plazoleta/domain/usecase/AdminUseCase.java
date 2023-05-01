@@ -37,11 +37,11 @@ public class AdminUseCase implements IAdminUseCasePort {
         String phoneRestaurantNoSpaces = phoneRestaurant.replaceAll(" ", "");
         if(phoneRestaurantNoSpaces.startsWith("+")){
             if(!phoneRestaurantNoSpaces.matches("\\+\\d+") ||
-                    phoneRestaurantNoSpaces.length() > 13 ){
+                    phoneRestaurantNoSpaces.length() != 13 ){
                 throw new InvalidDataException("The cell phone format is wrong");
             }
         } else {
-            if (phoneRestaurantNoSpaces.length() > 10 || !phoneRestaurantNoSpaces.matches("[0-9]+")) {
+            if (phoneRestaurantNoSpaces.length() != 10 || !phoneRestaurantNoSpaces.matches("[0-9]+")) {
                 throw new InvalidDataException("The cell phone format is wrong");
             }
         }

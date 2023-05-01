@@ -29,8 +29,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if(bearerToken != null && bearerToken.startsWith("Bearer ") &&
                 SecurityContextHolder.getContext().getAuthentication() == null) {
             String token = bearerToken.replace("Bearer ", "").trim();
-            jwtProvider.validateToken(token);
-
+            if(!request.getRequestURL().toString().equals("http://localhost:9090/micro-small-square/restaurant/")) {
+                jwtProvider.validateToken(token);
+            }
             UsernamePasswordAuthenticationToken auth = jwtProvider.getAuthentication(token);
             auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(auth);
