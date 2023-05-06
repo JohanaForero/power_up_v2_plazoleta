@@ -38,6 +38,4 @@ public class OwnerRestaurantController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
-
 }

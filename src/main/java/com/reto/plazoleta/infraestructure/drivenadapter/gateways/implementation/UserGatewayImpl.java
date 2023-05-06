@@ -1,7 +1,7 @@
 package com.reto.plazoleta.infraestructure.drivenadapter.gateways.implementation;
 
 import com.reto.plazoleta.infraestructure.configuration.security.exception.UserDoesNotExistException;
-import com.reto.plazoleta.infraestructure.drivenadapter.gateways.IUserGateway;
+import com.reto.plazoleta.domain.gateways.IUserGateway;
 import com.reto.plazoleta.infraestructure.drivenadapter.gateways.User;
 import com.reto.plazoleta.infraestructure.exception.UserInTokenIsInvalidException;
 import org.springframework.http.HttpHeaders;

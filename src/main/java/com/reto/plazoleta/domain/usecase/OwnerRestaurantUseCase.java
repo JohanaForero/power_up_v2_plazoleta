@@ -18,12 +18,13 @@ public class OwnerRestaurantUseCase implements IOwnerRestaurantServicePort {
         dishPersistencePort.saveDish(dishModel);
     }
 
+
     public void updateDish(DishModel dishModel) {
-        DishModel update = dishPersistencePort.findById(dishModel.getIdDish());
+        DishModel update = dishPersistencePort.findById(dishModel.getIdDish(1L));
         if(update == null) {
             throw new DishNotExistsException("The dish does not exist");
         }
-        update.setIdDish(dishModel.getIdDish());
+        update.setIdDish(dishModel.getIdDish(1L));
         update.setDescriptionDish(dishModel.getDescriptionDish());
         update.setPrice(dishModel.getPrice());
         dishPersistencePort.updateDish(update);

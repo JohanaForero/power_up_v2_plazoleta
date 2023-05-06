@@ -25,7 +25,7 @@ public class DishEntity {
     @Column
     private String imageDish;
     @Column
-    private String stateDish;
+    private boolean stateDish;
     @Column
     private Long restaurantId;
 

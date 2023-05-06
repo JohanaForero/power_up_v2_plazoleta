@@ -1,8 +1,6 @@
-package com.reto.plazoleta.domain;
+package com.reto.plazoleta.domain.model;
 
-import com.reto.plazoleta.domain.model.RestaurantModel;
-
-public class FactoryRestaurantModelTest {
+public class RestaurantModelTest {
 
     public static RestaurantModel restaurantModel() {
         RestaurantModel restaurantModel = new RestaurantModel();

@@ -2,16 +2,16 @@ package com.reto.plazoleta.domain.model;
 
 public class DishModel {
 
-    private Long idDish;
+    private long idDish;
     private String name;
     private String descriptionDish;
     private Double price;
     private String imageDish;
-    private String stateDish;
+    private boolean stateDish;
     public DishModel() {
     }
 
-    public DishModel(String name, String descriptionDish, Double price, String imageDish, String stateDish) {
+    public DishModel(String name, String descriptionDish, Double price, String imageDish, boolean stateDish) {
         this.name = name;
         this.descriptionDish = descriptionDish;
         this.price = price;
@@ -20,7 +20,7 @@ public class DishModel {
     }
 
 
-    public Long getIdDish() {
+    public Long getIdDish(long idDish) {
         return idDish;
     }
     public void setIdDish(Long idDish) {
@@ -50,10 +50,10 @@ public class DishModel {
     public void setImageDish(String imageDish) {
         this.imageDish = imageDish;
     }
-    public String getStateDish() {
+    public boolean getStateDish() {
         return stateDish;
     }
-    public void setStateDish(String stateDish) {
+    public void setStateDish(boolean stateDish) {
         this.stateDish = stateDish;
     }
 }

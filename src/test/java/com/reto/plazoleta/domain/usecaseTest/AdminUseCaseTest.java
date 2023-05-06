@@ -1,7 +1,8 @@
-package com.reto.plazoleta.domain.spi;
+package com.reto.plazoleta.domain.usecaseTest;
 
+import com.reto.plazoleta.domain.spi.IRestaurantPersistencePort;
 import com.reto.plazoleta.domain.usecase.AdminUseCase;
-import com.reto.plazoleta.domain.FactoryRestaurantModelTest;
+import com.reto.plazoleta.domain.model.RestaurantModelTest;
 import com.reto.plazoleta.domain.exception.EmptyFieldsException;
 import com.reto.plazoleta.domain.exception.InvalidDataException;
 import com.reto.plazoleta.domain.model.RestaurantModel;
@@ -27,14 +28,14 @@ class AdminUseCaseTest {
 
     @Test
     void mustSaveRestaurant() {
-        when(restaurantPersistencePort.saveRestaurant(any())).thenReturn(FactoryRestaurantModelTest.restaurantModel());
-        adminUseCase.saveRestaurant(FactoryRestaurantModelTest.restaurantModel());
+        when(restaurantPersistencePort.saveRestaurant(any())).thenReturn(RestaurantModelTest.restaurantModel());
+        adminUseCase.saveRestaurant(RestaurantModelTest.restaurantModel());
         verify(restaurantPersistencePort).saveRestaurant(any(RestaurantModel.class));
     }
 
     @Test
     void throwEmptyFieldsExceptionWhenSavingRestaurant() {
-        RestaurantModel restaurantModelWithEmptyFields = FactoryRestaurantModelTest.restaurantModelEmptyFields();
+        RestaurantModel restaurantModelWithEmptyFields = RestaurantModelTest.restaurantModelEmptyFields();
         Assertions.assertThrows(
                 EmptyFieldsException.class,
                 () -> { adminUseCase.saveRestaurant(restaurantModelWithEmptyFields); }
@@ -43,7 +44,7 @@ class AdminUseCaseTest {
 
     @Test
     void throwInvalidDataExceptionWhenSavingRestaurantWithPhoneWrong() {
-        RestaurantModel restaurantModelWithPhoneWrong = FactoryRestaurantModelTest.restaurantModelWrongPhone();
+        RestaurantModel restaurantModelWithPhoneWrong = RestaurantModelTest.restaurantModelWrongPhone();
         Assertions.assertThrows(
                 InvalidDataException.class,
                 () -> { adminUseCase.saveRestaurant(restaurantModelWithPhoneWrong); }
@@ -53,7 +54,7 @@ class AdminUseCaseTest {
     @Test
     void throwInvalidDataExceptionWhenSavingRestaurantWhereNameOnlyContainsNumbers() {
         RestaurantModel restaurantModelWhereNameOnlyContainsNumbers =
-                FactoryRestaurantModelTest.restaurantModelWhereNameIsJustNumbers();
+                RestaurantModelTest.restaurantModelWhereNameIsJustNumbers();
         Assertions.assertThrows(
                 InvalidDataException.class,
                 () -> { adminUseCase.saveRestaurant(restaurantModelWhereNameOnlyContainsNumbers); }
