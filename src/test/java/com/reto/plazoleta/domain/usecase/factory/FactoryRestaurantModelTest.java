@@ -1,4 +1,4 @@
-package com.reto.plazoleta.domain;
+package com.reto.plazoleta.domain.usecase.factory;
 
 import com.reto.plazoleta.domain.model.RestaurantModel;
 

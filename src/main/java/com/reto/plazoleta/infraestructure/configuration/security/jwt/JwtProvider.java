@@ -4,11 +4,11 @@ import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTParser;
 import com.reto.plazoleta.infraestructure.configuration.security.exception.AuthenticationFailedException;
-import com.reto.plazoleta.infraestructure.configuration.security.exception.TokenInvalidException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.io.DecodingException;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,21 +40,16 @@ public class JwtProvider {
         }
     }
 
-    public boolean validateToken(String token) {
-        userVerifierToken.isValidTokenUser(token);
+    public Boolean validateToken(String tokenNoBearerPrefix) {
         try {
-            Jwts.parserBuilder().setSigningKey(ACCESS_TOKEN_SECRET.getBytes()).build().parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(ACCESS_TOKEN_SECRET.getBytes()).build().parseClaimsJws(tokenNoBearerPrefix);
+            if(!userVerifierToken.isValidTokenUser("Bearer " + tokenNoBearerPrefix)) {
+                return false;
+            }
             return true;
-        } catch (MalformedJwtException e) {
-            throw new TokenInvalidException("malformed token");
-        } catch (UnsupportedJwtException e) {
-            throw new TokenInvalidException("token not supported");
-        } catch (ExpiredJwtException e) {
-            throw new TokenInvalidException("expired token");
-        } catch (IllegalArgumentException e) {
-            throw new TokenInvalidException("token empty");
-        } catch (SignatureException e) {
-            throw new TokenInvalidException("fail in signing");
+        } catch (MalformedJwtException | UnsupportedJwtException | ExpiredJwtException | IllegalArgumentException |
+                SignatureException | DecodingException e) {
+            return false;
         }
     }
 

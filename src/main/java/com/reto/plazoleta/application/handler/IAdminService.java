@@ -4,5 +4,5 @@ import com.reto.plazoleta.application.dto.request.RequestToCreateRestaurantDto;
 
 public interface IAdminService {
 
-    void saveRestaurant(RequestToCreateRestaurantDto requestToCreateRestaurantDto);
+    void saveRestaurant(RequestToCreateRestaurantDto requestToCreateRestaurantDto, String tokenWithBearerPrefix);
 }

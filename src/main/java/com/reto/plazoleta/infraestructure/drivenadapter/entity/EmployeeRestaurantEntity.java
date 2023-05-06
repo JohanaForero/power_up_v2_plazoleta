@@ -7,7 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-@AllArgsConstructor // para que funcione las validaciones
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Getter

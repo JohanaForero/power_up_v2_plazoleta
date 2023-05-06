@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@AllArgsConstructor
+@AllArgsConstructor // para que funcione las validaciones
 @NoArgsConstructor
 @Entity
 @Table(name = "dish")

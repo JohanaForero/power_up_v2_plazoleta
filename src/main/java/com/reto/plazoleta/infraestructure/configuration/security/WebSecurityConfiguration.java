@@ -1,6 +1,7 @@
 package com.reto.plazoleta.infraestructure.configuration.security;
 
 import com.reto.plazoleta.infraestructure.configuration.security.jwt.JwtAuthenticationFilter;
+import com.reto.plazoleta.infraestructure.configuration.security.jwt.JwtEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfiguration {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtEntryPoint jwtEntryPoint;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -30,13 +32,15 @@ public class WebSecurityConfiguration {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/swagger-resources/**",
-                                "/v3/api-docs/**", "/services-Owner-restaurant/").permitAll()
+                                "/v3/api-docs/**").permitAll()
                         .anyRequest()
                         .authenticated())
                 .sessionManagement( httpSecuritySessionManagementConfigurer ->
                         httpSecuritySessionManagementConfigurer.sessionCreationPolicy(
                                 SessionCreationPolicy.STATELESS)
                 )
+                .exceptionHandling().authenticationEntryPoint(jwtEntryPoint)
+                .and()
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

@@ -1,6 +1,10 @@
 package com.reto.plazoleta.infraestructure.configuration.security.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.reto.plazoleta.infraestructure.exceptionhandler.ExceptionResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +18,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
 
 @RequiredArgsConstructor
 @Component
@@ -29,8 +34,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if(bearerToken != null && bearerToken.startsWith("Bearer ") &&
                 SecurityContextHolder.getContext().getAuthentication() == null) {
             String token = bearerToken.replace("Bearer ", "").trim();
-            if(!request.getRequestURL().toString().equals("http://localhost:9090/micro-small-square/restaurant/")) {
-                jwtProvider.validateToken(token);
+            if(!jwtProvider.validateToken(token)) {
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                response.getWriter().write(new ObjectMapper()
+                        .writeValueAsString(Collections.
+                                singletonMap("message", ExceptionResponse.TOKEN_INVALID.getMessage())));
+                return;
             }
             UsernamePasswordAuthenticationToken auth = jwtProvider.getAuthentication(token);
             auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
