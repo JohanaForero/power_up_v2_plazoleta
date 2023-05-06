@@ -1,14 +1,16 @@
-package com.reto.plazoleta.domain.spi;
+package com.reto.plazoleta.domain.usecase;
 
-import com.reto.plazoleta.domain.usecase.AdminUseCase;
-import com.reto.plazoleta.domain.FactoryRestaurantModelTest;
 import com.reto.plazoleta.domain.exception.EmptyFieldsException;
 import com.reto.plazoleta.domain.exception.InvalidDataException;
+import com.reto.plazoleta.domain.gateways.IUserGateway;
 import com.reto.plazoleta.domain.model.RestaurantModel;
+import com.reto.plazoleta.domain.spi.IRestaurantPersistencePort;
+import com.reto.plazoleta.domain.usecase.factory.FactoryRestaurantModelTest;
+import com.reto.plazoleta.infraestructure.drivenadapter.gateways.User;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -17,18 +19,30 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
-class AdminUseCaseTest {
+class RestaurantUseCaseTest {
 
-    @InjectMocks
-    AdminUseCase adminUseCase;
+    private RestaurantUseCase restaurantUseCase;
 
     @Mock
-    IRestaurantPersistencePort restaurantPersistencePort;
+    private IRestaurantPersistencePort restaurantPersistencePort;
+
+    @Mock
+    private IUserGateway userGateway;
+    private final static String token = "";
+
+    @BeforeEach
+    void setUp() {
+        restaurantUseCase = new RestaurantUseCase(restaurantPersistencePort, userGateway);
+
+    }
 
     @Test
     void mustSaveRestaurant() {
+        User userTest = new User();
+        userTest.setRol("PROPIETARIO");
+        when(userGateway.getUserById(any(), any())).thenReturn(userTest);
         when(restaurantPersistencePort.saveRestaurant(any())).thenReturn(FactoryRestaurantModelTest.restaurantModel());
-        adminUseCase.saveRestaurant(FactoryRestaurantModelTest.restaurantModel());
+        restaurantUseCase.saveRestaurant(FactoryRestaurantModelTest.restaurantModel(), token);
         verify(restaurantPersistencePort).saveRestaurant(any(RestaurantModel.class));
     }
 
@@ -37,7 +51,7 @@ class AdminUseCaseTest {
         RestaurantModel restaurantModelWithEmptyFields = FactoryRestaurantModelTest.restaurantModelEmptyFields();
         Assertions.assertThrows(
                 EmptyFieldsException.class,
-                () -> { adminUseCase.saveRestaurant(restaurantModelWithEmptyFields); }
+                () -> { restaurantUseCase.saveRestaurant(restaurantModelWithEmptyFields, token); }
         );
     }
 
@@ -46,7 +60,7 @@ class AdminUseCaseTest {
         RestaurantModel restaurantModelWithPhoneWrong = FactoryRestaurantModelTest.restaurantModelWrongPhone();
         Assertions.assertThrows(
                 InvalidDataException.class,
-                () -> { adminUseCase.saveRestaurant(restaurantModelWithPhoneWrong); }
+                () -> { restaurantUseCase.saveRestaurant(restaurantModelWithPhoneWrong, token); }
         );
     }
 
@@ -56,7 +70,7 @@ class AdminUseCaseTest {
                 FactoryRestaurantModelTest.restaurantModelWhereNameIsJustNumbers();
         Assertions.assertThrows(
                 InvalidDataException.class,
-                () -> { adminUseCase.saveRestaurant(restaurantModelWhereNameOnlyContainsNumbers); }
+                () -> { restaurantUseCase.saveRestaurant(restaurantModelWhereNameOnlyContainsNumbers, token); }
         );
     }
 }

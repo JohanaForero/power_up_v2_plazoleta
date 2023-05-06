@@ -2,7 +2,7 @@ package com.reto.plazoleta.domain.model;
 
 public class DishModel {
 
-    private Long idDish;
+    private Integer idDish;
     private String name;
     private String descriptionDish;
     private Double price;
@@ -20,10 +20,10 @@ public class DishModel {
     }
 
 
-    public Long getIdDish() {
+    public Integer getIdDish() {
         return idDish;
     }
-    public void setIdDish(Long idDish) {
+    public void setIdDish(Integer idDish) {
         this.idDish = idDish;
     }
     public String getName() {
