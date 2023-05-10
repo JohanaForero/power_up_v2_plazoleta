@@ -6,6 +6,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CreateDishResponseDto {
-    private Long idDish;
     private String name;
+    private String descriptionDish;
+    private Double price;
+    private String imageDish;
+    private String stateDish;
+    private Long restaurantId;
 }

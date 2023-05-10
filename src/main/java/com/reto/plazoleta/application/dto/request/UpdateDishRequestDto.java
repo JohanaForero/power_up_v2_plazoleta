@@ -4,6 +4,7 @@ public class UpdateDishRequestDto {
     private Long idDish;
     private Double price;
     private String descriptionDish;
+    private Long idRestaurant;
 
     public Long getIdDish() {
         return idDish;
@@ -20,12 +21,5 @@ public class UpdateDishRequestDto {
     public void setPrice(Double price) {
         this.price = price;
     }
-
-    public String getDescriptionDish() {
-        return descriptionDish;
-    }
-
-    public void setDescriptionDish(String descriptionDish) {
-        this.descriptionDish = descriptionDish;
-    }
 }
+

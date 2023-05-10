@@ -2,7 +2,6 @@ package com.reto.plazoleta.infraestructure.drivenadapter.mapper;
 
 import com.reto.plazoleta.domain.model.DishModel;
 import com.reto.plazoleta.infraestructure.drivenadapter.entity.DishEntity;
-import com.reto.plazoleta.infraestructure.drivenadapter.entity.RestaurantEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
@@ -12,6 +11,7 @@ import org.mapstruct.ReportingPolicy;
 public interface IDishEntityMapper {
     DishEntity toDishEntity(DishModel dishModel);
 
-    DishModel toDishModel(RestaurantEntity dishEntity);
+    DishModel toDishModel(DishEntity dishEntity);
 
+    DishModel toDishStateModel(DishEntity dishEntity);
 }
