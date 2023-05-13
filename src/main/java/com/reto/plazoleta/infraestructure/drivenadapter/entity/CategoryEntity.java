@@ -18,4 +18,5 @@ public class CategoryEntity {
     private String name;
     @Column
     private String description;
+    private long idRestaurant;
 }

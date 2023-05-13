@@ -7,29 +7,21 @@ public class DishModel {
     private String descriptionDish;
     private Double price;
     private String imageDish;
-    private String stateDish;
-
-    public Long getIdRestaurant() {
-        return idRestaurant;
-    }
-
-    public void setIdRestaurant(Long idRestaurant) {
-        this.idRestaurant = idRestaurant;
-    }
-
-    private Long idRestaurant;
-
+    private Boolean stateDish;
+    private RestaurantModel restaurantModel;
+    private CategoryModel categoryModel;
 
     public DishModel() {
     }
 
-    public DishModel(String name, String descriptionDish, Double price, String imageDish, String stateDish, Long idRestaurant) {
+    public DishModel(String name, String descriptionDish, Double price, String imageDish, Boolean stateDish, RestaurantModel restaurantModel, CategoryModel categoryModel ) {
         this.name = name;
         this.descriptionDish = descriptionDish;
         this.price = price;
         this.imageDish = imageDish;
         this.stateDish = stateDish;
-        this.idRestaurant = idRestaurant;
+        this.restaurantModel = restaurantModel;
+        this.categoryModel = categoryModel;
     }
 
     public Long getIdDish() {
@@ -72,11 +64,27 @@ public class DishModel {
         this.imageDish = imageDish;
     }
 
-    public String getStateDish() {
+    public Boolean getStateDish() {
         return stateDish;
     }
 
-    public void setStateDish(String stateDish) {
+    public void setStateDish(Boolean stateDish) {
         this.stateDish = stateDish;
+    }
+
+    public RestaurantModel getRestaurantModel() {
+        return restaurantModel;
+    }
+
+    public void setRestaurantModel(RestaurantModel restaurantModel) {
+        this.restaurantModel = restaurantModel;
+    }
+
+    public CategoryModel getCategoryModel() {
+        return categoryModel;
+    }
+
+    public void setCategoryModel(CategoryModel categoryModel) {
+        this.categoryModel = categoryModel;
     }
 }

@@ -1,16 +1,32 @@
 package com.reto.plazoleta.domain.model;
 
 public class CategoryModel {
+
     private Long idCategory;
-    private String name;
+    private String nameCategory;
     private String description;
 
-    public CategoryModel() {
+    public CategoryModel(){}
+
+    public CategoryModel(Long idCategory, String nameCategory, String description) {
+        this.idCategory = idCategory;
+        this.nameCategory = nameCategory;
+        this.description = description;
     }
 
-    public CategoryModel(Long idCategory, String name, String description) {
-        this.idCategory = idCategory;
-        this.name = name;
+    public String getNameCategory() {
+        return nameCategory;
+    }
+
+    public void setNameCategory(String nameCategory) {
+        this.nameCategory = nameCategory;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -22,19 +38,4 @@ public class CategoryModel {
         this.idCategory = idCategory;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 }

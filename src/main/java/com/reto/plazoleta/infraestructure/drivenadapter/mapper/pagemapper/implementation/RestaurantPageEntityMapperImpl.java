@@ -14,7 +14,7 @@ public class RestaurantPageEntityMapperImpl implements IRestaurantPageEntityMapp
         return restaurantsEntityPage.map((RestaurantEntity restaurantEntity) -> {
             RestaurantModel restaurantModel = new RestaurantModel();
             restaurantModel.setIdRestaurant(restaurantEntity.getIdRestaurant());
-            restaurantModel.setName(restaurantEntity.getName());
+            restaurantModel.setNameRestaurant(restaurantEntity.getName());
             restaurantModel.setUrlLogo(restaurantEntity.getUrlLogo());
             restaurantModel.setAddress(restaurantEntity.getAddress());
             restaurantModel.setPhone(restaurantEntity.getPhone());

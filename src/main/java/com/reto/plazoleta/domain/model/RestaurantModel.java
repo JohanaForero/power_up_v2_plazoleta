@@ -2,7 +2,7 @@ package com.reto.plazoleta.domain.model;
 
 public class RestaurantModel {
     private Long idRestaurant;
-    private String name;
+    private String nameRestaurant;
     private String address;
     private String phone;
     private String urlLogo;
@@ -11,8 +11,8 @@ public class RestaurantModel {
 
     public RestaurantModel() {}
 
-    public RestaurantModel(String name, String address, String phone, String urlLogo, Long nit, Long idOwner) {
-        this.name = name;
+    public RestaurantModel(String nameRestaurant, String address, String phone, String urlLogo, Long nit, Long idOwner) {
+        this.nameRestaurant = nameRestaurant;
         this.address = address;
         this.phone = phone;
         this.urlLogo = urlLogo;
@@ -26,11 +26,11 @@ public class RestaurantModel {
     public void setIdRestaurant(Long idRestaurant) {
         this.idRestaurant = idRestaurant;
     }
-    public String getName() {
-        return name;
+    public String getNameRestaurant() {
+        return nameRestaurant;
     }
-    public void setName(String name) {
-        this.name = name;
+    public void setNameRestaurant(String nameRestaurant) {
+        this.nameRestaurant = nameRestaurant;
     }
     public String getAddress() {
         return address;

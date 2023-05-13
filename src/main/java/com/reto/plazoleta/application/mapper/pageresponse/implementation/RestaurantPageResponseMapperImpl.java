@@ -13,7 +13,7 @@ public class RestaurantPageResponseMapperImpl implements IRestaurantPageResponse
     public Page<RestaurantResponsePageableDto> toRestaurantResponsePageable(Page<RestaurantModel> restaurantsModelPage) {
         return restaurantsModelPage.map((RestaurantModel restaurantModel) -> {
             RestaurantResponsePageableDto restaurantResponseDto = new RestaurantResponsePageableDto();
-            restaurantResponseDto.setName(restaurantModel.getName());
+            restaurantResponseDto.setName(restaurantModel.getNameRestaurant());
             restaurantResponseDto.setUrlLogo(restaurantModel.getUrlLogo());
             return restaurantResponseDto;
         });

@@ -23,7 +23,7 @@ public class RestaurantUseCase implements IRestaurantServicePort {
 
     @Override
     public void saveRestaurant(RestaurantModel restaurantModel, String tokenWithBearerPrefix) {
-        if(isContainsRestaurantNameOnlyNumbers(restaurantModel.getName())) {
+        if(isContainsRestaurantNameOnlyNumbers(restaurantModel.getNameRestaurant())) {
             throw new InvalidDataException("The name of the restaurant cannot only contain numbers");
         }
         validateRestaurantFieldsEmpty(restaurantModel);
@@ -36,7 +36,7 @@ public class RestaurantUseCase implements IRestaurantServicePort {
     }
 
     private void validateRestaurantFieldsEmpty(RestaurantModel restaurantModel) {
-        if( restaurantModel.getName().replace(" ", "").isEmpty() ||
+        if( restaurantModel.getNameRestaurant().replace(" ", "").isEmpty() ||
                 restaurantModel.getUrlLogo().replace(" ", "").isEmpty() ||
                 restaurantModel.getAddress().replace(" ", "").isEmpty() ||
                 restaurantModel.getPhone().replace(" ", "").isEmpty() ||

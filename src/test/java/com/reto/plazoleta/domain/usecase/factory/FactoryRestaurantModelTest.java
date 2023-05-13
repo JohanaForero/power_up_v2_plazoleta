@@ -7,7 +7,7 @@ public class FactoryRestaurantModelTest {
     public static RestaurantModel restaurantModel() {
         RestaurantModel restaurantModel = new RestaurantModel();
         restaurantModel.setIdRestaurant(1L);
-        restaurantModel.setName("Sabroson17");
+        restaurantModel.setNameRestaurant("Sabroson17");
         restaurantModel.setUrlLogo("http://sabroson.img");
         restaurantModel.setAddress("Cra 10");
         restaurantModel.setPhone("3018452367");
@@ -18,7 +18,7 @@ public class FactoryRestaurantModelTest {
 
     public static RestaurantModel restaurantModelEmptyFields() {
         RestaurantModel restaurantModel = new RestaurantModel();
-        restaurantModel.setName(" ");
+        restaurantModel.setNameRestaurant(" ");
         restaurantModel.setUrlLogo(" ");
         restaurantModel.setAddress(" ");
         restaurantModel.setPhone(" ");
@@ -29,7 +29,7 @@ public class FactoryRestaurantModelTest {
 
     public static RestaurantModel restaurantModelWrongPhone() {
         RestaurantModel restaurantModel = new RestaurantModel();
-        restaurantModel.setName("Sabroson17");
+        restaurantModel.setNameRestaurant("Sabroson17");
         restaurantModel.setUrlLogo("http://sabroson.img");
         restaurantModel.setAddress("Cra 10");
         restaurantModel.setPhone("4563018452367");
@@ -40,7 +40,7 @@ public class FactoryRestaurantModelTest {
 
     public static RestaurantModel restaurantModelWhereNameIsJustNumbers() {
         RestaurantModel restaurantModel = new RestaurantModel();
-        restaurantModel.setName("17645676");
+        restaurantModel.setNameRestaurant("17645676");
         restaurantModel.setUrlLogo("http://sabroson.img");
         restaurantModel.setAddress("Cra 10");
         restaurantModel.setPhone("3018452367");

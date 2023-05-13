@@ -6,9 +6,11 @@ import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring",
+        uses = IRestaurantEntityMapper.class,
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface IDishEntityMapper {
+
     DishEntity toDishEntity(DishModel dishModel);
 
     DishModel toDishModel(DishEntity dishEntity);

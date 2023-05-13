@@ -1,11 +1,15 @@
 package com.reto.plazoleta.infraestructure.entrypoint;
 
+import com.reto.plazoleta.application.dto.request.CreateCategoryRequestDto;
 import com.reto.plazoleta.application.dto.request.CreateDishRequestDto;
 import com.reto.plazoleta.application.dto.request.UpdateDishRequestDto;
 import com.reto.plazoleta.application.dto.request.UpdateDishStateRequestDto;
 import com.reto.plazoleta.application.dto.response.UpdateDishResponseDto;
 import com.reto.plazoleta.application.dto.response.UpdateDishStateResponseDto;
 import com.reto.plazoleta.application.handler.IOwnerRestaurantService;
+import com.reto.plazoleta.domain.model.CategoryModel;
+import com.reto.plazoleta.infraestructure.drivenadapter.entity.CategoryEntity;
+import com.reto.plazoleta.infraestructure.drivenadapter.repository.ICategoryRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,12 +20,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/services-owner-restaurant")
 public class OwnerRestaurantController {
 
     private final IOwnerRestaurantService ownerRestaurantService;
+    private final ICategoryRepository categoryRepository;
+
 
     @PreAuthorize(value = "hasRole('PROPIETARIO')")
     @Operation(summary = "Add a new Dish")
@@ -32,8 +40,8 @@ public class OwnerRestaurantController {
     })
     @PostMapping(value = "/")
     public ResponseEntity<Void> saveDish(@RequestBody CreateDishRequestDto createDishRequestDto) {
-        ownerRestaurantService.saveDish(createDishRequestDto);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+            ownerRestaurantService.saveDish(createDishRequestDto);
+            return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @Operation(summary = "update dish price and description")
