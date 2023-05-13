@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@AllArgsConstructor // para que funcione las validaciones
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "dish")
@@ -25,9 +25,7 @@ public class DishEntity {
     @Column
     private String imageDish;
     @Column
-    private String stateDish;
-    @Column
-    private Long restaurantId;
+    private Boolean stateDish;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Restaurant", referencedColumnName = "idRestaurant")

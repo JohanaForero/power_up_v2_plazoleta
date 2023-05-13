@@ -26,7 +26,7 @@ public class OwnerRestaurantUseCaseTest {
     @Test
     void mustSaveDish() {
         when(dishPersistencePort.saveDish(any())).thenReturn(FactoryDishModelTest.dishModel());
-        ownerRestaurantUseCase.saveDish(FactoryDishModelTest.dishModel());
+        ownerRestaurantUseCase.saveDish(FactoryDishModelTest.dishModel(), 1L, 1L);
         verify(dishPersistencePort).saveDish(any(DishModel.class));
     }
 }
