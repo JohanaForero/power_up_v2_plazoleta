@@ -9,12 +9,12 @@ import lombok.Setter;
 @Setter
 public class CreateDishResponseDto {
 
-    private String nameDish;
+    private String name;
     private Double price;
     private String descriptionDish;
     private String imageDish;
-    private CategoryModel nameCategory;
-    private RestaurantModel nameRestaurant;
     private Boolean stateDish;
+    private String nameRestaurant;
+    private String nameCategory;
 
 }

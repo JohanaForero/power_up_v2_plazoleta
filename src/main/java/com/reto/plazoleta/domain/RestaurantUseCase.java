@@ -1,4 +1,4 @@
-package com.reto.plazoleta.domain.usecase;
+package com.reto.plazoleta.domain;
 
 import com.reto.plazoleta.domain.api.IRestaurantServicePort;
 import com.reto.plazoleta.domain.exception.EmptyFieldsException;

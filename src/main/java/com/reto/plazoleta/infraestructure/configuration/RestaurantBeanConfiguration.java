@@ -3,7 +3,7 @@ package com.reto.plazoleta.infraestructure.configuration;
 import com.reto.plazoleta.domain.api.IRestaurantServicePort;
 import com.reto.plazoleta.domain.gateways.IUserGateway;
 import com.reto.plazoleta.domain.spi.IRestaurantPersistencePort;
-import com.reto.plazoleta.domain.usecase.RestaurantUseCase;
+import com.reto.plazoleta.domain.RestaurantUseCase;
 import com.reto.plazoleta.infraestructure.drivenadapter.gateways.UserGatewayImpl;
 import com.reto.plazoleta.infraestructure.drivenadapter.mapper.IRestaurantEntityMapper;
 import com.reto.plazoleta.infraestructure.drivenadapter.mapper.pagemapper.IRestaurantPageEntityMapper;

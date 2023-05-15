@@ -14,6 +14,17 @@ public class DishModel {
     public DishModel() {
     }
 
+    public DishModel(Long idDish, String name, String descriptionDish, Double price, String imageDish, Boolean stateDish, RestaurantModel restaurantModel, CategoryModel categoryModel) {
+        this.idDish = idDish;
+        this.name = name;
+        this.descriptionDish = descriptionDish;
+        this.price = price;
+        this.imageDish = imageDish;
+        this.stateDish = stateDish;
+        this.restaurantModel = restaurantModel;
+        this.categoryModel = categoryModel;
+    }
+
     public Long getIdDish() {
         return idDish;
     }

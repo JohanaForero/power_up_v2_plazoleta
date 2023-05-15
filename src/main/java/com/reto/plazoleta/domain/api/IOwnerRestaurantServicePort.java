@@ -4,5 +4,5 @@ import com.reto.plazoleta.domain.model.DishModel;
 
 public interface IOwnerRestaurantServicePort {
 
-    void saveDish(DishModel dishModel, Long idCategory, Long idRestaurant);
+    DishModel saveDish(DishModel dishModel);
 }

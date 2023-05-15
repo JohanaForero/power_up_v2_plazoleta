@@ -1,4 +1,4 @@
-package com.reto.plazoleta.domain.usecase;
+package com.reto.plazoleta.domain;
 
 import com.reto.plazoleta.domain.api.IEmployeeRestaurantServicePort;
 import com.reto.plazoleta.domain.model.EmployeeRestaurantModel;

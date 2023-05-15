@@ -1,4 +1,4 @@
-package com.reto.plazoleta.domain.usecase;
+package com.reto.plazoleta.domain;
 
 import com.reto.plazoleta.domain.api.IOwnerRestaurantServicePort;
 import com.reto.plazoleta.domain.exception.InvalidDataException;
@@ -23,22 +23,22 @@ public class OwnerRestaurantUseCase implements IOwnerRestaurantServicePort {
     }
 
     @Override
-    public void saveDish(DishModel dishModel, Long idCategory, Long idRestaurant) {
+    public DishModel saveDish(DishModel dishModel) {
         if(dishModel.getPrice() < 1) {
             throw new InvalidDataException("Price must be greater than zero");
         }
-        RestaurantModel restaurantModel = restaurantPersistencePort.findByIdRestaurant(idRestaurant);
+        RestaurantModel restaurantModel = restaurantPersistencePort.findByIdRestaurant(dishModel.getRestaurantModel().getIdRestaurant());
         if(restaurantModel == null) {
             throw new InvalidDataException("The restaurant does not exist");
         }
-        CategoryModel categoryModel = categoryPersistencePort.findById(idCategory);
+        CategoryModel categoryModel = categoryPersistencePort.findById(dishModel.getCategoryModel().getIdCategory());
         if(categoryModel == null) {
             throw new InvalidDataException("The category does not exist");
         }
         dishModel.setRestaurantModel(restaurantModel);
         dishModel.setCategoryModel(categoryModel);
         dishModel.setStateDish(true);
-        dishPersistencePort.saveDish(dishModel);
+        return dishPersistencePort.saveDish(dishModel);
     }
 
 }

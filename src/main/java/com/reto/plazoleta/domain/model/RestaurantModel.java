@@ -12,6 +12,16 @@ public class RestaurantModel {
 
     public RestaurantModel() {}
 
+    public RestaurantModel(Long idRestaurant, String name, String address, String phone, String urlLogo, Long nit, Long idOwner) {
+        this.idRestaurant = idRestaurant;
+        this.name = name;
+        this.address = address;
+        this.phone = phone;
+        this.urlLogo = urlLogo;
+        this.nit = nit;
+        this.idOwner = idOwner;
+    }
+
     public Long getIdRestaurant() {
         return idRestaurant;
     }

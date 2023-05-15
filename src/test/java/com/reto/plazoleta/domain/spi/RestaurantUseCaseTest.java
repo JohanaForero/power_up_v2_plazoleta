@@ -1,24 +1,21 @@
-package com.reto.plazoleta.domain.usecase;
+package com.reto.plazoleta.domain.spi;
 
+import com.reto.plazoleta.domain.RestaurantUseCase;
 import com.reto.plazoleta.domain.exception.EmptyFieldsException;
 import com.reto.plazoleta.domain.exception.InvalidDataException;
 import com.reto.plazoleta.domain.gateways.IUserGateway;
 import com.reto.plazoleta.domain.model.RestaurantModel;
 import com.reto.plazoleta.domain.spi.IRestaurantPersistencePort;
-import com.reto.plazoleta.domain.usecase.factory.FactoryRestaurantModelTest;
+import com.reto.plazoleta.factory.FactoryRestaurantModelTest;
 import com.reto.plazoleta.infraestructure.drivenadapter.gateways.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(SpringExtension.class)
 class RestaurantUseCaseTest {
 
     private RestaurantUseCase restaurantUseCase;
@@ -73,4 +70,5 @@ class RestaurantUseCaseTest {
                 () -> { restaurantUseCase.saveRestaurant(restaurantModelWhereNameOnlyContainsNumbers, token); }
         );
     }
+
 }

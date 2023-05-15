@@ -1,5 +1,4 @@
-package com.reto.plazoleta.domain.usecase.factory;
-
+package com.reto.plazoleta.factory;
 import com.reto.plazoleta.domain.model.RestaurantModel;
 
 public class FactoryRestaurantModelTest {
