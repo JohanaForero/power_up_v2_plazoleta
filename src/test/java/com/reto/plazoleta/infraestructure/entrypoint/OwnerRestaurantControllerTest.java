@@ -38,7 +38,7 @@ class OwnerRestaurantControllerTest {
 
     @WithMockUser(username = "owner@owner.com", password = "123", roles = {"PROPIETARIO"})
     @Test
-    void saveDish() throws Exception {
+    void test_saveDish_withCreateDishRequestDto_whenSystemCreateDish_ShouldReturnADishWithStatusCreated() throws Exception {
         CreateDishRequestDto dish = new CreateDishRequestDto("plato1", 20000.00, "description", "http://image.com",
                 1L, 1L);
 
