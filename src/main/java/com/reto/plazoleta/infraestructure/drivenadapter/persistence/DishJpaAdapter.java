@@ -2,9 +2,6 @@ package com.reto.plazoleta.infraestructure.drivenadapter.persistence;
 
 import com.reto.plazoleta.domain.model.DishModel;
 import com.reto.plazoleta.domain.spi.IDishPersistencePort;
-import com.reto.plazoleta.infraestructure.drivenadapter.entity.CategoryEntity;
-import com.reto.plazoleta.infraestructure.drivenadapter.entity.DishEntity;
-import com.reto.plazoleta.infraestructure.drivenadapter.entity.RestaurantEntity;
 import com.reto.plazoleta.infraestructure.drivenadapter.mapper.IDishEntityMapper;
 import com.reto.plazoleta.infraestructure.drivenadapter.repository.IDishRepository;
 

@@ -4,7 +4,7 @@ import com.reto.plazoleta.domain.api.IOwnerRestaurantServicePort;
 import com.reto.plazoleta.domain.spi.ICategoryPersistencePort;
 import com.reto.plazoleta.domain.spi.IDishPersistencePort;
 import com.reto.plazoleta.domain.spi.IRestaurantPersistencePort;
-import com.reto.plazoleta.domain.OwnerRestaurantUseCase;
+import com.reto.plazoleta.domain.usecase.OwnerRestaurantUseCase;
 import com.reto.plazoleta.infraestructure.drivenadapter.mapper.IDishEntityMapper;
 import com.reto.plazoleta.infraestructure.drivenadapter.persistence.DishJpaAdapter;
 import com.reto.plazoleta.infraestructure.drivenadapter.repository.IDishRepository;

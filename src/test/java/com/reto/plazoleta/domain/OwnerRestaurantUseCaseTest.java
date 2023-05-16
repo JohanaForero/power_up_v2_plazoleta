@@ -1,10 +1,12 @@
-package com.reto.plazoleta.domain.spi;
+package com.reto.plazoleta.domain;
 
-import com.reto.plazoleta.domain.OwnerRestaurantUseCase;
-import com.reto.plazoleta.domain.api.IOwnerRestaurantServicePort;
 import com.reto.plazoleta.domain.model.CategoryModel;
 import com.reto.plazoleta.domain.model.DishModel;
 import com.reto.plazoleta.domain.model.RestaurantModel;
+import com.reto.plazoleta.domain.spi.ICategoryPersistencePort;
+import com.reto.plazoleta.domain.spi.IDishPersistencePort;
+import com.reto.plazoleta.domain.spi.IRestaurantPersistencePort;
+import com.reto.plazoleta.domain.usecase.OwnerRestaurantUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

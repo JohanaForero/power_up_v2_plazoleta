@@ -1,10 +1,12 @@
 package com.reto.plazoleta.application.dto.response;
 
-import com.reto.plazoleta.domain.model.CategoryModel;
-import com.reto.plazoleta.domain.model.RestaurantModel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class CreateDishResponseDto {

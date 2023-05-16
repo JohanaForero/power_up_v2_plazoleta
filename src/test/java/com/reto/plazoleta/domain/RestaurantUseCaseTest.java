@@ -1,11 +1,11 @@
-package com.reto.plazoleta.domain.spi;
+package com.reto.plazoleta.domain;
 
-import com.reto.plazoleta.domain.RestaurantUseCase;
 import com.reto.plazoleta.domain.exception.EmptyFieldsException;
 import com.reto.plazoleta.domain.exception.InvalidDataException;
 import com.reto.plazoleta.domain.gateways.IUserGateway;
 import com.reto.plazoleta.domain.model.RestaurantModel;
 import com.reto.plazoleta.domain.spi.IRestaurantPersistencePort;
+import com.reto.plazoleta.domain.usecase.RestaurantUseCase;
 import com.reto.plazoleta.factory.FactoryRestaurantModelTest;
 import com.reto.plazoleta.infraestructure.drivenadapter.gateways.User;
 import org.junit.jupiter.api.Assertions;
