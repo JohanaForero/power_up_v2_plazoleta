@@ -18,7 +18,7 @@ public class UserGatewayImpl implements IUserGateway {
     @Override
     public User getUserById(Long idUser, String token) {
         return webClient.get().uri(uriBuilder -> uriBuilder.path("verifier")
-                        .queryParam("iduser", idUser)
+                        .queryParam("idUser", idUser)
                         .build())
                 .header(HttpHeaders.AUTHORIZATION, token)
                 .exchangeToMono( clientResponse -> {

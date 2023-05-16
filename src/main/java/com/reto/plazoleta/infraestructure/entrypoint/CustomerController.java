@@ -33,7 +33,7 @@ public class CustomerController {
     })
     @PreAuthorize(value = "hasRole('CLIENTE')")
     @GetMapping(value = "customer")
-    public ResponseEntity<Page<RestaurantResponsePageableDto>> getAllRestaurantsByOrderByNombreAsc(
+    public ResponseEntity<Page<RestaurantResponsePageableDto>> getAllRestaurantsByOrderByNameAsc(
             @Parameter(
                     description = "Number of restaurant items by page",
                     schema = @Schema(implementation = Integer.class))
