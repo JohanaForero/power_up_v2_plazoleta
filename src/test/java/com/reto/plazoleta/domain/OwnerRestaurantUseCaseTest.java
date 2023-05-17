@@ -14,7 +14,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
+
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,24 +32,20 @@ class OwnerRestaurantUseCaseTest {
     @Mock
     private ICategoryPersistencePort categoryPersistencePort;
 
-    @Mock
-    private CategoryModel categoryModel;
-
     @BeforeEach
     void setUp() {
         ownerRestaurantUseCase = new OwnerRestaurantUseCase(dishPersistencePort, restaurantPersistencePort, categoryPersistencePort);
     }
 
     @Test
-    public void testSaveDish_When_DishModelIsValid_Then_ReturnsSavedDish() {
+    public void test_saveDish_withRequestCompleteAndNameUnique_ShouldResponseCreateDishSuccess() {
+        RestaurantModel restaurantModel = new RestaurantModel(1L, "salado", "bellavista", "+123456779", "urlLogo", 1L, 12344L);
+        CategoryModel categoryModel = new CategoryModel(1L, "salados", "salado");
+        DishModel dishModel = new DishModel(1L, "cuscu", "salsa", 12.00, "urlImagen", true, restaurantModel, categoryModel);
 
-        RestaurantModel restaurantModel = new RestaurantModel(1L,"salado","bellavista","+123456779","urlLogo",1L,12344L);
-        CategoryModel categoryModel = new CategoryModel(1L,"salados","salado");
-        DishModel dishModel = new DishModel(1l,"cuscu","salsa",12.00,"urlImagen",true,restaurantModel,categoryModel);
-
-        when(restaurantPersistencePort.findByIdRestaurant(anyLong())).thenReturn(restaurantModel);
-        when(categoryPersistencePort.findById(anyLong())).thenReturn(categoryModel);
-        when(dishPersistencePort.saveDish(any(DishModel.class))).thenReturn(dishModel);
+        when(restaurantPersistencePort.findByIdRestaurant(eq(1L))).thenReturn(restaurantModel);
+        when(categoryPersistencePort.findById(eq(1L))).thenReturn(categoryModel);
+        when(dishPersistencePort.saveDish(argThat(dish -> dish.getName().equals("cuscu")))).thenReturn(dishModel);
 
         DishModel savedDish = ownerRestaurantUseCase.saveDish(dishModel);
 
@@ -57,9 +54,9 @@ class OwnerRestaurantUseCaseTest {
         assertEquals(categoryModel, savedDish.getCategoryModel());
         assertTrue(savedDish.getStateDish());
 
-        verify(restaurantPersistencePort, times(1)).findByIdRestaurant(anyLong());
-        verify(categoryPersistencePort, times(1)).findById(anyLong());
-        verify(dishPersistencePort, times(1)).saveDish(any(DishModel.class));
+        verify(restaurantPersistencePort, times(1)).findByIdRestaurant(eq(1L));
+        verify(categoryPersistencePort, times(1)).findById(eq(1L));
+        verify(dishPersistencePort, times(1)).saveDish(argThat(dish -> dish.getName().equals("cuscu")));
     }
 }
 
