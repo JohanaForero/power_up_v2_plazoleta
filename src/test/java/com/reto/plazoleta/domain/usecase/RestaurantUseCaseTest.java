@@ -25,10 +25,8 @@ import static org.mockito.Mockito.*;
 class RestaurantUseCaseTest {
 
     private RestaurantUseCase restaurantUseCase;
-
     @Mock
     private IRestaurantPersistencePort restaurantPersistencePort;
-
     @Mock
     private IUserGateway userGateway;
     private final static String token = "";
@@ -39,7 +37,7 @@ class RestaurantUseCaseTest {
     }
 
     @Test
-    void test_SaveRestaurant_withObjectAsRestaurantModel_whenSystemCreateARestaurant_ShouldReturnVoid() {
+    void test_SaveRestaurant_withObjectAsRestaurantModel_ShouldReturnVoid() {
         User userWithRoleOwner = new User();
         userWithRoleOwner.setRol("PROPIETARIO");
 
@@ -61,7 +59,7 @@ class RestaurantUseCaseTest {
     }
 
     @Test
-    void test_findAllByOrderByNameAsc_withIntAsSizeItems_whenSystemListRestaurantsPageableByAField_ShouldReturnListRestaurantPageableWithAllFields() {
+    void test_findAllByOrderByNameAsc_withIntAsSizeItems_ShouldReturnListRestaurantPageableWithAllFields() {
         List<RestaurantModel> restaurantList = new ArrayList<>();
         restaurantList.add(new RestaurantModel("Restaurante 1", "Dirección 1", "3014896273", "http://restaurante1.com", 111111L, 1L));
         restaurantList.add(new RestaurantModel("Restaurante 2", "Dirección 2", "3224196283", "http://restaurante2.com", 222222L, 2L));
@@ -72,10 +70,13 @@ class RestaurantUseCaseTest {
 
         verify(restaurantPersistencePort, times(1)).findAllByOrderByNameAsc(PageRequest.of(0, 10));
         assertEquals(pageableRestaurantsExpected, result);
+        assertEquals(pageableRestaurantsExpected.getTotalElements(), result.getTotalElements());
+        assertEquals(pageableRestaurantsExpected.toList().get(0).getPhone(), result.toList().get(0).getPhone());
+        assertEquals(pageableRestaurantsExpected.toList().get(1).getNit(), result.toList().get(1).getNit());
     }
 
     @Test
-    void test_validateRestaurantPhone_withStringAsPhoneRestaurant_whenSystemCreateARestaurant_ShouldThrowInvalidDataException() {
+    void test_validateRestaurantPhone_withStringAsPhoneRestaurant_ShouldThrowInvalidDataException() {
         RestaurantModel restaurantWithPhoneWrong = new RestaurantModel();
         restaurantWithPhoneWrong.setName("Sabroson17");
         restaurantWithPhoneWrong.setUrlLogo("http://sabroson.img");
@@ -84,8 +85,6 @@ class RestaurantUseCaseTest {
         restaurantWithPhoneWrong.setNit(843775L);
         restaurantWithPhoneWrong.setIdOwner(5L);
 
-        when(restaurantPersistencePort.saveRestaurant(restaurantWithPhoneWrong)).thenReturn(restaurantWithPhoneWrong);
-
         Assertions.assertThrows(
                 InvalidDataException.class,
                 () -> restaurantUseCase.saveRestaurant(restaurantWithPhoneWrong, token)
@@ -93,7 +92,7 @@ class RestaurantUseCaseTest {
     }
 
     @Test
-    void test_isContainsRestaurantNameOnlyNumbers_withStringAsNameRestaurant_whenSystemCreateARestaurant_ShouldThrowInvalidDataException() {
+    void test_isContainsRestaurantNameOnlyNumbers_withStringAsNameRestaurant_ShouldThrowInvalidDataException() {
         RestaurantModel restaurantWhereNameOnlyContainsNumbers = new RestaurantModel();
         restaurantWhereNameOnlyContainsNumbers.setName("17645676");
         restaurantWhereNameOnlyContainsNumbers.setUrlLogo("http://sabroson.img");
@@ -101,8 +100,6 @@ class RestaurantUseCaseTest {
         restaurantWhereNameOnlyContainsNumbers.setPhone("3018452367");
         restaurantWhereNameOnlyContainsNumbers.setNit(843775L);
         restaurantWhereNameOnlyContainsNumbers.setIdOwner(5L);
-
-        when(restaurantPersistencePort.saveRestaurant(restaurantWhereNameOnlyContainsNumbers)).thenReturn(restaurantWhereNameOnlyContainsNumbers);
 
         Assertions.assertThrows(
                 InvalidDataException.class,
