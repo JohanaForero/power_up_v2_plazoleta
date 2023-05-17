@@ -6,9 +6,9 @@ import com.reto.plazoleta.domain.model.RestaurantModel;
 import com.reto.plazoleta.domain.spi.IRestaurantPersistencePort;
 import com.reto.plazoleta.infraestructure.drivenadapter.gateways.User;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
@@ -24,6 +24,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class RestaurantUseCaseTest {
 
+    @InjectMocks
     private RestaurantUseCase restaurantUseCase;
     @Mock
     private IRestaurantPersistencePort restaurantPersistencePort;
@@ -31,13 +32,8 @@ class RestaurantUseCaseTest {
     private IUserGateway userGateway;
     private final static String token = "";
 
-    @BeforeEach
-    void setUp() {
-        restaurantUseCase = new RestaurantUseCase(restaurantPersistencePort, userGateway);
-    }
-
     @Test
-    void test_SaveRestaurant_withObjectAsRestaurantModel_ShouldReturnVoid() {
+    void test_SaveRestaurant_withNonEmptyRestaurantModelAndValidToken_withNameAndPhoneFormatCorrectAndIdOwnerExistWithRoleOwner_ShouldReturnVoid() {
         User userWithRoleOwner = new User();
         userWithRoleOwner.setRol("PROPIETARIO");
 
@@ -59,11 +55,11 @@ class RestaurantUseCaseTest {
     }
 
     @Test
-    void test_findAllByOrderByNameAsc_withIntAsSizeItems_ShouldReturnListRestaurantPageableWithAllFields() {
+    void test_findAllByOrderByNameAsc_withIntAsSizeItemsGreaterThanZero_ShouldReturnListRestaurantPageableWithAllFields() {
         List<RestaurantModel> restaurantList = new ArrayList<>();
         restaurantList.add(new RestaurantModel("Restaurante 1", "Dirección 1", "3014896273", "http://restaurante1.com", 111111L, 1L));
         restaurantList.add(new RestaurantModel("Restaurante 2", "Dirección 2", "3224196283", "http://restaurante2.com", 222222L, 2L));
-        Page<RestaurantModel>  pageableRestaurantsExpected = new PageImpl<>(restaurantList);
+        Page<RestaurantModel> pageableRestaurantsExpected = new PageImpl<>(restaurantList);
         when(restaurantPersistencePort.findAllByOrderByNameAsc(PageRequest.of(0, 10))).thenReturn(pageableRestaurantsExpected);
 
         Page<RestaurantModel> result = restaurantUseCase.findAllByOrderByNameAsc(0, 10);
@@ -76,7 +72,7 @@ class RestaurantUseCaseTest {
     }
 
     @Test
-    void test_validateRestaurantPhone_withStringAsPhoneRestaurant_ShouldThrowInvalidDataException() {
+    void test_validateRestaurantPhone_withStringAsPhoneInvalidRestaurant_ShouldThrowInvalidDataException() {
         RestaurantModel restaurantWithPhoneWrong = new RestaurantModel();
         restaurantWithPhoneWrong.setName("Sabroson17");
         restaurantWithPhoneWrong.setUrlLogo("http://sabroson.img");
@@ -92,7 +88,7 @@ class RestaurantUseCaseTest {
     }
 
     @Test
-    void test_isContainsRestaurantNameOnlyNumbers_withStringAsNameRestaurant_ShouldThrowInvalidDataException() {
+    void test_isContainsRestaurantNameOnlyNumbers_withStringAsNameRestaurantWithOnlyNumbers_ShouldThrowInvalidDataException() {
         RestaurantModel restaurantWhereNameOnlyContainsNumbers = new RestaurantModel();
         restaurantWhereNameOnlyContainsNumbers.setName("17645676");
         restaurantWhereNameOnlyContainsNumbers.setUrlLogo("http://sabroson.img");

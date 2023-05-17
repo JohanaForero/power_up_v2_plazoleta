@@ -13,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,7 +31,7 @@ public class CustomerController {
             @ApiResponse(responseCode = "404", description = "Not found", content = @Content)
     })
     @PreAuthorize(value = "hasRole('CLIENTE')")
-    @GetMapping(value = "customer")
+    @GetMapping(value = "restaurants")
     public ResponseEntity<Page<RestaurantResponsePageableDto>> getAllRestaurantsByOrderByNameAsc(
             @Parameter(
                     description = "Number of restaurant items by page",

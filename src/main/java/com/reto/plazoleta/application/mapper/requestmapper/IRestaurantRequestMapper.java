@@ -5,9 +5,8 @@ import com.reto.plazoleta.application.dto.response.RestaurantResponsePageableDto
 import com.reto.plazoleta.domain.model.RestaurantModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+@Mapper
 public interface IRestaurantRequestMapper {
 
     @Mapping(target = "idRestaurant", ignore = true)
