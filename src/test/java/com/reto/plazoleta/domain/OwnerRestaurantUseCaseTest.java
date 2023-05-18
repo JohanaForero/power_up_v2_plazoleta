@@ -36,6 +36,7 @@ class OwnerRestaurantUseCaseTest {
 
     @Test
     void test_saveDish_withRequestCompleteAndNameUnique_ShouldResponseCreateDishSuccess() {
+        //Given
         RestaurantModel restaurantModel = new RestaurantModel(1L, "salado", "bellavista", "+123456779", "urlLogo", 1L, 12344L);
         CategoryModel categoryModel = new CategoryModel(1L, "salados", "salado");
         DishModel dishModel = new DishModel(1L, "cuscu", "salsa", 12.00, "urlImagen", true, restaurantModel, categoryModel);
@@ -43,13 +44,14 @@ class OwnerRestaurantUseCaseTest {
         when(restaurantPersistencePort.findByIdRestaurant(1L)).thenReturn(restaurantModel);
         when(categoryPersistencePort.findById(1L)).thenReturn(categoryModel);
         when(dishPersistencePort.saveDish(argThat(dish -> dish.getName().equals("cuscu")))).thenReturn(dishModel);
-
+        //When
         DishModel savedDish = ownerRestaurantUseCase.saveDish(dishModel);
 
         verify(restaurantPersistencePort, times(1)).findByIdRestaurant(1L);
         verify(categoryPersistencePort, times(1)).findById(1L);
         verify(dishPersistencePort, times(1)).saveDish(argThat(dish -> dish.getName().equals("cuscu")));
 
+        //Then
         assertNotNull(savedDish);
         assertEquals(dishModel.getName(), savedDish.getName());
         assertEquals(dishModel.getIdDish(), savedDish.getIdDish());
