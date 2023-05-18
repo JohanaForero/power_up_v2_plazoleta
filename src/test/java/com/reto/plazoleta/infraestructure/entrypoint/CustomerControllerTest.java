@@ -5,13 +5,12 @@ import com.reto.plazoleta.infraestructure.drivenadapter.repository.IRestaurantRe
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,11 +21,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ActiveProfiles("test")
+@AutoConfigureMockMvc
 class CustomerControllerTest {
 
     @Autowired
-    private WebApplicationContext webApplicationContext;
-
     private MockMvc mockMvc;
 
     @Autowired
@@ -34,9 +32,8 @@ class CustomerControllerTest {
 
     @BeforeEach
     void setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         List<RestaurantEntity> restaurantList = new ArrayList<>();
-        restaurantList.add(new RestaurantEntity(1L,"Restaurante 1", "Dirección 1", "3014896273", "http://restaurante1.com", 111111L, 1L));
+        restaurantList.add(new RestaurantEntity(1L, "Restaurante 1", "Dirección 1", "3014896273", "http://restaurante1.com", 111111L, 1L));
         restaurantList.add(new RestaurantEntity(2L, "Restaurante 2", "Dirección 2", "3224196283", "http://restaurante2.com", 222222L, 2L));
         restaurantRepository.saveAll(restaurantList);
     }
@@ -44,7 +41,7 @@ class CustomerControllerTest {
     @WithMockUser(username = "customer@customer.com", password = "123", roles = {"CLIENTE"})
     @Test
     void test_getAllRestaurantsByOrderByNameAsc_withIntAsSizeItemsByPages_ShouldResponseAListOfNameAndUrlLogoOfRestaurantsPageableByPageSizeOrderByNameAsc() throws Exception {
-        mockMvc.perform(get("/micro-small-square/customer")
+        mockMvc.perform(get("/micro-small-square/restaurants")
                         .param("sizeItemsByPages", "10")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
