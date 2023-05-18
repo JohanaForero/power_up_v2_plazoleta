@@ -29,7 +29,7 @@ public class OwnerRestaurantController {
             @ApiResponse(responseCode = "400", description = "The format in the fields is invalid", content = @Content),
             @ApiResponse(responseCode = "409", description = "There are empty fields", content = @Content)
     })
-    @PostMapping(value = "/")
+    @PostMapping(value = "/create-dish")
     public ResponseEntity<CreateDishResponseDto> saveDish(@RequestBody CreateDishRequestDto createDishRequestDto) {
         CreateDishResponseDto responseDto = ownerRestaurantService.saveDish(createDishRequestDto);
         return new ResponseEntity<>(responseDto,HttpStatus.CREATED);
