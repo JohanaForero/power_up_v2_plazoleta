@@ -7,9 +7,6 @@ public class OrderModel {
     private int idChef;
     private String name;
 
-    public OrderModel() {
-    }
-
     public String getName() {
         return name;
     }

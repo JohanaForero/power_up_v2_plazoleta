@@ -4,11 +4,8 @@ import com.reto.plazoleta.domain.model.DishModel;
 import com.reto.plazoleta.infraestructure.drivenadapter.entity.DishEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring",
-        unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        unmappedSourcePolicy = ReportingPolicy.IGNORE)
+@Mapper
 public interface IDishEntityMapper {
 
     @Mapping(target = "restaurantEntity", source = "dishModel.restaurantModel")

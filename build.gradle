@@ -11,6 +11,8 @@ sourceCompatibility = '11'
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
+
+
 	}
 }
 
@@ -36,8 +38,6 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation "org.springdoc:springdoc-openapi-webflux-ui:1.6.9"
 	implementation "org.springdoc:springdoc-openapi-ui:1.6.11"
-	implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.5'
-
 
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
@@ -47,4 +47,7 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+compileJava {
+	options.compilerArgs = ['-Amapstruct.defaultComponentModel=spring']
 }

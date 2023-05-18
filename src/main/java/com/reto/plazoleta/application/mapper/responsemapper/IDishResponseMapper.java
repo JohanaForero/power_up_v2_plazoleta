@@ -4,11 +4,8 @@ import com.reto.plazoleta.application.dto.response.CreateDishResponseDto;
 import com.reto.plazoleta.domain.model.DishModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring",
-        unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        unmappedSourcePolicy = ReportingPolicy.IGNORE)
+@Mapper
 public interface IDishResponseMapper {
 
     @Mapping(target = "nameRestaurant", source = "dishModel.restaurantModel.name")
