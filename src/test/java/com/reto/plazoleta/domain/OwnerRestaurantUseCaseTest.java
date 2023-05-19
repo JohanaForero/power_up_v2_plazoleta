@@ -64,18 +64,21 @@ class OwnerRestaurantUseCaseTest {
 
     @Test
     void test_saveDish_withRequestIdRestaurantNotExists_ShouldThrowInvalidDataException() {
+        //Given
         RestaurantModel restaurantModel = new RestaurantModel(2L, "sal", "bellavista",
                 "+123456779", "urlLogo", 1L, 12344L);
         CategoryModel categoryModel = new CategoryModel(1L, "salados", "salado");
         DishModel dishModel = new DishModel(2L, "cuscu", "salsa", 12.00,
                 "urlImagen", true, restaurantModel, categoryModel);
-
+        // When
         InvalidDataException exception = assertThrows(InvalidDataException.class, () -> ownerRestaurantUseCase.saveDish(dishModel));
+        //Then
         assertEquals("The restaurant does not exist", exception.getMessage());
     }
 
     @Test
     void test_saveDish_withRequestIdCategoryNotExists_ShouldThrowInvalidDataException() {
+        //Given
         RestaurantModel restaurantModel = new RestaurantModel(1L, "sal", "bellavista",
                 "+123456779", "urlLogo", 1L, 12344L);
         CategoryModel categoryModel = new CategoryModel(1L, "salados", "salado");
@@ -83,21 +86,23 @@ class OwnerRestaurantUseCaseTest {
                 "urlImagen", true, restaurantModel, categoryModel);
 
         when(restaurantPersistencePort.findByIdRestaurant(1L)).thenReturn(restaurantModel);
-
+        // When
         InvalidDataException exception = assertThrows(InvalidDataException.class, () -> ownerRestaurantUseCase.saveDish(dishModel));
+        // Then
         assertEquals("The category does not exist", exception.getMessage());
     }
 
     @Test
     void test_saveDish_withRequestPriceIsLessThatZero_ShouldThrowInvalidDataException() {
-
+        //Given
         RestaurantModel restaurantModel = new RestaurantModel(1L, "sal", "bellavista",
                 "+123456779", "urlLogo", 1L, 12344L);
         CategoryModel categoryModel = new CategoryModel(1L, "salados", "salado");
         DishModel dishModel = new DishModel(2L, "cuscu", "salsa", -10.5,
                 "urlImagen", true, restaurantModel, categoryModel);
-
+        // When
         InvalidDataException exception = assertThrows(InvalidDataException.class, () -> ownerRestaurantUseCase.saveDish(dishModel));
+        // Then
         assertEquals("Price must be greater than zero", exception.getMessage());
     }
 }
