@@ -1,4 +1,4 @@
-package com.reto.plazoleta.domain;
+package com.reto.plazoleta.domain.usecase;
 
 import com.reto.plazoleta.domain.exception.InvalidDataException;
 import com.reto.plazoleta.domain.model.CategoryModel;
@@ -45,7 +45,7 @@ class OwnerRestaurantUseCaseTest {
         when(categoryPersistencePort.findById(1L)).thenReturn(categoryModel);
         when(dishPersistencePort.saveDish(argThat(dish -> dish.getName().equals("cuscu")))).thenReturn(dishModel);
         //When
-        
+
         DishModel savedDish = ownerRestaurantUseCase.saveDish(dishModel);
 
         //Then
