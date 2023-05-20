@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -22,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
+@DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
 class CustomerControllerTest {
 
     @Autowired
@@ -51,5 +53,29 @@ class CustomerControllerTest {
                 .andExpect(jsonPath("$.content[0].urlLogo").value("http://restaurante1.com"))
                 .andExpect(jsonPath("$.content[1].name").value("Restaurante 2"))
                 .andExpect(jsonPath("$.content[1].urlLogo").value("http://restaurante2.com"));
+    }
+
+    @WithMockUser(username = "admin@dmin.com", password = "123", roles = {"ADMINISTRADOR"})
+    @Test
+    void test_getAllRestaurantsByOrderByNameAsc_withRoleAdminInTheToken_ShouldThrowAStatusForbidden() throws Exception {
+        mockMvc.perform(get("/micro-small-square/restaurants")
+                        .param("sizeItemsByPages", "10")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.message").value("Prohibited you do not have the necessary role for authorization"));
+    }
+
+    @WithMockUser(username = "customer@customer.com", password = "123", roles = {"CLIENTE"})
+    @Test
+    void test_getAllRestaurantsByOrderByNameAsc_withPageSizeOneAndTwoRestaurantsInDatabase_ShouldReturnSuccessAndTwoTotalPagesAndARestaurant() throws Exception {
+        mockMvc.perform(get("/micro-small-square/restaurants")
+                        .param("sizeItemsByPages", "1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.pageable.pageSize").value(1))
+                .andExpect(jsonPath("$.pageable.pageNumber").value(0))
+                .andExpect(jsonPath("$.totalPages").value(2))
+                .andExpect(jsonPath("$.content[0].name").value("Restaurante 1"))
+                .andExpect(jsonPath("$.content[0].urlLogo").value("http://restaurante1.com"));
     }
 }
