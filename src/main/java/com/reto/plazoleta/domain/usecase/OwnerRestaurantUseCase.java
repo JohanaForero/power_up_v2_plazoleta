@@ -24,7 +24,7 @@ public class OwnerRestaurantUseCase implements IOwnerRestaurantServicePort {
 
     @Override
     public DishModel saveDish(DishModel dishModel) {
-        if(dishModel.getPrice() < 1) {
+        if(dishModel.getPrice() <= 0) {
             throw new InvalidDataException("Price must be greater than zero");
         }
         RestaurantModel restaurantModel = restaurantPersistencePort.findByIdRestaurant(dishModel.getRestaurantModel().getIdRestaurant());

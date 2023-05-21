@@ -44,8 +44,8 @@ class OwnerRestaurantUseCaseTest {
         when(restaurantPersistencePort.findByIdRestaurant(1L)).thenReturn(restaurantModel);
         when(categoryPersistencePort.findById(1L)).thenReturn(categoryModel);
         when(dishPersistencePort.saveDish(argThat(dish -> dish.getName().equals("cuscu")))).thenReturn(dishModel);
-        //When
 
+        //When
         DishModel savedDish = ownerRestaurantUseCase.saveDish(dishModel);
 
         //Then
@@ -106,4 +106,5 @@ class OwnerRestaurantUseCaseTest {
         // Then
         assertEquals("Price must be greater than zero", exception.getMessage());
     }
+
 }

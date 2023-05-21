@@ -66,9 +66,48 @@ class OwnerRestaurantControllerTest {
 
     @WithMockUser(username = USERNAME_OWNER, password = PASSWORD_OWNER, roles = {ROL_OWNER})
     @Test
-    void test_saveDish_withInvalidFormatInDishCreationFields_ShouldThrowBadRequestException() throws Exception {
+    void test_saveDish_withCreateDishRequestDto_ShouldThrowBadRequestExceptionIfCategoryNotExist() throws Exception {
         CreateDishRequestDto dish = new CreateDishRequestDto("plato1", 20000.00, "description", "http://image.com",
-                1L, 2L);
+                9L, 1L);
+
+        mockMvc.perform(MockMvcRequestBuilders.post(CREATE_DISH)
+                        .content(objectMapper.writeValueAsString(dish))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(ExceptionResponse.INVALID_DATA.getMessage()));
+    }
+
+    @WithMockUser(username = USERNAME_OWNER, password = PASSWORD_OWNER, roles = {ROL_OWNER})
+    @Test
+    void test_saveDish_withCreateDishRequestDto_ShouldThrowBadRequestExceptionIfRestaurantNotExist() throws Exception {
+        CreateDishRequestDto dish = new CreateDishRequestDto("plato1", 20000.00, "description", "http://image.com",
+                1L, 9L);
+
+        mockMvc.perform(MockMvcRequestBuilders.post(CREATE_DISH)
+                        .content(objectMapper.writeValueAsString(dish))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(ExceptionResponse.INVALID_DATA.getMessage()));
+    }
+
+    @WithMockUser(username = USERNAME_OWNER, password = PASSWORD_OWNER, roles = {ROL_OWNER})
+    @Test
+    void test_saveDish_withZeroPriceInDishCreation_ShouldThrowBadRequestException() throws Exception {
+        CreateDishRequestDto dish = new CreateDishRequestDto("plato1", 0.0, "description", "http://image.com",
+                1L, 1L);
+
+        mockMvc.perform(MockMvcRequestBuilders.post(CREATE_DISH)
+                        .content(objectMapper.writeValueAsString(dish))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(ExceptionResponse.INVALID_DATA.getMessage()));
+    }
+
+    @WithMockUser(username = USERNAME_OWNER, password = PASSWORD_OWNER, roles = {ROL_OWNER})
+    @Test
+    void test_saveDish_withNegativePriceInDishCreation_ShouldThrowBadRequestException() throws Exception {
+        CreateDishRequestDto dish = new CreateDishRequestDto("plato1", -10.0, "description", "http://image.com",
+                1L, 1L);
 
         mockMvc.perform(MockMvcRequestBuilders.post(CREATE_DISH)
                         .content(objectMapper.writeValueAsString(dish))
