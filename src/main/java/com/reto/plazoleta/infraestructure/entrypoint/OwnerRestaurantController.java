@@ -34,6 +34,4 @@ public class OwnerRestaurantController {
         CreateDishResponseDto responseDto = ownerRestaurantService.saveDish(createDishRequestDto);
         return new ResponseEntity<>(responseDto,HttpStatus.CREATED);
     }
-
-
 }

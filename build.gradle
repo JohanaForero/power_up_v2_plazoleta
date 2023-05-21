@@ -11,8 +11,6 @@ sourceCompatibility = '11'
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
-
-
 	}
 }
 

@@ -40,5 +40,4 @@ public class OwnerRestaurantUseCase implements IOwnerRestaurantServicePort {
         dishModel.setStateDish(true);
         return dishPersistencePort.saveDish(dishModel);
     }
-
 }

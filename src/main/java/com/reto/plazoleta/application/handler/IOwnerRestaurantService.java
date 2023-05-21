@@ -6,5 +6,4 @@ import com.reto.plazoleta.application.dto.response.CreateDishResponseDto;
 public interface IOwnerRestaurantService {
 
     CreateDishResponseDto saveDish(CreateDishRequestDto createDishRequestDto);
-
 }

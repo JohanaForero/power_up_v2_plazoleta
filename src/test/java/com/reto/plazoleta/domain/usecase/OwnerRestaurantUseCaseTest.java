@@ -107,6 +107,3 @@ class OwnerRestaurantUseCaseTest {
         assertEquals("Price must be greater than zero", exception.getMessage());
     }
 }
-
-
-

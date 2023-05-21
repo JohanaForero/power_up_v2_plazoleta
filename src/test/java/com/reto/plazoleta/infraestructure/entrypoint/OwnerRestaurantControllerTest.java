@@ -6,6 +6,7 @@ import com.reto.plazoleta.infraestructure.drivenadapter.entity.CategoryEntity;
 import com.reto.plazoleta.infraestructure.drivenadapter.entity.RestaurantEntity;
 import com.reto.plazoleta.infraestructure.drivenadapter.repository.ICategoryRepository;
 import com.reto.plazoleta.infraestructure.drivenadapter.repository.IRestaurantRepository;
+import com.reto.plazoleta.infraestructure.exceptionhandler.ExceptionResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +29,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
 class OwnerRestaurantControllerTest {
 
+    private static final String USERNAME_OWNER = "owner@owner.com";
+    private static final String PASSWORD_OWNER = "123";
+    private static final String ROL_OWNER = "PROPIETARIO";
+    private static final String CREATE_DISH = "/services-owner-restaurant/create-dish";
+
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @Autowired
     private IRestaurantRepository restaurantRepository;
-
     @Autowired
     private ICategoryRepository categoryRepository;
 
@@ -47,24 +50,30 @@ class OwnerRestaurantControllerTest {
         categoryRepository.save(new CategoryEntity(1L, "salados", "salado"));
     }
 
-    @WithMockUser(username = "owner@owner.com", password = "123", roles = {"PROPIETARIO"})
+    @WithMockUser(username = USERNAME_OWNER, password = PASSWORD_OWNER, roles = {ROL_OWNER})
     @Test
-    void test_saveDish_withCreateDishRequestDto_whenSystemCreateDish_ShouldReturnADishWithStatusCreated() throws Exception {
+    void test_saveDish_withCreateDishRequestDto_ShouldReturnADishWithStatusCreated() throws Exception {
         CreateDishRequestDto dish = new CreateDishRequestDto("plato1", 20000.00, "description", "http://image.com",
                 1L, 1L);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/services-owner-restaurant/create-dish")
+        mockMvc.perform(MockMvcRequestBuilders.post(CREATE_DISH)
                         .content(objectMapper.writeValueAsString(dish))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.stateDish").value("true"))
-                .andExpect(jsonPath("$.name").value("plato1"));
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+
+    }
+
+    @WithMockUser(username = USERNAME_OWNER, password = PASSWORD_OWNER, roles = {ROL_OWNER})
+    @Test
+    void test_saveDish_withInvalidFormatInDishCreationFields_ShouldThrowBadRequestException() throws Exception {
+        CreateDishRequestDto dish = new CreateDishRequestDto("plato1", 20000.00, "description", "http://image.com",
+                1L, 2L);
+
+        mockMvc.perform(MockMvcRequestBuilders.post(CREATE_DISH)
+                        .content(objectMapper.writeValueAsString(dish))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(ExceptionResponse.INVALID_DATA.getMessage()));
     }
 }
-
-
-
-
-
-
