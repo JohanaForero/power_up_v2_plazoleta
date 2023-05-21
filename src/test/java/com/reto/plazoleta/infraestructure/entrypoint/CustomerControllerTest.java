@@ -32,6 +32,14 @@ class CustomerControllerTest {
     @Autowired
     private IRestaurantRepository restaurantRepository;
 
+    private static final String USERNAME_CUSTOMER = "customer@customer.com";
+    private static final String USERNAME_ADMIN = "admin@dmin.com";
+    private static final String PASSWORD = "123";
+    private static final String ROLE_ADMIN = "ADMINISTRADOR";
+    private static final String ROLE_CUSTOMER = "CLIENTE";
+    private static final String RESTAURANT_API_PATH = "/micro-small-square/restaurants";
+    private static final String PAGE_SIZE_PARAM = "sizeItemsByPages";
+
     @BeforeEach
     void setup() {
         List<RestaurantEntity> restaurantList = new ArrayList<>();
@@ -40,11 +48,11 @@ class CustomerControllerTest {
         restaurantRepository.saveAll(restaurantList);
     }
 
-    @WithMockUser(username = "customer@customer.com", password = "123", roles = {"CLIENTE"})
+    @WithMockUser(username = USERNAME_CUSTOMER, password = PASSWORD, roles = {ROLE_CUSTOMER})
     @Test
     void test_getAllRestaurantsByOrderByNameAsc_withIntAsSizeItemsByPages_ShouldResponseAListOfNameAndUrlLogoOfRestaurantsPageableByPageSizeOrderByNameAsc() throws Exception {
-        mockMvc.perform(get("/micro-small-square/restaurants")
-                        .param("sizeItemsByPages", "10")
+        mockMvc.perform(get(RESTAURANT_API_PATH)
+                        .param(PAGE_SIZE_PARAM, "10")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.pageable.pageSize").value(10))
@@ -55,21 +63,21 @@ class CustomerControllerTest {
                 .andExpect(jsonPath("$.content[1].urlLogo").value("http://restaurante2.com"));
     }
 
-    @WithMockUser(username = "admin@dmin.com", password = "123", roles = {"ADMINISTRADOR"})
+    @WithMockUser(username = USERNAME_ADMIN, password = PASSWORD, roles = {ROLE_ADMIN})
     @Test
     void test_getAllRestaurantsByOrderByNameAsc_withRoleAdminInTheToken_ShouldThrowAStatusForbidden() throws Exception {
-        mockMvc.perform(get("/micro-small-square/restaurants")
-                        .param("sizeItemsByPages", "10")
+        mockMvc.perform(get(RESTAURANT_API_PATH)
+                        .param(PAGE_SIZE_PARAM, "10")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.message").value("Prohibited you do not have the necessary role for authorization"));
     }
 
-    @WithMockUser(username = "customer@customer.com", password = "123", roles = {"CLIENTE"})
+    @WithMockUser(username = USERNAME_CUSTOMER, password = PASSWORD, roles = {ROLE_CUSTOMER})
     @Test
     void test_getAllRestaurantsByOrderByNameAsc_withPageSizeOneAndTwoRestaurantsInDatabase_ShouldReturnSuccessAndTwoTotalPagesAndARestaurant() throws Exception {
-        mockMvc.perform(get("/micro-small-square/restaurants")
-                        .param("sizeItemsByPages", "1")
+        mockMvc.perform(get(RESTAURANT_API_PATH)
+                        .param(PAGE_SIZE_PARAM, "1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.pageable.pageSize").value(1))
