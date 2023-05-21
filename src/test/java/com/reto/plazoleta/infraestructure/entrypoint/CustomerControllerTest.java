@@ -2,6 +2,7 @@ package com.reto.plazoleta.infraestructure.entrypoint;
 
 import com.reto.plazoleta.infraestructure.drivenadapter.entity.RestaurantEntity;
 import com.reto.plazoleta.infraestructure.drivenadapter.repository.IRestaurantRepository;
+import com.reto.plazoleta.infraestructure.exceptionhandler.ExceptionResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +71,7 @@ class CustomerControllerTest {
                         .param(PAGE_SIZE_PARAM, "10")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.message").value("Prohibited you do not have the necessary role for authorization"));
+                .andExpect(jsonPath("$.message").value(ExceptionResponse.ACCESS_DENIED.getMessage()));
     }
 
     @WithMockUser(username = USERNAME_CUSTOMER, password = PASSWORD, roles = {ROLE_CUSTOMER})
@@ -85,5 +86,26 @@ class CustomerControllerTest {
                 .andExpect(jsonPath("$.totalPages").value(2))
                 .andExpect(jsonPath("$.content[0].name").value("Restaurante 1"))
                 .andExpect(jsonPath("$.content[0].urlLogo").value("http://restaurante1.com"));
+    }
+
+    @WithMockUser(username = USERNAME_CUSTOMER, password = PASSWORD, roles = {ROLE_CUSTOMER})
+    @Test
+    void test_getAllRestaurantsByOrderByNameAsc_withPageSizeOneAndNotDataFound_ShouldThrowAStatusNoContent() throws Exception {
+        restaurantRepository.deleteAll();
+        mockMvc.perform(get(RESTAURANT_API_PATH)
+                        .param(PAGE_SIZE_PARAM, "1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @WithMockUser(username = USERNAME_CUSTOMER, password = PASSWORD, roles = {ROLE_CUSTOMER})
+    @Test
+    void test_getAllRestaurantsByOrderByNameAsc_withNullPageSizeAndByDefaultTheValueIsFive_ShouldReturnMaximumFivePaginatedRestaurants() throws Exception {
+        mockMvc.perform(get(RESTAURANT_API_PATH)
+                        .param(PAGE_SIZE_PARAM, "")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.pageable.pageSize").value(5))
+                .andExpect(jsonPath("$.pageable.pageNumber").value(0));
     }
 }

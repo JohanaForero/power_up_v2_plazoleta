@@ -5,6 +5,7 @@ import com.reto.plazoleta.domain.gateways.IUserGateway;
 import com.reto.plazoleta.domain.model.RestaurantModel;
 import com.reto.plazoleta.domain.spi.IRestaurantPersistencePort;
 import com.reto.plazoleta.infraestructure.drivenadapter.gateways.User;
+import com.reto.plazoleta.infraestructure.exception.NoDataFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -74,6 +74,20 @@ class RestaurantUseCaseTest {
         assertEquals(pageableRestaurantsExpected.getTotalElements(), result.getTotalElements());
         assertEquals(pageableRestaurantsExpected.toList().get(0).getPhone(), result.toList().get(0).getPhone());
         assertEquals(pageableRestaurantsExpected.toList().get(1).getNit(), result.toList().get(1).getNit());
+    }
+
+    @Test
+    void test_findAllByOrderByNameAsc_withIntAsSizeItemsGreaterThanZeroAndNoDataFound_ShouldThrowNoDataFoundException() {
+        //Given
+        int numberPage = 0;
+        int sizeItems = 10;
+        Page<RestaurantModel> emptyRestaurantPage = Page.empty();
+        when(restaurantPersistencePort.findAllByOrderByNameAsc(PageRequest.of(numberPage, sizeItems))).thenReturn(emptyRestaurantPage);
+        // When & Then
+        Assertions.assertThrows(
+                NoDataFoundException.class,
+                () -> restaurantUseCase.findAllByOrderByNameAsc(numberPage, sizeItems)
+        );
     }
 
     @Test
