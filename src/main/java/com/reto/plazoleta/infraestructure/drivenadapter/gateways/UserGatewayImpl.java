@@ -3,22 +3,23 @@ package com.reto.plazoleta.infraestructure.drivenadapter.gateways;
 import com.reto.plazoleta.infraestructure.configuration.security.exception.UserDoesNotExistException;
 import com.reto.plazoleta.domain.gateways.IUserGateway;
 import com.reto.plazoleta.infraestructure.exception.UserInTokenIsInvalidException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+@RequiredArgsConstructor
 @Service
 public class UserGatewayImpl implements IUserGateway {
 
-    private static final String BASE_URL = "http://localhost:8090/user-micro/user/";
-    WebClient webClient = WebClient.builder().baseUrl(BASE_URL).build();
+    private final WebClient webClient;
 
     @Override
     public User getUserById(Long idUser, String token) {
-        return webClient.get().uri(uriBuilder -> uriBuilder.path("verifier")
-                        .queryParam("iduser", idUser)
+        return webClient.get().uri(uriBuilder -> uriBuilder.path("user/verifier")
+                        .queryParam("idUser", idUser)
                         .build())
                 .header(HttpHeaders.AUTHORIZATION, token)
                 .exchangeToMono( clientResponse -> {
