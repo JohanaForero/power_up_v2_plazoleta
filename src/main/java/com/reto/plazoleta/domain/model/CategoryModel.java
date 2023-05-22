@@ -9,12 +9,6 @@ public class CategoryModel {
     public CategoryModel() {
     }
 
-    public CategoryModel(Long idCategory, String name, String description) {
-        this.idCategory = idCategory;
-        this.name = name;
-        this.description = description;
-    }
-
     public Long getIdCategory() {
         return idCategory;
     }
