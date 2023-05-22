@@ -1,9 +1,11 @@
 package com.reto.plazoleta.domain.usecase;
 
+import com.reto.plazoleta.domain.exception.EmptyFieldsException;
 import com.reto.plazoleta.domain.exception.InvalidDataException;
 import com.reto.plazoleta.domain.gateways.IUserGateway;
 import com.reto.plazoleta.domain.model.RestaurantModel;
 import com.reto.plazoleta.domain.spi.IRestaurantPersistencePort;
+import com.reto.plazoleta.domain.usecase.factory.FactoryRestaurantModelTest;
 import com.reto.plazoleta.infraestructure.drivenadapter.gateways.User;
 import com.reto.plazoleta.infraestructure.exception.NoDataFoundException;
 import org.junit.jupiter.api.Assertions;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -33,29 +36,16 @@ class RestaurantUseCaseTest {
     private IRestaurantPersistencePort restaurantPersistencePort;
     @Mock
     private IUserGateway userGateway;
-    private static final String TOKEN = "";
+    private final static String token = "";
 
     @Test
-    void test_SaveRestaurant_withNonEmptyRestaurantModelTheFieldsNameAndPhoneFormatCorrectAndIdOwnerExistAndEqualsOwnerRoleAndAndValidToken_ShouldReturnVoid() {
-        //Given
-        User userWithRoleOwner = new User();
-        userWithRoleOwner.setRol("PROPIETARIO");
-
-        RestaurantModel restaurantModel = new RestaurantModel();
-        restaurantModel.setIdRestaurant(1L);
-        restaurantModel.setName("Sabroson17");
-        restaurantModel.setUrlLogo("http://sabroson.img");
-        restaurantModel.setAddress("Cra 10");
-        restaurantModel.setPhone("3018452367");
-        restaurantModel.setNit(843775L);
-        restaurantModel.setIdOwner(5L);
-
-        when(userGateway.getUserById(5L, TOKEN)).thenReturn(userWithRoleOwner);
-        when(restaurantPersistencePort.saveRestaurant(restaurantModel)).thenReturn(restaurantModel);
-        //When
-        restaurantUseCase.saveRestaurant(restaurantModel, TOKEN);
-        //Then
-        verify(restaurantPersistencePort).saveRestaurant(restaurantModel);
+    void mustSaveRestaurant() {
+        User userTest = new User();
+        userTest.setRol("PROPIETARIO");
+        when(userGateway.getUserById(any(), any())).thenReturn(userTest);
+        when(restaurantPersistencePort.saveRestaurant(any())).thenReturn(FactoryRestaurantModelTest.restaurantModel());
+        restaurantUseCase.saveRestaurant(FactoryRestaurantModelTest.restaurantModel(), token);
+        verify(restaurantPersistencePort).saveRestaurant(any(RestaurantModel.class));
     }
 
     @Test
@@ -91,36 +81,30 @@ class RestaurantUseCaseTest {
     }
 
     @Test
-    void test_validateRestaurantPhone_withStringAsPhoneInvalidRestaurant_ShouldThrowInvalidDataException() {
-        //Given
-        RestaurantModel restaurantWithPhoneWrong = new RestaurantModel();
-        restaurantWithPhoneWrong.setName("Sabroson17");
-        restaurantWithPhoneWrong.setUrlLogo("http://sabroson.img");
-        restaurantWithPhoneWrong.setAddress("Cra 10");
-        restaurantWithPhoneWrong.setPhone("4563018452367");
-        restaurantWithPhoneWrong.setNit(843775L);
-        restaurantWithPhoneWrong.setIdOwner(5L);
-        // When & Then
+    void throwEmptyFieldsExceptionWhenSavingRestaurant() {
+        RestaurantModel restaurantModelWithEmptyFields = FactoryRestaurantModelTest.restaurantModelEmptyFields();
         Assertions.assertThrows(
-                InvalidDataException.class,
-                () -> restaurantUseCase.saveRestaurant(restaurantWithPhoneWrong, TOKEN)
+                EmptyFieldsException.class,
+                () -> { restaurantUseCase.saveRestaurant(restaurantModelWithEmptyFields, token); }
         );
     }
 
     @Test
-    void test_isContainsRestaurantNameOnlyNumbers_withStringAsNameRestaurantWithOnlyNumbers_ShouldThrowInvalidDataException() {
-        //Given
-        RestaurantModel restaurantWhereNameOnlyContainsNumbers = new RestaurantModel();
-        restaurantWhereNameOnlyContainsNumbers.setName("17645676");
-        restaurantWhereNameOnlyContainsNumbers.setUrlLogo("http://sabroson.img");
-        restaurantWhereNameOnlyContainsNumbers.setAddress("Cra 10");
-        restaurantWhereNameOnlyContainsNumbers.setPhone("3018452367");
-        restaurantWhereNameOnlyContainsNumbers.setNit(843775L);
-        restaurantWhereNameOnlyContainsNumbers.setIdOwner(5L);
-        // When & Then
+    void throwInvalidDataExceptionWhenSavingRestaurantWithPhoneWrong() {
+        RestaurantModel restaurantModelWithPhoneWrong = FactoryRestaurantModelTest.restaurantModelWrongPhone();
         Assertions.assertThrows(
                 InvalidDataException.class,
-                () -> restaurantUseCase.saveRestaurant(restaurantWhereNameOnlyContainsNumbers, TOKEN)
+                () -> { restaurantUseCase.saveRestaurant(restaurantModelWithPhoneWrong, token); }
+        );
+    }
+
+    @Test
+    void throwInvalidDataExceptionWhenSavingRestaurantWhereNameOnlyContainsNumbers() {
+        RestaurantModel restaurantModelWhereNameOnlyContainsNumbers =
+                FactoryRestaurantModelTest.restaurantModelWhereNameIsJustNumbers();
+        Assertions.assertThrows(
+                InvalidDataException.class,
+                () -> { restaurantUseCase.saveRestaurant(restaurantModelWhereNameOnlyContainsNumbers, token); }
         );
     }
 }
