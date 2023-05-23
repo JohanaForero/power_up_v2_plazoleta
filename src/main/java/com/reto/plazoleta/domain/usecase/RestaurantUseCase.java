@@ -7,6 +7,7 @@ import com.reto.plazoleta.domain.gateways.IUserGateway;
 import com.reto.plazoleta.domain.model.RestaurantModel;
 import com.reto.plazoleta.domain.spi.IRestaurantPersistencePort;
 import com.reto.plazoleta.infraestructure.drivenadapter.gateways.User;
+import com.reto.plazoleta.infraestructure.exception.NoDataFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.AccessDeniedException;
@@ -66,7 +67,10 @@ public class RestaurantUseCase implements IRestaurantServicePort {
 
     @Override
     public Page<RestaurantModel> findAllByOrderByNameAsc(int numberPage, int sizeItems) {
-        return restaurantPersistencePort.findAllByOrderByNameAsc(PageRequest.of(numberPage, sizeItems));
+        Page<RestaurantModel> resultRestaurantsPageable = restaurantPersistencePort.findAllByOrderByNameAsc(
+                                                                PageRequest.of(numberPage, sizeItems));
+        if (resultRestaurantsPageable.isEmpty()) throw new NoDataFoundException();
+        return resultRestaurantsPageable;
     }
 
 }
