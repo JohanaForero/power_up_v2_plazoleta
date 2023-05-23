@@ -11,7 +11,8 @@ public class RestaurantModel {
 
     public RestaurantModel() {}
 
-    public RestaurantModel(String name, String address, String phone, String urlLogo, Long nit, Long idOwner) {
+    public RestaurantModel(Long idRestaurant, String name, String address, String phone, String urlLogo, Long nit, Long idOwner) {
+        this.idRestaurant = idRestaurant;
         this.name = name;
         this.address = address;
         this.phone = phone;
