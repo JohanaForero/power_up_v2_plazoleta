@@ -1,8 +1,10 @@
 package com.reto.plazoleta.application.handler.impl;
 
-import com.reto.plazoleta.application.dto.request.DishRequestDto;
+import com.reto.plazoleta.application.dto.request.CreateDishRequestDto;
+import com.reto.plazoleta.application.dto.response.CreateDishResponseDto;
 import com.reto.plazoleta.application.handler.IOwnerRestaurantService;
 import com.reto.plazoleta.application.mapper.requestmapper.IDishRequestMapper;
+import com.reto.plazoleta.application.mapper.responsemapper.IDishResponseMapper;
 import com.reto.plazoleta.domain.api.IOwnerRestaurantServicePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,9 +18,10 @@ public class OwnerRestaurantService implements IOwnerRestaurantService {
 
     private final IOwnerRestaurantServicePort ownerRestaurantServicePort;
     private final IDishRequestMapper dishRequestMapper;
+    private final IDishResponseMapper dishResponseMapper;
 
     @Override
-    public void saveDish(DishRequestDto dishRequestDto) {
-        ownerRestaurantServicePort.saveDish(dishRequestMapper.toDishModel(dishRequestDto));
+    public CreateDishResponseDto saveDish(CreateDishRequestDto createDishRequestDto) {
+        return dishResponseMapper.toDishResponse(ownerRestaurantServicePort.saveDish(dishRequestMapper.toDishModel(createDishRequestDto)));
     }
 }

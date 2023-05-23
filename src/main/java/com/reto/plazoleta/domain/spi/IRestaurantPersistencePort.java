@@ -9,4 +9,6 @@ public interface IRestaurantPersistencePort {
     RestaurantModel saveRestaurant(RestaurantModel restaurantModel);
 
     Page<RestaurantModel> findAllByOrderByNameAsc(Pageable pageable);
+
+    RestaurantModel findByIdRestaurant(Long idRestaurant);
 }
