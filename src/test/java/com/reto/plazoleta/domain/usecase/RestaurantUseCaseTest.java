@@ -52,8 +52,8 @@ class RestaurantUseCaseTest {
     void test_findAllByOrderByNameAsc_withIntAsSizeItemsGreaterThanZero_ShouldReturnListRestaurantPageableWithAllFields() {
         //Given
         List<RestaurantModel> restaurantList = new ArrayList<>();
-        restaurantList.add(new RestaurantModel("Restaurante 1", "Dirección 1", "3014896273", "http://restaurante1.com", 111111L, 1L));
-        restaurantList.add(new RestaurantModel("Restaurante 2", "Dirección 2", "3224196283", "http://restaurante2.com", 222222L, 2L));
+        restaurantList.add(new RestaurantModel(1L, "Restaurante 1", "Dirección 1", "3014896273", "http://restaurante1.com", 111111L, 1L));
+        restaurantList.add(new RestaurantModel(2L, "Restaurante 2", "Dirección 2", "3224196283", "http://restaurante2.com", 222222L, 2L));
         Page<RestaurantModel> pageableRestaurantsExpected = new PageImpl<>(restaurantList);
         when(restaurantPersistencePort.findAllByOrderByNameAsc(PageRequest.of(0, 10))).thenReturn(pageableRestaurantsExpected);
         //When
