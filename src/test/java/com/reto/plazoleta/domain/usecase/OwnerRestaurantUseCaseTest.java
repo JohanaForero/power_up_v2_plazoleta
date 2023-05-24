@@ -107,4 +107,19 @@ class OwnerRestaurantUseCaseTest {
         assertEquals("Price must be greater than zero", exception.getMessage());
     }
 
-}
+    @Test
+     void test_updateDish_WithNonExistingDish_ShouldThrowInvalidDataException() {
+            // Given
+            long nonExistingDishId = 4L;
+
+            RestaurantModel restaurantModel = new RestaurantModel(1L, "salado", "bellavista", "+123456779", "urlLogo", 1L, 12344L);
+            CategoryModel categoryModel = new CategoryModel(1L, "salados", "salado");
+            DishModel dishModel = new DishModel(nonExistingDishId, "cuscu", "salsa", 12.00, "urlImagen", true, restaurantModel, categoryModel);
+
+            // When
+            InvalidDataException exception = assertThrows(InvalidDataException.class, () -> ownerRestaurantUseCase.updateDish(dishModel));
+
+            // Then
+            assertEquals("The dish does not exist", exception.getMessage());
+        }
+    }
