@@ -1,6 +1,7 @@
 package com.reto.plazoleta.infraestructure.entrypoint;
 
-import com.reto.plazoleta.application.dto.request.DishRequestDto;
+import com.reto.plazoleta.application.dto.request.CreateDishRequestDto;
+import com.reto.plazoleta.application.dto.response.CreateDishResponseDto;
 import com.reto.plazoleta.application.handler.IOwnerRestaurantService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,11 +29,9 @@ public class OwnerRestaurantController {
             @ApiResponse(responseCode = "400", description = "The format in the fields is invalid", content = @Content),
             @ApiResponse(responseCode = "409", description = "There are empty fields", content = @Content)
     })
-    @PostMapping(value = "/")
-    public ResponseEntity<Void> saveDish(@RequestBody DishRequestDto dishRequestDto) {
-        ownerRestaurantService.saveDish(dishRequestDto);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    @PostMapping(value = "/create-dish")
+    public ResponseEntity<CreateDishResponseDto> saveDish(@RequestBody CreateDishRequestDto createDishRequestDto) {
+        CreateDishResponseDto responseDto = ownerRestaurantService.saveDish(createDishRequestDto);
+        return new ResponseEntity<>(responseDto,HttpStatus.CREATED);
     }
-
-
 }

@@ -1,9 +1,9 @@
 package com.reto.plazoleta.application.handler;
 
-import com.reto.plazoleta.application.dto.request.DishRequestDto;
+import com.reto.plazoleta.application.dto.request.CreateDishRequestDto;
+import com.reto.plazoleta.application.dto.response.CreateDishResponseDto;
 
 public interface IOwnerRestaurantService {
 
-    void saveDish(DishRequestDto dishRequestDto);
-
+    CreateDishResponseDto saveDish(CreateDishRequestDto createDishRequestDto);
 }

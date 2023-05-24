@@ -20,7 +20,6 @@ public class RestaurantModel {
         this.nit = nit;
         this.idOwner = idOwner;
     }
-
     public Long getIdRestaurant() {
         return idRestaurant;
     }
@@ -63,6 +62,4 @@ public class RestaurantModel {
     public void setIdOwner(Long idOwner) {
         this.idOwner = idOwner;
     }
-
-
 }
