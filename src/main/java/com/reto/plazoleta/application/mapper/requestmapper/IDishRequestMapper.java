@@ -16,7 +16,6 @@ public interface IDishRequestMapper {
     DishModel toDishModel(CreateDishRequestDto createDishRequestDto);
 
     @Mapping(target = "restaurantModel.idRestaurant", source = "updateDishRequestDto.idRestaurant")
-    @Mapping(target = "idDish", ignore = true)
     @Mapping(target = "name", ignore = true)
     @Mapping(target = "imageDish", ignore = true)
     @Mapping(target = "stateDish", ignore = true)

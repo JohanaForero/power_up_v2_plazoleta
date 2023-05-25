@@ -41,11 +41,11 @@ public class OwnerRestaurantController {
             @ApiResponse(responseCode = "400", description = "The format in the fields is invalid", content = @Content),
             @ApiResponse(responseCode = "409", description = "There are empty fields", content = @Content)
     })
-    @RequestMapping(value = "/update-dish", method = RequestMethod.PATCH)
+    @PatchMapping(value = "/update-dish", produces = "application/json")
     @PreAuthorize(value = "hasRole('PROPIETARIO')")
     public ResponseEntity<UpdateDishResponseDto> updateDishPriceAndDescription(@RequestBody UpdateDishRequestDto updateDishRequestDto) {
         UpdateDishResponseDto dishResponseDto = ownerRestaurantService.updateDish(updateDishRequestDto);
-        return new ResponseEntity<>(dishResponseDto,HttpStatus.CREATED);
+        return new ResponseEntity<>(dishResponseDto,HttpStatus.OK);
     }
 
 }

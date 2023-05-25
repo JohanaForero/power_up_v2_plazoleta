@@ -1,7 +1,9 @@
 package com.reto.plazoleta.domain.usecase;
 
 import com.reto.plazoleta.domain.api.IOwnerRestaurantServicePort;
+import com.reto.plazoleta.domain.exception.DishNotExistsException;
 import com.reto.plazoleta.domain.exception.InvalidDataException;
+import com.reto.plazoleta.domain.exception.ObjectNotFoundException;
 import com.reto.plazoleta.domain.model.CategoryModel;
 import com.reto.plazoleta.domain.model.DishModel;
 import com.reto.plazoleta.domain.model.RestaurantModel;
@@ -45,11 +47,11 @@ public class OwnerRestaurantUseCase implements IOwnerRestaurantServicePort {
     public DishModel updateDish(DishModel dishModel) {
         DishModel updateDishModel = dishPersistencePort.findById(dishModel.getIdDish());
         if (updateDishModel == null) {
-            throw new InvalidDataException("The dish does not exist");
+            throw new DishNotExistsException("The dish not exist");
         }
         RestaurantModel restaurantModel = restaurantPersistencePort.findByIdRestaurant(dishModel.getRestaurantModel().getIdRestaurant());
         if (restaurantModel == null) {
-            throw new InvalidDataException("The restaurant does not exist");
+            throw new ObjectNotFoundException("The restaurant does not exist");
         }
         if (updateDishModel.getRestaurantModel().getIdRestaurant() != restaurantModel.getIdRestaurant()) {
             throw new InvalidDataException("Only the owner of the restaurant can update the dish");

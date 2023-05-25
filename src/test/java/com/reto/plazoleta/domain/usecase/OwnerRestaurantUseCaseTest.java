@@ -1,5 +1,6 @@
 package com.reto.plazoleta.domain.usecase;
 
+import com.reto.plazoleta.domain.exception.DishNotExistsException;
 import com.reto.plazoleta.domain.exception.InvalidDataException;
 import com.reto.plazoleta.domain.model.CategoryModel;
 import com.reto.plazoleta.domain.model.DishModel;
@@ -7,7 +8,6 @@ import com.reto.plazoleta.domain.model.RestaurantModel;
 import com.reto.plazoleta.domain.spi.ICategoryPersistencePort;
 import com.reto.plazoleta.domain.spi.IDishPersistencePort;
 import com.reto.plazoleta.domain.spi.IRestaurantPersistencePort;
-import com.reto.plazoleta.domain.usecase.OwnerRestaurantUseCase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -108,6 +108,23 @@ class OwnerRestaurantUseCaseTest {
     }
 
     @Test
-    void test_updateDish_WithNonExistingDish_ShouldThrowInvalidDataException() {
+    void test_updateDish_WithNonExistingDish_ShouldThrowDishNotExistsException() {
+        // Given
+        RestaurantModel restaurantModel = new RestaurantModel(1L, "sal", "bellavista",
+                "+123456779", "urlLogo", 1L, 12344L);
+        CategoryModel categoryModel = new CategoryModel(1L, "salados", "salado");
+        DishModel dishModel = new DishModel(1L, "cuscu", "salsa", 20.5,
+                "urlImagen", true, restaurantModel, categoryModel);
+        DishModel dishNotExist = new DishModel();
+        dishNotExist.setIdDish(0L);
+        dishNotExist.setPrice(78.00);
+        dishNotExist.setDescriptionDish("carne");
+        DishModel updatedDish = ownerRestaurantUseCase.updateDish(dishNotExist);
+
+        // When
+        DishNotExistsException exception = assertThrows(DishNotExistsException.class, () -> ownerRestaurantUseCase.updateDish(dishModel));
+
+        // Then
+        assertEquals("The dish not exist", exception.getMessage());
     }
 }
