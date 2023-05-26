@@ -2,6 +2,7 @@ package com.reto.plazoleta.infraestructure.entrypoint;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reto.plazoleta.application.dto.request.CreateDishRequestDto;
+import com.reto.plazoleta.application.dto.request.RestaurantEmployeeRequestDto;
 import com.reto.plazoleta.infraestructure.drivenadapter.entity.CategoryEntity;
 import com.reto.plazoleta.infraestructure.drivenadapter.entity.RestaurantEntity;
 import com.reto.plazoleta.infraestructure.drivenadapter.repository.ICategoryRepository;
@@ -33,6 +34,7 @@ class OwnerRestaurantControllerTest {
     private static final String PASSWORD_OWNER = "123";
     private static final String ROL_OWNER = "PROPIETARIO";
     private static final String CREATE_DISH = "/services-owner-restaurant/create-dish";
+    private static final String ADD_A_EMPLOYEE_TO_THE_RESTAURANT = "/services-owner-restaurant/add-employee-restaurant";
 
     @Autowired
     private MockMvc mockMvc;
@@ -114,5 +116,33 @@ class OwnerRestaurantControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(ExceptionResponse.INVALID_DATA.getMessage()));
+    }
+
+    @WithMockUser(username = USERNAME_OWNER, password = PASSWORD_OWNER, roles = {ROL_OWNER})
+    @Test
+    void test_saveUserEmployeeInARestaurant_withAllFieldsCompleteAndValidInTheObjectAsRestaurantEmployeeRequestDto_shouldReturnAStatusCreatedAndTheIdRestaurantEmployee() throws Exception {
+        RestaurantEmployeeRequestDto restaurantEmployeeRequest = new RestaurantEmployeeRequestDto();
+        restaurantEmployeeRequest.setIdOwnerRestaurant(15L);
+        restaurantEmployeeRequest.setIdUserEmployee(2L);
+
+        mockMvc.perform(MockMvcRequestBuilders.post(ADD_A_EMPLOYEE_TO_THE_RESTAURANT)
+                        .content(objectMapper.writeValueAsString(restaurantEmployeeRequest))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.idRestaurantEmployee").value(1));
+    }
+
+    @WithMockUser(username = USERNAME_OWNER, password = PASSWORD_OWNER, roles = {ROL_OWNER})
+    @Test
+    void test_saveUserEmployeeInARestaurant_withFieldIdOwnerRestaurantThatIsNotRelatedToARestaurant_shouldReturnAStatusNotFound() throws Exception {
+        RestaurantEmployeeRequestDto restaurantEmployeeRequest = new RestaurantEmployeeRequestDto();
+        restaurantEmployeeRequest.setIdOwnerRestaurant(0L);
+        restaurantEmployeeRequest.setIdUserEmployee(2L);
+
+        mockMvc.perform(MockMvcRequestBuilders.post(ADD_A_EMPLOYEE_TO_THE_RESTAURANT)
+                        .content(objectMapper.writeValueAsString(restaurantEmployeeRequest))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.idRestaurantEmployee").value(1));
     }
 }
