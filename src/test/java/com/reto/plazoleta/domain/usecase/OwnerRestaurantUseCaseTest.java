@@ -108,23 +108,63 @@ class OwnerRestaurantUseCaseTest {
     }
 
     @Test
-    void test_updateDish_WithNonExistingDish_ShouldThrowDishNotExistsException() {
-        // Given
-        RestaurantModel restaurantModel = new RestaurantModel(1L, "sal", "bellavista",
-                "+123456779", "urlLogo", 1L, 12344L);
+    void test_updateDish_withRequestComplete_ShouldResponseSuccessfulUpdate() {
+        //Given
+        RestaurantModel restaurantModel = new RestaurantModel(1L, "salado", "bellavista", "+123456779", "urlLogo", 1L, 12344L);
         CategoryModel categoryModel = new CategoryModel(1L, "salados", "salado");
-        DishModel dishModel = new DishModel(1L, "cuscu", "salsa", 20.5,
-                "urlImagen", true, restaurantModel, categoryModel);
-        DishModel dishNotExist = new DishModel();
-        dishNotExist.setIdDish(0L);
-        dishNotExist.setPrice(78.00);
-        dishNotExist.setDescriptionDish("carne");
-        DishModel updatedDish = ownerRestaurantUseCase.updateDish(dishNotExist);
+        DishModel existingDish = new DishModel(1L, "existingDish", "Description", 10.0, "url", true, restaurantModel, categoryModel);
+        DishModel updatedDishModel = new DishModel(1L, "existingDish", "New Description", 15.0, "url", true, restaurantModel, categoryModel);
+
+        when(dishPersistencePort.findById(existingDish.getIdDish())).thenReturn(existingDish);
+        when(restaurantPersistencePort.findByIdRestaurant(restaurantModel.getIdRestaurant())).thenReturn(restaurantModel);
+        when(dishPersistencePort.updateDish(existingDish)).thenReturn(updatedDishModel);
 
         // When
-        DishNotExistsException exception = assertThrows(DishNotExistsException.class, () -> ownerRestaurantUseCase.updateDish(dishModel));
+        DishModel result = ownerRestaurantUseCase.updateDish(existingDish);
 
         // Then
+        assertEquals(updatedDishModel, result);
+        assertEquals("New Description", result.getDescriptionDish());
+        assertEquals(15.0, result.getPrice(), 0.0);
+        verify(dishPersistencePort, times(1)).updateDish(existingDish);
+    }
+
+    @Test
+    void test_updateDish_WithNonExistingDish_ShouldThrowDishNotExistsException() {
+        //Given
+        RestaurantModel restaurantModel = new RestaurantModel(1L, "salado", "bellavista", "+123456779", "urlLogo", 1L, 12344L);
+        CategoryModel categoryModel = new CategoryModel(1L, "salados", "salado");
+        DishModel dishModel = new DishModel(1L, "cuscu", "salsa", 12.00, "urlImagen", true, restaurantModel, categoryModel);
+        DishModel dish = new DishModel();
+
+        dish.setIdDish(4L);
+        dish.setDescriptionDish("Non-existing Description");
+        dish.setPrice(0.0);
+
+        when(dishPersistencePort.findById(4L)).thenReturn(null);
+
+        //When
+        DishNotExistsException exception = assertThrows(DishNotExistsException.class, () -> ownerRestaurantUseCase.updateDish(dish));
+
+        //Then
         assertEquals("The dish not exist", exception.getMessage());
+    }
+
+    @Test
+    void test_updateDish_WithInvalidOwner_ShouldThrowInvalidDataException() {
+        // Given
+        RestaurantModel restaurantModel = new RestaurantModel(1L, "OtherRestaurant", "OtherAddress", "123456789", "logoUrl", 2L, 12345L);
+        RestaurantModel otherRestaurantModel = new RestaurantModel(2L, "OtherRestaurant", "OtherAddress", "123456789", "logoUrl", 2L, 12345L);
+        CategoryModel categoryModel = new CategoryModel(1L, "salados", "salado");
+        DishModel existingDish = new DishModel(1L, "existingDish", "Description", 10.0, "url", true, otherRestaurantModel, categoryModel);
+
+        when(restaurantPersistencePort.findByIdRestaurant(otherRestaurantModel.getIdRestaurant())).thenReturn(otherRestaurantModel);
+
+        // When
+        verify(restaurantPersistencePort, times(1)).findByIdRestaurant(1L);
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> ownerRestaurantUseCase.updateDish(existingDish));
+
+        // Then
+        assertEquals("Only the owner of the restaurant can update the dish", exception.getMessage());
     }
 }
