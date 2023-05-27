@@ -53,7 +53,7 @@ public class OwnerRestaurantUseCase implements IOwnerRestaurantServicePort {
         if (restaurantModel == null) {
             throw new ObjectNotFoundException("The restaurant does not exist");
         }
-        if (updateDishModel.getRestaurantModel().getIdRestaurant() != restaurantModel.getIdRestaurant()) {
+        if (!updateDishModel.getRestaurantModel().getIdRestaurant().equals(restaurantModel.getIdRestaurant())) {
             throw new InvalidDataException("Only the owner of the restaurant can update the dish");
         }
 

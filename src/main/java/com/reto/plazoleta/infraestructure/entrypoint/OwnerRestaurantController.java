@@ -39,9 +39,10 @@ public class OwnerRestaurantController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Price and description update", content = @Content),
             @ApiResponse(responseCode = "400", description = "The format in the fields is invalid", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Access to that resource is prohibited", content = @Content),
             @ApiResponse(responseCode = "409", description = "There are empty fields", content = @Content)
     })
-    @PatchMapping(value = "/update-dish", produces = "application/json")
+    @PatchMapping(value = "/update-dish")
     @PreAuthorize(value = "hasRole('PROPIETARIO')")
     public ResponseEntity<UpdateDishResponseDto> updateDishPriceAndDescription(@RequestBody UpdateDishRequestDto updateDishRequestDto) {
         UpdateDishResponseDto dishResponseDto = ownerRestaurantService.updateDish(updateDishRequestDto);
