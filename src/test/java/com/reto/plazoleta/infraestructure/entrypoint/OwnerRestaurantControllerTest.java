@@ -115,4 +115,17 @@ class OwnerRestaurantControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(ExceptionResponse.INVALID_DATA.getMessage()));
     }
+
+    @WithMockUser(username = USERNAME_OWNER, password = PASSWORD_OWNER, roles = {ROL_OWNER})
+    @Test
+    void test_updateStateDish_withUpdateStateDishRequestDto_ShouldReturnAUpdateStateDishResponseDtoAndStatusOk(){}
+
+    @WithMockUser(username = USERNAME_OWNER, password = PASSWORD_OWNER, roles = {ROL_OWNER})
+    @Test
+    void test_updateStateDish_withInvalidOwnerRestaurant_ShouldThrowObjectNotFoundExceptionOwnerRestaurantNotPermitted(){}
+
+    @WithMockUser(username = USERNAME_OWNER, password = PASSWORD_OWNER, roles = {ROL_OWNER})
+    @Test
+    void test_updateStateDish_withExtraData_ShouldThrowInvalidDataExceptionDataNoAllowed(){}
+    
 }
