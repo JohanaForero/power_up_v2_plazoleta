@@ -33,8 +33,7 @@ public class RestaurantUseCase implements IRestaurantServicePort {
         if(!user.getRol().equals("PROPIETARIO")) {
             throw new AccessDeniedException("The user id does not have the required role to use this action");
         }
-        RestaurantModel restaurantCreatedModel = restaurantPersistencePort.saveRestaurant(restaurantModel);
-        return restaurantCreatedModel;
+        return restaurantPersistencePort.saveRestaurant(restaurantModel);
     }
 
     private void validateRestaurantFieldsEmpty(RestaurantModel restaurantModel) {
