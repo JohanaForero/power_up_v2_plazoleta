@@ -133,9 +133,6 @@ class OwnerRestaurantUseCaseTest {
     @Test
     void test_updateDish_WithNonExistingDish_ShouldThrowDishNotExistsException() {
         //Given
-        RestaurantModel restaurantModel = new RestaurantModel(1L, "salado", "bellavista", "+123456779", "urlLogo", 1L, 12344L);
-        CategoryModel categoryModel = new CategoryModel(1L, "salados", "salado");
-        DishModel dishModel = new DishModel(1L, "cuscu", "salsa", 12.00, "urlImagen", true, restaurantModel, categoryModel);
         DishModel dish = new DishModel();
 
         dish.setIdDish(4L);
