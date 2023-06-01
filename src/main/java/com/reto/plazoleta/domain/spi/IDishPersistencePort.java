@@ -6,4 +6,8 @@ import com.reto.plazoleta.domain.model.DishModel;
 public interface IDishPersistencePort {
 
     DishModel saveDish(DishModel dishModel);
+
+    DishModel findById(Long idDish);
+
+    DishModel updateDish(DishModel existingDishModel);
 }

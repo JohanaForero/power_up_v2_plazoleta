@@ -7,7 +7,11 @@ public enum ExceptionResponse {
     AUTHENTICATION_FAILED("Failed to parse JWT token"),
     TOKEN_INVALID("The token is invalid"),
     USER_DOES_NOT_EXIST("User id not found"),
-    ACCESS_DENIED("Prohibited you do not have the necessary role for authorization");
+    ACCESS_DENIED("Prohibited you do not have the necessary role for authorization"),
+
+    DISH_NOT_EXISTS("he dish not exist"),
+
+    OBJECT_NOT_FOUND("The restaurant not exist");
 
     private final String message;
 
