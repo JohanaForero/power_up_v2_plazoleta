@@ -1,9 +1,11 @@
 package com.reto.plazoleta.application.handler.impl;
 
 import com.reto.plazoleta.application.dto.request.CreateDishRequestDto;
+import com.reto.plazoleta.application.dto.response.RestaurantEmployeeResponseDto;
 import com.reto.plazoleta.application.dto.request.RestaurantEmployeeRequestDto;
 import com.reto.plazoleta.application.dto.response.CreateDishResponseDto;
-import com.reto.plazoleta.application.dto.response.RestaurantEmployeeResponseDto;
+import com.reto.plazoleta.application.dto.request.UpdateDishRequestDto;
+import com.reto.plazoleta.application.dto.response.UpdateDishResponseDto;
 import com.reto.plazoleta.application.handler.IOwnerRestaurantService;
 import com.reto.plazoleta.application.mapper.requestmapper.IDishRequestMapper;
 import com.reto.plazoleta.application.mapper.requestmapper.IEmployeeRestaurantRequestMapper;
@@ -35,6 +37,13 @@ public class OwnerRestaurantService implements IOwnerRestaurantService {
     }
 
     @Override
+    public UpdateDishResponseDto updateDish(UpdateDishRequestDto updateDishRequestDto) {
+        return  dishResponseMapper.toDishUpdateResponse(ownerRestaurantServicePort
+                .updateDish(dishRequestMapper
+                        .toDishModel(updateDishRequestDto)));
+    }
+
+  
     public RestaurantEmployeeResponseDto saveUserEmployeeInTheRestaurant(RestaurantEmployeeRequestDto restaurantEmployeeRequestDto) {
         final EmployeeRestaurantModel employeeRestaurantRequestModel = this.employeeRestaurantRequestMapper.toEmployeeRestaurantModel(restaurantEmployeeRequestDto);
         final EmployeeRestaurantModel employeeRestaurantSavedModel = this.employeeRestaurantServicePort.saveEmployeeRestaurant(

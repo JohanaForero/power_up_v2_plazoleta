@@ -1,13 +1,14 @@
 package com.reto.plazoleta.domain.usecase;
 
+import com.reto.plazoleta.domain.exception.DishNotExistsException;
 import com.reto.plazoleta.domain.exception.InvalidDataException;
+import com.reto.plazoleta.domain.exception.ObjectNotFoundException;
 import com.reto.plazoleta.domain.model.CategoryModel;
 import com.reto.plazoleta.domain.model.DishModel;
 import com.reto.plazoleta.domain.model.RestaurantModel;
 import com.reto.plazoleta.domain.spi.ICategoryPersistencePort;
 import com.reto.plazoleta.domain.spi.IDishPersistencePort;
 import com.reto.plazoleta.domain.spi.IRestaurantPersistencePort;
-import com.reto.plazoleta.domain.usecase.OwnerRestaurantUseCase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -105,6 +106,68 @@ class OwnerRestaurantUseCaseTest {
         InvalidDataException exception = assertThrows(InvalidDataException.class, () -> ownerRestaurantUseCase.saveDish(dishModel));
         // Then
         assertEquals("Price must be greater than zero", exception.getMessage());
+    }
+
+    @Test
+    void test_updateDish_withRequestComplete_ShouldResponseSuccessfulUpdate() {
+        //Given
+        RestaurantModel restaurantModel = new RestaurantModel(1L, "salado", "bellavista", "+123456779", "urlLogo", 1L, 12344L);
+        CategoryModel categoryModel = new CategoryModel(1L, "salados", "salado");
+        DishModel existingDish = new DishModel(1L, "existingDish", "Description", 10.0, "url", true, restaurantModel, categoryModel);
+        DishModel updatedDishModel = new DishModel(1L, "existingDish", "New Description", 15.0, "url", true, restaurantModel, categoryModel);
+
+        when(dishPersistencePort.findById(existingDish.getIdDish())).thenReturn(existingDish);
+        when(restaurantPersistencePort.findByIdRestaurant(restaurantModel.getIdRestaurant())).thenReturn(restaurantModel);
+        when(dishPersistencePort.updateDish(existingDish)).thenReturn(updatedDishModel);
+
+        // When
+        DishModel result = ownerRestaurantUseCase.updateDish(existingDish);
+
+        // Then
+        assertEquals(updatedDishModel, result);
+        assertEquals("New Description", result.getDescriptionDish());
+        assertEquals(15.0, result.getPrice(), 0.0);
+        verify(dishPersistencePort, times(1)).updateDish(existingDish);
+    }
+
+    @Test
+    void test_updateDish_WithNonExistingDish_ShouldThrowDishNotExistsException() {
+        //Given
+        DishModel dish = new DishModel();
+
+        dish.setIdDish(4L);
+        dish.setDescriptionDish("Non-existing Description");
+        dish.setPrice(0.0);
+
+        when(dishPersistencePort.findById(4L)).thenReturn(null);
+
+        //When
+        DishNotExistsException exception = assertThrows(DishNotExistsException.class, () -> ownerRestaurantUseCase.updateDish(dish));
+
+        //Then
+        assertEquals("The dish not exist", exception.getMessage());
+    }
+    @Test
+    void test_updateDish_WithInvalidRestaurant_ShouldThrowObjectNotFoundException() {
+        // Given
+        RestaurantModel restaurantOwnerDish = new RestaurantModel();
+        restaurantOwnerDish.setIdRestaurant(1L);
+        DishModel dishRequest = new DishModel();
+        dishRequest.setIdDish(1L);
+        dishRequest.setPrice(15000.0);
+        dishRequest.setDescriptionDish("new description");
+        dishRequest.setRestaurantModel(restaurantOwnerDish);
+
+        RestaurantModel restaurantInvalid = new RestaurantModel(2L, "OtherRestaurant", "OtherAddress", "123456789", "logoUrl", 2L, 12345L);
+        CategoryModel categoryModel = new CategoryModel(1L, "salados", "salado");
+
+        DishModel dishExisting = new DishModel(1L, "existingDish", "Description", 10.0, "url", true, restaurantOwnerDish, categoryModel);
+        when(this.dishPersistencePort.findById(dishRequest.getIdDish())).thenReturn(dishExisting);
+        when(this.restaurantPersistencePort.findByIdRestaurant(dishRequest.getRestaurantModel().getIdRestaurant())).thenReturn(restaurantInvalid);
+        // When
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> ownerRestaurantUseCase.updateDish(dishRequest));
+        // Then
+        assertEquals("Only the owner of the restaurant can update the dish", exception.getMessage());
     }
 
 }

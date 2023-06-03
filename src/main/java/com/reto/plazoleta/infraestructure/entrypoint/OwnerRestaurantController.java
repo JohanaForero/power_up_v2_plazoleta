@@ -4,6 +4,8 @@ import com.reto.plazoleta.application.dto.request.CreateDishRequestDto;
 import com.reto.plazoleta.application.dto.request.RestaurantEmployeeRequestDto;
 import com.reto.plazoleta.application.dto.response.CreateDishResponseDto;
 import com.reto.plazoleta.application.dto.response.RestaurantEmployeeResponseDto;
+import com.reto.plazoleta.application.dto.request.UpdateDishRequestDto;
+import com.reto.plazoleta.application.dto.response.UpdateDishResponseDto;
 import com.reto.plazoleta.application.handler.IOwnerRestaurantService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -38,6 +40,19 @@ public class OwnerRestaurantController {
         return new ResponseEntity<>(responseDto,HttpStatus.CREATED);
     }
 
+    @Operation(summary = "update dish price and description")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Price and description update", content = @Content),
+            @ApiResponse(responseCode = "401", description = "The format in the fields is invalid", content = @Content),
+            @ApiResponse(responseCode = "403", description = "no access allowed", content = @Content)
+    })
+    @PatchMapping(value = "/update-dish")
+    @PreAuthorize(value = "hasRole('PROPIETARIO')")
+    public ResponseEntity<UpdateDishResponseDto> updateDishPriceAndDescription(@RequestBody UpdateDishRequestDto updateDishRequestDto) {
+        UpdateDishResponseDto dishResponseDto = ownerRestaurantService.updateDish(updateDishRequestDto);
+        return new ResponseEntity<>(dishResponseDto,HttpStatus.OK);
+    }
+  
     @Operation(summary = "Add a new User employee in a restaurant")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "restaurant employee created"),
