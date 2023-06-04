@@ -7,6 +7,6 @@ import lombok.Setter;
 @Setter
 public class RestaurantEmployeeRequestDto {
 
-    private Long idOwnerRestaurant;
     private Long idUserEmployee;
+    private Long idRestaurant;
 }

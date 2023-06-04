@@ -19,7 +19,5 @@ public class EmployeeRestaurantEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idRestaurantEmployee;
     private Long idUserEmployee;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_restaurant", referencedColumnName = "idRestaurant")
-    private RestaurantEntity restaurantEntity;
+    private Long idRestaurant;
 }

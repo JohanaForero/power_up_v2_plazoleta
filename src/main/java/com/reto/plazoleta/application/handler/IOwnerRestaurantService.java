@@ -5,7 +5,6 @@ import com.reto.plazoleta.application.dto.request.RestaurantEmployeeRequestDto;
 import com.reto.plazoleta.application.dto.response.CreateDishResponseDto;
 import com.reto.plazoleta.application.dto.response.RestaurantEmployeeResponseDto;
 import com.reto.plazoleta.application.dto.request.UpdateDishRequestDto;
-import com.reto.plazoleta.application.dto.response.CreateDishResponseDto;
 import com.reto.plazoleta.application.dto.response.UpdateDishResponseDto;
 
 public interface IOwnerRestaurantService {
@@ -14,5 +13,5 @@ public interface IOwnerRestaurantService {
   
     UpdateDishResponseDto updateDish(UpdateDishRequestDto updateDishRequestDto);
   
-    RestaurantEmployeeResponseDto saveUserEmployeeInTheRestaurant(RestaurantEmployeeRequestDto restaurantEmployeeRequestDto);
+    RestaurantEmployeeResponseDto saveUserEmployeeInTheRestaurant(RestaurantEmployeeRequestDto restaurantEmployeeRequestDto, String tokenWithBearerPrefix);
 }

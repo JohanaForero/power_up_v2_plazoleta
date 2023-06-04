@@ -4,5 +4,5 @@ import com.reto.plazoleta.domain.model.EmployeeRestaurantModel;
 
 public interface IEmployeeRestaurantServicePort {
 
-    EmployeeRestaurantModel saveEmployeeRestaurant(EmployeeRestaurantModel employeeRestaurantModel, Long idOwner);
+    EmployeeRestaurantModel saveEmployeeRestaurant(EmployeeRestaurantModel employeeRestaurantModel, String tokenWithBearerPrefix);
 }

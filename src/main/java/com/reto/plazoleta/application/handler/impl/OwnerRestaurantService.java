@@ -43,11 +43,11 @@ public class OwnerRestaurantService implements IOwnerRestaurantService {
                         .toDishModel(updateDishRequestDto)));
     }
 
-  
-    public RestaurantEmployeeResponseDto saveUserEmployeeInTheRestaurant(RestaurantEmployeeRequestDto restaurantEmployeeRequestDto) {
+    @Override
+    public RestaurantEmployeeResponseDto saveUserEmployeeInTheRestaurant(RestaurantEmployeeRequestDto restaurantEmployeeRequestDto, String tokenWithBearerPrefix) {
         final EmployeeRestaurantModel employeeRestaurantRequestModel = this.employeeRestaurantRequestMapper.toEmployeeRestaurantModel(restaurantEmployeeRequestDto);
         final EmployeeRestaurantModel employeeRestaurantSavedModel = this.employeeRestaurantServicePort.saveEmployeeRestaurant(
-                                                    employeeRestaurantRequestModel, restaurantEmployeeRequestDto.getIdOwnerRestaurant());
+                                                    employeeRestaurantRequestModel, tokenWithBearerPrefix);
         return this.employeeResponseMapper.toRestaurantEmployeeResponseDto(employeeRestaurantSavedModel);
     }
 }

@@ -9,6 +9,5 @@ import org.mapstruct.Mapping;
 public interface IEmployeeRestaurantRequestMapper {
 
     @Mapping(target = "idRestaurantEmployee", ignore = true)
-    @Mapping(target = "restaurantModel", ignore = true)
     EmployeeRestaurantModel toEmployeeRestaurantModel(RestaurantEmployeeRequestDto restaurantEmployeeRequestDto);
 }

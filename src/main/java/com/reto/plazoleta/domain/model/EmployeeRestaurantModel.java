@@ -4,15 +4,15 @@ public class EmployeeRestaurantModel {
 
     private Long idRestaurantEmployee;
     private Long idUserEmployee;
-    private RestaurantModel restaurantModel;
+    private Long idRestaurant;
 
     public EmployeeRestaurantModel() {
     }
 
-    public EmployeeRestaurantModel(Long idRestaurantEmployee, Long idUserEmployee, RestaurantModel restaurantModel) {
+    public EmployeeRestaurantModel(Long idRestaurantEmployee, Long idUserEmployee, Long idRestaurant) {
         this.idRestaurantEmployee = idRestaurantEmployee;
         this.idUserEmployee = idUserEmployee;
-        this.restaurantModel = restaurantModel;
+        this.idRestaurant = idRestaurant;
     }
 
     public Long getIdRestaurantEmployee() {
@@ -31,11 +31,11 @@ public class EmployeeRestaurantModel {
         this.idUserEmployee = idUserEmployee;
     }
 
-    public RestaurantModel getRestaurantModel() {
-        return restaurantModel;
+    public Long getIdRestaurant() {
+        return idRestaurant;
     }
 
-    public void setRestaurantModel(RestaurantModel restaurantModel) {
-        this.restaurantModel = restaurantModel;
+    public void setIdRestaurant(Long idRestaurant) {
+        this.idRestaurant = idRestaurant;
     }
 }

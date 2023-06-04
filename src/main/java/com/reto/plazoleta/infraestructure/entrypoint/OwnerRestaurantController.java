@@ -12,11 +12,14 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -56,12 +59,13 @@ public class OwnerRestaurantController {
     @Operation(summary = "Add a new User employee in a restaurant")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "restaurant employee created"),
+            @ApiResponse(responseCode = "403", description = "The user does not have the owner role"),
             @ApiResponse(responseCode = "404", description = "The restaurant not found")
     })
     @PreAuthorize(value = "hasRole('PROPIETARIO')")
     @PostMapping(value = "/add-employee-restaurant")
-    public ResponseEntity<RestaurantEmployeeResponseDto> saveUserEmployeeInARestaurant(@RequestBody RestaurantEmployeeRequestDto restaurantEmployeeRequestDto) {
-        final RestaurantEmployeeResponseDto restaurantEmployeeCreated = this.ownerRestaurantService.saveUserEmployeeInTheRestaurant(restaurantEmployeeRequestDto);
-        return new ResponseEntity<>(restaurantEmployeeCreated, HttpStatus.CREATED);
+    public ResponseEntity<RestaurantEmployeeResponseDto> saveUserEmployeeInARestaurant(@RequestBody RestaurantEmployeeRequestDto restaurantEmployeeRequestDto,
+                                                                                       @RequestHeader(HttpHeaders.AUTHORIZATION) String tokenWithBearerPrefix) {
+        return new ResponseEntity<>(this.ownerRestaurantService.saveUserEmployeeInTheRestaurant(restaurantEmployeeRequestDto, tokenWithBearerPrefix), HttpStatus.CREATED);
     }
 }
