@@ -58,7 +58,7 @@ public class OwnerRestaurantController {
     })
     @PatchMapping(value = "/update-state-dish")
     @PreAuthorize(value = "hasRole('PROPIETARIO')")
-    public ResponseEntity<UpdateStateDishResponseDto> UpdateStateDish(@RequestBody UpdateStateDishRequestDto updateStateDishRequestDto) {
+    public ResponseEntity<UpdateStateDishResponseDto> updateStateDish(@RequestBody UpdateStateDishRequestDto updateStateDishRequestDto) {
         UpdateStateDishResponseDto stateDishResponseDto = ownerRestaurantService.updateStateDish(updateStateDishRequestDto);
         return new ResponseEntity<>(stateDishResponseDto,HttpStatus.OK);
     }

@@ -79,6 +79,6 @@ public class OwnerRestaurantUseCase implements IOwnerRestaurantServicePort {
 
         updateStateDishModel.setStateDish(dishModel.getStateDish());
 
-        return dishPersistencePort.updateStateDish(updateStateDishModel);
+        return dishPersistencePort.updateDish(updateStateDishModel);
     }
 }

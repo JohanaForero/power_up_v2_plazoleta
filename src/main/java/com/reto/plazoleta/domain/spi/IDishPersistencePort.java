@@ -2,7 +2,6 @@ package com.reto.plazoleta.domain.spi;
 
 import com.reto.plazoleta.domain.model.DishModel;
 
-
 public interface IDishPersistencePort {
 
     DishModel saveDish(DishModel dishModel);
@@ -10,6 +9,4 @@ public interface IDishPersistencePort {
     DishModel findById(Long idDish);
 
     DishModel updateDish(DishModel existingDishModel);
-
-    DishModel updateStateDish(DishModel dishModel);
 }
