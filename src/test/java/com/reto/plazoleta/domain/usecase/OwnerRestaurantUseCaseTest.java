@@ -138,7 +138,7 @@ class OwnerRestaurantUseCaseTest {
 
         when(dishPersistencePort.findById(existingDish.getIdDish())).thenReturn(existingDish);
         when(restaurantPersistencePort.findByIdRestaurant(restaurant.getIdRestaurant())).thenReturn(restaurant);
-        when(dishPersistencePort.updateStateDish(existingDish)).thenReturn(updatedStateDishModel);
+        when(dishPersistencePort.updateDish(existingDish)).thenReturn(updatedStateDishModel);
 
         // When
         DishModel result = ownerRestaurantUseCase.updateStateDish(existingDish);
@@ -146,7 +146,7 @@ class OwnerRestaurantUseCaseTest {
         // Then
         assertEquals(updatedStateDishModel, result);
         assertEquals(false, result.getStateDish());
-        verify(dishPersistencePort, times(1)).updateStateDish(existingDish);
+        verify(dishPersistencePort, times(1)).updateDish(existingDish);
     }
 
     @Test
