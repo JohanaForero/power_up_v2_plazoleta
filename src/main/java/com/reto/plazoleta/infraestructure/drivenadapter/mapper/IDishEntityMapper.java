@@ -15,4 +15,7 @@ public interface IDishEntityMapper {
     @Mapping(target = "restaurantModel", source = "dishEntity.restaurantEntity")
     @Mapping(target = "categoryModel", source = "dishEntity.categoryEntity")
     DishModel toDishModel(DishEntity dishEntity);
+
+    @Mapping(target = "restaurantModel", source = "dishEntity.restaurantEntity")
+    DishModel toStateDishModel(DishEntity dishEntity);
 }

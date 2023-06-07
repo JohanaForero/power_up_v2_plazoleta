@@ -10,4 +10,6 @@ public interface IDishPersistencePort {
     DishModel findById(Long idDish);
 
     DishModel updateDish(DishModel existingDishModel);
+
+    DishModel updateStateDish(DishModel dishModel);
 }

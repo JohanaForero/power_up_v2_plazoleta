@@ -2,6 +2,7 @@ package com.reto.plazoleta.application.mapper.requestmapper;
 
 import com.reto.plazoleta.application.dto.request.CreateDishRequestDto;
 import com.reto.plazoleta.application.dto.request.UpdateDishRequestDto;
+import com.reto.plazoleta.application.dto.request.UpdateStateDishRequestDto;
 import com.reto.plazoleta.domain.model.DishModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -23,4 +24,13 @@ public interface IDishRequestMapper {
     @Mapping(target = "price", source = "updateDishRequestDto.price")
     @Mapping(target = "descriptionDish", source = "updateDishRequestDto.descriptionDish")
     DishModel toDishModel(UpdateDishRequestDto updateDishRequestDto);
+
+    @Mapping(target = "name", ignore = true)
+    @Mapping(target = "imageDish", ignore = true)
+    @Mapping(target = "categoryModel", ignore = true)
+    @Mapping(target = "price", ignore = true)
+    @Mapping(target = "descriptionDish",ignore = true)
+    @Mapping(target = "restaurantModel.idRestaurant", source = "updateStateDishRequestDto.idRestaurant")
+    @Mapping(target = "stateDish", source = "updateStateDishRequestDto.stateDish")
+    DishModel toStateDishModel(UpdateStateDishRequestDto updateStateDishRequestDto);
 }

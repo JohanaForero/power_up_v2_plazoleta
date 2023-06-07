@@ -62,4 +62,23 @@ public class OwnerRestaurantUseCase implements IOwnerRestaurantServicePort {
 
         return dishPersistencePort.updateDish(updateDishModel);
     }
+
+    @Override
+    public DishModel updateStateDish(DishModel dishModel) {
+        DishModel updateStateDishModel = dishPersistencePort.findById(dishModel.getIdDish());
+        if (updateStateDishModel == null) {
+            throw new DishNotExistsException("The dish not exist");
+        }
+        RestaurantModel restaurantModel = restaurantPersistencePort.findByIdRestaurant(dishModel.getRestaurantModel().getIdRestaurant());
+        if (restaurantModel == null) {
+            throw new ObjectNotFoundException("The restaurant does not exist");
+        }
+        if (!updateStateDishModel.getRestaurantModel().getIdRestaurant().equals(restaurantModel.getIdRestaurant())) {
+            throw new InvalidDataException("Only the owner of the restaurant can update the status of the dish");
+        }
+
+        updateStateDishModel.setStateDish(dishModel.getStateDish());
+
+        return dishPersistencePort.updateStateDish(updateStateDishModel);
+    }
 }
