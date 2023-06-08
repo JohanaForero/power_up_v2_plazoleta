@@ -2,8 +2,10 @@ package com.reto.plazoleta.infraestructure.entrypoint;
 
 import com.reto.plazoleta.application.dto.request.CreateDishRequestDto;
 import com.reto.plazoleta.application.dto.request.UpdateDishRequestDto;
+import com.reto.plazoleta.application.dto.request.UpdateStateDishRequestDto;
 import com.reto.plazoleta.application.dto.response.CreateDishResponseDto;
 import com.reto.plazoleta.application.dto.response.UpdateDishResponseDto;
+import com.reto.plazoleta.application.dto.response.UpdateStateDishResponseDto;
 import com.reto.plazoleta.application.handler.IOwnerRestaurantService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -46,5 +48,18 @@ public class OwnerRestaurantController {
     public ResponseEntity<UpdateDishResponseDto> updateDishPriceAndDescription(@RequestBody UpdateDishRequestDto updateDishRequestDto) {
         UpdateDishResponseDto dishResponseDto = ownerRestaurantService.updateDish(updateDishRequestDto);
         return new ResponseEntity<>(dishResponseDto,HttpStatus.OK);
+    }
+
+    @Operation(summary = "update dish state")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Price and description update", content = @Content),
+            @ApiResponse(responseCode = "400", description = "The format in the fields is invalid", content = @Content),
+            @ApiResponse(responseCode = "403", description = "no access allowed", content = @Content)
+    })
+    @PatchMapping(value = "/update-state-dish")
+    @PreAuthorize(value = "hasRole('PROPIETARIO')")
+    public ResponseEntity<UpdateStateDishResponseDto> updateStateDish(@RequestBody UpdateStateDishRequestDto updateStateDishRequestDto) {
+        UpdateStateDishResponseDto stateDishResponseDto = ownerRestaurantService.updateStateDish(updateStateDishRequestDto);
+        return new ResponseEntity<>(stateDishResponseDto,HttpStatus.OK);
     }
 }
