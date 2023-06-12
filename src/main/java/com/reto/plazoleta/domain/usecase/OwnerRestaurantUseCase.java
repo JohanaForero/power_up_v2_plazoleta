@@ -4,24 +4,36 @@ import com.reto.plazoleta.domain.api.IOwnerRestaurantServicePort;
 import com.reto.plazoleta.domain.exception.DishNotExistsException;
 import com.reto.plazoleta.domain.exception.InvalidDataException;
 import com.reto.plazoleta.domain.exception.ObjectNotFoundException;
+import com.reto.plazoleta.domain.gateways.IUserGateway;
 import com.reto.plazoleta.domain.model.CategoryModel;
 import com.reto.plazoleta.domain.model.DishModel;
+import com.reto.plazoleta.domain.model.EmployeeRestaurantModel;
 import com.reto.plazoleta.domain.model.RestaurantModel;
 import com.reto.plazoleta.domain.spi.ICategoryPersistencePort;
 import com.reto.plazoleta.domain.spi.IDishPersistencePort;
+import com.reto.plazoleta.domain.spi.IEmployeeRestaurantPersistencePort;
 import com.reto.plazoleta.domain.spi.IRestaurantPersistencePort;
+import com.reto.plazoleta.infraestructure.configuration.security.jwt.JwtProvider;
+import com.reto.plazoleta.infraestructure.drivenadapter.gateways.User;
 
 public class OwnerRestaurantUseCase implements IOwnerRestaurantServicePort {
 
     private final IDishPersistencePort dishPersistencePort;
     private final IRestaurantPersistencePort restaurantPersistencePort;
     private final ICategoryPersistencePort categoryPersistencePort;
+    private final IEmployeeRestaurantPersistencePort employeeRestaurantPersistencePort;
 
-    public OwnerRestaurantUseCase(IDishPersistencePort persistencePort, IRestaurantPersistencePort restaurantPersistencePort,
-                                  ICategoryPersistencePort categoryPersistencePort) {
-        this.dishPersistencePort = persistencePort;
+    private final IUserGateway userGateway;
+    private final JwtProvider jwtProvider;
+
+    public OwnerRestaurantUseCase(IDishPersistencePort dishPersistencePort, IRestaurantPersistencePort restaurantPersistencePort,
+                                  ICategoryPersistencePort categoryPersistencePort, IEmployeeRestaurantPersistencePort employeeRestaurantPersistencePort, IUserGateway userGateway, JwtProvider jwtProvider) {
+        this.dishPersistencePort = dishPersistencePort;
+        this.employeeRestaurantPersistencePort = employeeRestaurantPersistencePort;
         this.restaurantPersistencePort = restaurantPersistencePort;
         this.categoryPersistencePort = categoryPersistencePort;
+        this.userGateway = userGateway;
+        this.jwtProvider = jwtProvider;
     }
 
     @Override
@@ -80,5 +92,17 @@ public class OwnerRestaurantUseCase implements IOwnerRestaurantServicePort {
         updateStateDishModel.setStateDish(dishModel.getStateDish());
 
         return dishPersistencePort.updateDish(updateStateDishModel);
+    }
+
+    @Override
+    public EmployeeRestaurantModel saveEmployeeRestaurant(EmployeeRestaurantModel employeeRestaurantModel, String tokenWithBearerPrefix) {
+        String emailFromUserOwnerOfARestaurant = jwtProvider.getAuthentication(tokenWithBearerPrefix.replace("Bearer ", "").trim()).getPrincipal().toString();
+        User userOwnerFound = userGateway.getUserByEmailInTheToken(emailFromUserOwnerOfARestaurant, tokenWithBearerPrefix);
+        final RestaurantModel restaurantFoundModelByIdRestaurant = this.restaurantPersistencePort.findByIdRestaurant(employeeRestaurantModel.getIdRestaurant());
+        if(restaurantFoundModelByIdRestaurant == null || !restaurantFoundModelByIdRestaurant.getIdOwner().equals(userOwnerFound.getIdUser())) {
+            throw new ObjectNotFoundException("Restaurant not Exist");
+        }
+        employeeRestaurantModel.setIdRestaurant(restaurantFoundModelByIdRestaurant.getIdRestaurant());
+        return this.employeeRestaurantPersistencePort.saveEmployeeRestaurant(employeeRestaurantModel);
     }
 }
