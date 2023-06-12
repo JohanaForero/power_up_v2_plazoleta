@@ -7,5 +7,4 @@ import java.util.List;
 public interface IOrderServicePort {
     void saveOrder(OrderModel orderModel);
     List<OrderModel> getAllOrders();
-
 }

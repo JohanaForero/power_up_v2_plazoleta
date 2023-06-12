@@ -31,7 +31,7 @@ public class OwnerRestaurantController {
             @ApiResponse(responseCode = "400", description = "The format in the fields is invalid", content = @Content),
             @ApiResponse(responseCode = "409", description = "There are empty fields", content = @Content)
     })
-    @PostMapping(value = "/create-dish")
+    @PostMapping(value = "/")
     public ResponseEntity<CreateDishResponseDto> saveDish(@RequestBody CreateDishRequestDto createDishRequestDto) {
         CreateDishResponseDto responseDto = ownerRestaurantService.saveDish(createDishRequestDto);
         return new ResponseEntity<>(responseDto,HttpStatus.CREATED);
@@ -43,7 +43,7 @@ public class OwnerRestaurantController {
             @ApiResponse(responseCode = "401", description = "The format in the fields is invalid", content = @Content),
             @ApiResponse(responseCode = "403", description = "no access allowed", content = @Content)
     })
-    @PatchMapping(value = "/update-dish")
+    @PatchMapping(value = "/dish/{id}")
     @PreAuthorize(value = "hasRole('PROPIETARIO')")
     public ResponseEntity<UpdateDishResponseDto> updateDishPriceAndDescription(@RequestBody UpdateDishRequestDto updateDishRequestDto) {
         UpdateDishResponseDto dishResponseDto = ownerRestaurantService.updateDish(updateDishRequestDto);
@@ -56,7 +56,7 @@ public class OwnerRestaurantController {
             @ApiResponse(responseCode = "400", description = "The format in the fields is invalid", content = @Content),
             @ApiResponse(responseCode = "403", description = "no access allowed", content = @Content)
     })
-    @PatchMapping(value = "/update-state-dish")
+    @PatchMapping(value = "/{enableDisable}/{id}")
     @PreAuthorize(value = "hasRole('PROPIETARIO')")
     public ResponseEntity<UpdateStateDishResponseDto> updateStateDish(@RequestBody UpdateStateDishRequestDto updateStateDishRequestDto) {
         UpdateStateDishResponseDto stateDishResponseDto = ownerRestaurantService.updateStateDish(updateStateDishRequestDto);

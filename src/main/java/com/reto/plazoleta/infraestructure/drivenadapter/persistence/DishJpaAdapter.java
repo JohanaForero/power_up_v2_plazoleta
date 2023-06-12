@@ -9,7 +9,6 @@ public class DishJpaAdapter implements IDishPersistencePort {
     private final IDishRepository dishRepository;
     private final IDishEntityMapper dishEntityMapper;
 
-
     public DishJpaAdapter(IDishRepository restaurantRepository, IDishEntityMapper restaurantEntityMapper) {
         this.dishRepository = restaurantRepository;
         this.dishEntityMapper = restaurantEntityMapper;
