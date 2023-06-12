@@ -46,7 +46,6 @@ public class RestaurantUseCase implements IRestaurantServicePort {
         }
     }
 
-
     private void validateRestaurantPhone(String phoneRestaurant) {
         String phoneRestaurantNoSpaces = phoneRestaurant.replace(" ", "");
         if(phoneRestaurantNoSpaces.startsWith("+")){
@@ -72,5 +71,4 @@ public class RestaurantUseCase implements IRestaurantServicePort {
         if (resultRestaurantsPageable.isEmpty()) throw new NoDataFoundException();
         return resultRestaurantsPageable;
     }
-
 }

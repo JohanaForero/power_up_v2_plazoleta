@@ -40,12 +40,10 @@ public class AdminController {
             description = "The restaurant object to create",
             required = true,
             schema = @Schema(implementation = RequestToCreateRestaurantDto.class))
-                                                                       @RequestBody RequestToCreateRestaurantDto requestToCreateRestaurantDto,
-                                                                       @Parameter(
-                                                                               description = "The authentication token with Bearer prefix",
-                                                                               required = true,
-                                                                               schema = @Schema(type = "String", format = "jwt"))
-                                                                       @RequestHeader(HttpHeaders.AUTHORIZATION) String tokenWithBearerPrefix) {
+            @RequestBody RequestToCreateRestaurantDto requestToCreateRestaurantDto,
+            @Parameter(description = "The authentication token with Bearer prefix",
+            required = true,schema = @Schema(type = "String", format = "jwt"))
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String tokenWithBearerPrefix) {
         ResponseToCreateRestaurantDto restaurantCreated = adminService.saveRestaurant(requestToCreateRestaurantDto, tokenWithBearerPrefix);
         return new ResponseEntity<>(restaurantCreated, HttpStatus.CREATED);
     }
