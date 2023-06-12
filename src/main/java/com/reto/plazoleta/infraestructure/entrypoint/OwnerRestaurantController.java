@@ -43,7 +43,7 @@ public class OwnerRestaurantController {
             @ApiResponse(responseCode = "401", description = "The format in the fields is invalid", content = @Content),
             @ApiResponse(responseCode = "403", description = "no access allowed", content = @Content)
     })
-    @PatchMapping(value = "/dish-price-description")
+    @PatchMapping(value = "/dish")
     @PreAuthorize(value = "hasRole('PROPIETARIO')")
     public ResponseEntity<UpdateDishResponseDto> updateDishPriceAndDescription(@RequestBody UpdateDishRequestDto updateDishRequestDto) {
         UpdateDishResponseDto dishResponseDto = ownerRestaurantService.updateDish(updateDishRequestDto);
