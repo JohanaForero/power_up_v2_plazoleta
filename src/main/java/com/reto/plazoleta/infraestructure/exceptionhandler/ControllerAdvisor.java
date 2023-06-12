@@ -3,7 +3,6 @@ package com.reto.plazoleta.infraestructure.exceptionhandler;
 import com.reto.plazoleta.domain.exception.DishNotExistsException;
 import com.reto.plazoleta.domain.exception.EmptyFieldsException;
 import com.reto.plazoleta.domain.exception.InvalidDataException;
-import com.reto.plazoleta.domain.exception.ObjectNotFoundException;
 import com.reto.plazoleta.infraestructure.configuration.security.exception.AuthenticationFailedException;
 import com.reto.plazoleta.infraestructure.configuration.security.exception.UserDoesNotExistException;
 import com.reto.plazoleta.infraestructure.exception.NoDataFoundException;
@@ -39,13 +38,6 @@ public class ControllerAdvisor {
             InvalidDataException ignoredInvalidDataException) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.INVALID_DATA.getMessage()));
-    }
-
-    @ExceptionHandler(ObjectNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleObjectNotFoundException(
-            ObjectNotFoundException objectNotFoundException) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.OBJECT_NOT_FOUND.getMessage()));
     }
 
     @ExceptionHandler(DishNotExistsException.class)

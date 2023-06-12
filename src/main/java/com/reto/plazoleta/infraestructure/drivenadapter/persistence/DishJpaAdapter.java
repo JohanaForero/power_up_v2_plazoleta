@@ -9,7 +9,6 @@ public class DishJpaAdapter implements IDishPersistencePort {
     private final IDishRepository dishRepository;
     private final IDishEntityMapper dishEntityMapper;
 
-
     public DishJpaAdapter(IDishRepository restaurantRepository, IDishEntityMapper restaurantEntityMapper) {
         this.dishRepository = restaurantRepository;
         this.dishEntityMapper = restaurantEntityMapper;
@@ -25,7 +24,6 @@ public class DishJpaAdapter implements IDishPersistencePort {
         return  dishEntityMapper.toDishModel(
                 dishRepository.save(dishEntityMapper.toDishEntity(dishModel)));
     }
-
     @Override
     public DishModel findById(Long idDish) {
         return dishEntityMapper.toDishModel(dishRepository.findById(idDish).orElse(null));

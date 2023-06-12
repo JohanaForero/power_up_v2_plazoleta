@@ -28,5 +28,4 @@ public class RestaurantBeanConfiguration {
     public IRestaurantServicePort restaurantUseCase() {
         return new RestaurantUseCase(restaurantPersistencePort(), userGateway);
     }
-
 }

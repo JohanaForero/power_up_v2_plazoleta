@@ -17,5 +17,4 @@ public class CreateDishRequestDto {
     private String imageDish;
     private Long idCategory;
     private Long idRestaurant;
-
 }
