@@ -35,7 +35,7 @@ public class AdminController {
             @ApiResponse(responseCode = "409", description = "There are empty fields")
     })
     @PreAuthorize(value = "hasRole('ADMINISTRADOR')")
-    @PostMapping(value = "/")
+    @PostMapping(value = "/restaurant")
     public ResponseEntity<ResponseToCreateRestaurantDto> saveRestaurant(@Parameter(
             description = "The restaurant object to create",
             required = true,
