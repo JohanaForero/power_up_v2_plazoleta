@@ -98,7 +98,10 @@ public class OwnerRestaurantUseCase implements IOwnerRestaurantServicePort {
     public EmployeeRestaurantModel saveEmployeeRestaurant(EmployeeRestaurantModel employeeRestaurantModel, String tokenWithBearerPrefix) {
         String emailFromUserOwnerOfARestaurant = jwtProvider.getAuthentication(tokenWithBearerPrefix.replace("Bearer ", "").trim()).getPrincipal().toString();
         User userOwnerFound = userGateway.getUserByEmailInTheToken(emailFromUserOwnerOfARestaurant, tokenWithBearerPrefix);
+        System.out.println("user employee" +userOwnerFound.getIdUser());
+        System.out.println("restaurant" +employeeRestaurantModel.getIdRestaurant());
         final RestaurantModel restaurantFoundModelByIdRestaurant = this.restaurantPersistencePort.findByIdRestaurant(employeeRestaurantModel.getIdRestaurant());
+        System.out.println("owner" + restaurantFoundModelByIdRestaurant.getIdOwner());
         if(restaurantFoundModelByIdRestaurant == null || !restaurantFoundModelByIdRestaurant.getIdOwner().equals(userOwnerFound.getIdUser())) {
             throw new ObjectNotFoundException("Restaurant not Exist");
         }

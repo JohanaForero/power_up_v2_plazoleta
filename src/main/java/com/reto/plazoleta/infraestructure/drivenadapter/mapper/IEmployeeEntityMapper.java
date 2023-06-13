@@ -8,7 +8,9 @@ import org.mapstruct.Mapping;
 @Mapper
 public interface IEmployeeEntityMapper {
 
+    @Mapping(target = "idEmployee", source ="idUserEmployee")
     EmployeeRestaurantEntity toEmployeeRestaurantEntity(EmployeeRestaurantModel employeeRestaurantModel);
 
+    @Mapping(target = "idUserEmployee", source ="idEmployee")
     EmployeeRestaurantModel toEmployeeRestaurantModel(EmployeeRestaurantEntity employeeRestaurantEntity);
 }
