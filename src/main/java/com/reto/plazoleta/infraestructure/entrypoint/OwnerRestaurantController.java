@@ -1,17 +1,17 @@
 package com.reto.plazoleta.infraestructure.entrypoint;
 
 import com.reto.plazoleta.application.dto.request.CreateDishRequestDto;
+import com.reto.plazoleta.application.dto.request.RequestEmployeeAccountDto;
 import com.reto.plazoleta.application.dto.request.UpdateDishRequestDto;
 import com.reto.plazoleta.application.dto.request.UpdateStateDishRequestDto;
-import com.reto.plazoleta.application.dto.response.CreateDishResponseDto;
-import com.reto.plazoleta.application.dto.response.UpdateDishResponseDto;
-import com.reto.plazoleta.application.dto.response.UpdateStateDishResponseDto;
+import com.reto.plazoleta.application.dto.response.*;
 import com.reto.plazoleta.application.handler.IOwnerRestaurantService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -61,5 +61,19 @@ public class OwnerRestaurantController {
     public ResponseEntity<UpdateStateDishResponseDto> updateStateDish(@RequestBody UpdateStateDishRequestDto updateStateDishRequestDto) {
         UpdateStateDishResponseDto stateDishResponseDto = ownerRestaurantService.updateStateDish(updateStateDishRequestDto);
         return new ResponseEntity<>(stateDishResponseDto,HttpStatus.OK);
+    }
+
+
+    @Operation(summary = "Add a new User employee in a restaurant")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "restaurant employee created"),
+            @ApiResponse(responseCode = "403", description = "The user does not have the owner role"),
+            @ApiResponse(responseCode = "404", description = "The restaurant not found")
+    })
+    @PreAuthorize(value = "hasRole('PROPIETARIO')")
+    @PostMapping(value = "/employee")
+    public ResponseEntity<ResponseEmployeeAccountDto> saveUserEmployeeInARestaurant(@RequestBody RequestEmployeeAccountDto requestEmployeeAccountDto,
+                                                                                    @RequestHeader(HttpHeaders.AUTHORIZATION) String tokenWithBearerPrefix) {
+        return new ResponseEntity<>(this.ownerRestaurantService.saveUserEmployeeInTheRestaurant(requestEmployeeAccountDto, tokenWithBearerPrefix), HttpStatus.CREATED);
     }
 }

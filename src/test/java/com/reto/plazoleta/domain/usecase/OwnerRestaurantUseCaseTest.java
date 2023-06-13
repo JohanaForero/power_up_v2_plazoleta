@@ -227,4 +227,6 @@ class OwnerRestaurantUseCaseTest {
         //Then
         assertEquals("The dish not exist", exception.getMessage());
     }
+
+
 }
