@@ -67,7 +67,7 @@ public class RestaurantUseCase implements IRestaurantServicePort {
     @Override
     public Page<RestaurantModel> findAllByOrderByNameAsc(int numberPage, int sizeItems) {
         Page<RestaurantModel> resultRestaurantsPageable = restaurantPersistencePort.findAllByOrderByNameAsc(
-                                                                PageRequest.of(numberPage, sizeItems));
+                PageRequest.of(numberPage, sizeItems));
         if (resultRestaurantsPageable.isEmpty()) throw new NoDataFoundException();
         return resultRestaurantsPageable;
     }

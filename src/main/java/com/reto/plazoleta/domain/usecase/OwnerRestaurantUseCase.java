@@ -38,15 +38,15 @@ public class OwnerRestaurantUseCase implements IOwnerRestaurantServicePort {
 
     @Override
     public DishModel saveDish(DishModel dishModel) {
-        if(dishModel.getPrice() <= 0) {
+        if (dishModel.getPrice() <= 0) {
             throw new InvalidDataException("Price must be greater than zero");
         }
         RestaurantModel restaurantModel = restaurantPersistencePort.findByIdRestaurant(dishModel.getRestaurantModel().getIdRestaurant());
-        if(restaurantModel == null) {
+        if (restaurantModel == null) {
             throw new InvalidDataException("The restaurant does not exist");
         }
         CategoryModel categoryModel = categoryPersistencePort.findById(dishModel.getCategoryModel().getIdCategory());
-        if(categoryModel == null) {
+        if (categoryModel == null) {
             throw new InvalidDataException("The category does not exist");
         }
         dishModel.setRestaurantModel(restaurantModel);
@@ -98,11 +98,8 @@ public class OwnerRestaurantUseCase implements IOwnerRestaurantServicePort {
     public EmployeeRestaurantModel saveEmployeeRestaurant(EmployeeRestaurantModel employeeRestaurantModel, String tokenWithBearerPrefix) {
         String emailFromUserOwnerOfARestaurant = jwtProvider.getAuthentication(tokenWithBearerPrefix.replace("Bearer ", "").trim()).getPrincipal().toString();
         User userOwnerFound = userGateway.getUserByEmailInTheToken(emailFromUserOwnerOfARestaurant, tokenWithBearerPrefix);
-        System.out.println("user employee" +userOwnerFound.getIdUser());
-        System.out.println("restaurant" +employeeRestaurantModel.getIdRestaurant());
         final RestaurantModel restaurantFoundModelByIdRestaurant = this.restaurantPersistencePort.findByIdRestaurant(employeeRestaurantModel.getIdRestaurant());
-        System.out.println("owner" + restaurantFoundModelByIdRestaurant.getIdOwner());
-        if(restaurantFoundModelByIdRestaurant == null || !restaurantFoundModelByIdRestaurant.getIdOwner().equals(userOwnerFound.getIdUser())) {
+        if (restaurantFoundModelByIdRestaurant == null || !restaurantFoundModelByIdRestaurant.getIdOwner().equals(userOwnerFound.getIdUser())) {
             throw new ObjectNotFoundException("Restaurant not Exist");
         }
         employeeRestaurantModel.setIdRestaurant(restaurantFoundModelByIdRestaurant.getIdRestaurant());
