@@ -6,6 +6,8 @@ import com.reto.plazoleta.domain.spi.ICategoryPersistencePort;
 import com.reto.plazoleta.infraestructure.drivenadapter.mapper.ICategoryEntityMapper;
 import com.reto.plazoleta.infraestructure.drivenadapter.repository.ICategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @RequiredArgsConstructor
 public class CategoryJpaAdapter implements ICategoryPersistencePort {
@@ -16,5 +18,11 @@ public class CategoryJpaAdapter implements ICategoryPersistencePort {
     @Override
     public CategoryModel findById(Long idCategory) {
         return categoryEntityMapper.toCategoryEntity(categoryRepository.findById(idCategory).orElse(null));
+    }
+
+    @Override
+    public Page<CategoryModel> findAllCategories(Pageable pageable) {
+        return categoryRepository.findAll(pageable)
+                .map(categoryEntityMapper::toCategoryEntity);
     }
 }

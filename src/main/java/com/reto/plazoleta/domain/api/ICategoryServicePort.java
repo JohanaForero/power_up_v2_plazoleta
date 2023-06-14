@@ -1,6 +1,5 @@
 package com.reto.plazoleta.domain.api;
 
-
 import com.reto.plazoleta.domain.model.CategoryModel;
 
 import java.util.List;
