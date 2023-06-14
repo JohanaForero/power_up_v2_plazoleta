@@ -209,4 +209,24 @@ class CustomerControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.message").value(ExceptionResponse.DISH_NOT_EXISTS));
     }
+
+    @WithMockUser(username = USERNAME_CUSTOMER, password = PASSWORD, roles = {ROLE_CUSTOMER})
+    @Test
+    void testRegisterOrderFromCustomer_WithAllFieldsCompleteAndTokenValid_ShouldResponseAStatusCreated() throws Exception {
+    }
+
+    @WithMockUser(username = USERNAME_CUSTOMER, password = PASSWORD, roles = {ROLE_CUSTOMER})
+    @Test
+    void test_registerOrderFromCustomer_withExistingInProgressOrderAndTokenValid_ShouldReturnStatusConflict() throws Exception {
+    }
+
+    @WithMockUser(username = USERNAME_CUSTOMER, password = PASSWORD, roles = {ROLE_CUSTOMER})
+    @Test
+    void test_registerOrderFromCustomer_WithNonexistentRestaurantIdAndValidToken_ShouldReturnStatusNotFound() throws Exception {
+    }
+
+    @WithMockUser(username = USERNAME_CUSTOMER, password = PASSWORD, roles = {ROLE_CUSTOMER})
+    @Test
+    void test_registerOrderFromCustomer_withNonexistentDishIdAndValidToken_ShouldReturnStatusNotFound()  throws Exception {
+    }
 }
