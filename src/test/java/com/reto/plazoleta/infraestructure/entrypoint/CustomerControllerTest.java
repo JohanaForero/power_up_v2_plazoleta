@@ -108,4 +108,20 @@ class CustomerControllerTest {
                 .andExpect(jsonPath("$.pageable.pageSize").value(5))
                 .andExpect(jsonPath("$.pageable.pageNumber").value(0));
     }
+
+    @WithMockUser(username = USERNAME_CUSTOMER, password = PASSWORD, roles = {ROLE_CUSTOMER})
+    @Test
+    void test_listDishesByCategory_withSpecificPageSize_ShouldReturnCorrectPaginatedDishes() throws Exception {}
+
+    @WithMockUser(username = USERNAME_CUSTOMER, password = PASSWORD, roles = {ROLE_CUSTOMER})
+    @Test
+    void test_listDishesByCategory_withCorrectGroupingByCategory_ShouldReturnGroupedDishes() throws Exception {}
+
+    @WithMockUser(username = USERNAME_CUSTOMER, password = PASSWORD, roles = {ROLE_CUSTOMER})
+    @Test
+    void test_listDishesByCategory_withNullPageSizeAndByDefaultTheValueIsFive_ShouldReturnMaximumFivePaginatedRestaurants() throws Exception {}
+
+    @WithMockUser(username = USERNAME_CUSTOMER, password = PASSWORD, roles = {ROLE_CUSTOMER})
+    @Test
+    void test_listDishesByCategory_withNoDishesForRestaurant_ShouldThrowObjectNotFoundException() throws Exception {}
 }
