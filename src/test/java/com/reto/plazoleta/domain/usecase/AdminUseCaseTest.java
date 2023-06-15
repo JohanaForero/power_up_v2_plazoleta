@@ -28,10 +28,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class RestaurantUseCaseTest {
+class AdminUseCaseTest {
 
     @InjectMocks
-    private RestaurantUseCase restaurantUseCase;
+    private AdminUseCase adminUseCase;
     @Mock
     private IRestaurantPersistencePort restaurantPersistencePort;
     @Mock
@@ -56,7 +56,7 @@ class RestaurantUseCaseTest {
         when(userGateway.getUserById(1L, TOKEN)).thenReturn(userWithRoleOwner);
         when(restaurantPersistencePort.saveRestaurant(restaurantExpected)).thenReturn(restaurantExpected);
         //When
-        RestaurantModel restaurantSaved = restaurantUseCase.saveRestaurant(restaurantExpected, TOKEN);
+        RestaurantModel restaurantSaved = adminUseCase.saveRestaurant(restaurantExpected, TOKEN);
         //Then
         verify(restaurantPersistencePort).saveRestaurant(restaurantExpected);
         assertEquals(restaurantExpected.getIdRestaurant(), restaurantSaved.getIdRestaurant());
@@ -81,7 +81,7 @@ class RestaurantUseCaseTest {
         // When & Then
         Assertions.assertThrows(
                 InvalidDataException.class,
-                () -> restaurantUseCase.saveRestaurant(restaurantWithPhoneWrong, TOKEN)
+                () -> adminUseCase.saveRestaurant(restaurantWithPhoneWrong, TOKEN)
         );
     }
 
@@ -99,7 +99,7 @@ class RestaurantUseCaseTest {
         // When & Then
         Assertions.assertThrows(
                 InvalidDataException.class,
-                () -> restaurantUseCase.saveRestaurant(restaurantWhereNameOnlyContainsNumbers, TOKEN)
+                () -> adminUseCase.saveRestaurant(restaurantWhereNameOnlyContainsNumbers, TOKEN)
         );
     }
 
@@ -116,7 +116,7 @@ class RestaurantUseCaseTest {
         // When & Then
         Assertions.assertThrows(
                 EmptyFieldsException.class,
-                () -> restaurantUseCase.saveRestaurant(restaurantWhereAllFieldsAreEmpty, TOKEN)
+                () -> adminUseCase.saveRestaurant(restaurantWhereAllFieldsAreEmpty, TOKEN)
         );
     }
 
@@ -136,7 +136,7 @@ class RestaurantUseCaseTest {
         when(userGateway.getUserById(1L, TOKEN)).thenReturn(userWithRoleOtherThanOwner);
         // When
         AccessDeniedException exception = assertThrows(AccessDeniedException.class,
-                () -> restaurantUseCase.saveRestaurant(restaurantRequestModel, TOKEN));
+                () -> adminUseCase.saveRestaurant(restaurantRequestModel, TOKEN));
         //Then
         assertEquals("The user id does not have the required role to use this action", exception.getMessage());
     }
@@ -150,7 +150,7 @@ class RestaurantUseCaseTest {
         Page<RestaurantModel> pageableRestaurantsExpected = new PageImpl<>(restaurantList);
         when(restaurantPersistencePort.findAllByOrderByNameAsc(PageRequest.of(0, 10))).thenReturn(pageableRestaurantsExpected);
         //When
-        Page<RestaurantModel> result = restaurantUseCase.findAllByOrderByNameAsc(0, 10);
+        Page<RestaurantModel> result = adminUseCase.findAllByOrderByNameAsc(0, 10);
         //Then
         verify(restaurantPersistencePort, times(1)).findAllByOrderByNameAsc(PageRequest.of(0, 10));
         assertEquals(pageableRestaurantsExpected, result);
@@ -169,7 +169,7 @@ class RestaurantUseCaseTest {
         // When & Then
         Assertions.assertThrows(
                 NoDataFoundException.class,
-                () -> restaurantUseCase.findAllByOrderByNameAsc(numberPage, sizeItems)
+                () -> adminUseCase.findAllByOrderByNameAsc(numberPage, sizeItems)
         );
     }
 }

@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RestaurantResponsePageableDto {
+public class RestaurantResponsePaginatedDto {
 
     private String name;
     private String urlLogo;

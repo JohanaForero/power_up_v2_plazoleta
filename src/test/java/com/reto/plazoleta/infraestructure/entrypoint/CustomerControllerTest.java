@@ -4,13 +4,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reto.plazoleta.application.dto.request.CreateOrderRequestDto;
 import com.reto.plazoleta.application.dto.request.DishFromOrderRequestDto;
 import com.reto.plazoleta.domain.gateways.IUserGateway;
+import com.reto.plazoleta.domain.model.*;
 import com.reto.plazoleta.infraestructure.configuration.security.jwt.JwtProvider;
 import com.reto.plazoleta.infraestructure.drivenadapter.entity.*;
+import com.reto.plazoleta.infraestructure.drivenadapter.gateways.User;
 import com.reto.plazoleta.infraestructure.drivenadapter.repository.*;
 import com.reto.plazoleta.infraestructure.exceptionhandler.ExceptionResponse;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +22,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -29,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -85,9 +91,11 @@ class CustomerControllerTest {
     private static final String PAGE_SIZE_PARAM = "sizeItemsByPages";
     private static final String REGISTER_ORDER_API_PATH = "/micro-small-square/order";
     private static final String TOKE_WITH_PREFIX_BEARER = "Bearer + token";
+    private static final String NAME_OF_THE_ENTITY_ORDER = "pedidos";
+    private static final String NAME_OF_THE_COLUM_PRIMARY_KEY_OF_ORDER_ENTITY = "id_pedido";
 
     @BeforeAll
-    void setup() {
+    void initializeTestEnvironment() {
         List<RestaurantEntity> restaurantList = new ArrayList<>();
         restaurantList.add(new RestaurantEntity(1L, "Restaurante 1", "Dirección 1", "3014896273", "http://restaurante1.com", 111111L, 1L));
         restaurantList.add(new RestaurantEntity(2L, "Restaurante 2", "Dirección 2", "3224196283", "http://restaurante2.com", 222222L, 2L));
@@ -105,13 +113,13 @@ class CustomerControllerTest {
                 true, restaurantList.get(1), categoryEntityToSave));
         this.dishRepository.saveAll(listDishEntities);
 
-        EmployeeRestaurantEntity employeeRestaurantEntityExpected = new EmployeeRestaurantEntity(1L,2L, 2L);
+        EmployeeRestaurantEntity employeeRestaurantEntityExpected = new EmployeeRestaurantEntity(1L, 2L, 2L);
         this.employeeRepository.save(employeeRestaurantEntityExpected);
 
         OrderDishEntity orderDishEntity = new OrderDishEntity();
         orderDishEntity.setAmount(4);
         orderDishEntity.setDishEntity(listDishEntities.get(0));
-        this.orderRepository.save(new OrderEntity(1L, 1L, LocalDate.now(), StatusOrder.EN_PREPARACION,employeeRestaurantEntityExpected, restaurantList.get(1), asList(orderDishEntity)));
+        this.orderRepository.save(new OrderEntity(1L, 1L, LocalDate.now(), StatusOrder.EN_PREPARACION, employeeRestaurantEntityExpected, restaurantList.get(1), asList(orderDishEntity)));
     }
 
     @WithMockUser(username = USERNAME_CUSTOMER, password = PASSWORD, roles = {ROLE_CUSTOMER})
@@ -153,9 +161,13 @@ class CustomerControllerTest {
                 .andExpect(jsonPath("$.content[0].urlLogo").value("http://restaurante1.com"));
     }
 
+    @Transactional
     @WithMockUser(username = USERNAME_CUSTOMER, password = PASSWORD, roles = {ROLE_CUSTOMER})
     @Test
     void test_getAllRestaurantsByOrderByNameAsc_withPageSizeOneAndNotDataFound_ShouldThrowAStatusNoContent() throws Exception {
+        this.orderRepository.deleteAll();
+        this.orderDishRepository.deleteAll();
+        this.dishRepository.deleteAll();
         restaurantRepository.deleteAll();
         mockMvc.perform(get(RESTAURANT_API_PATH)
                         .param(PAGE_SIZE_PARAM, "1")
@@ -177,12 +189,17 @@ class CustomerControllerTest {
     @Transactional
     @WithMockUser(username = USERNAME_CUSTOMER, password = PASSWORD, roles = {ROLE_CUSTOMER})
     @Test
-    void test_createOrderInTheCustomerService_withTheFieldsCompleteFromCreateOrderRequestDtoAndTokenValid_ShouldResponseValueFromFieldIdOrderSavedInTheDataBase() throws Exception {
+    void test_createOrderInTheCustomerService_withTheFieldsCompleteFromCreateOrderRequestDtoAndTokenValid_ShouldReturnCreatedStatusAndIdOrderSavedInTheDatabase() throws Exception {
         this.orderRepository.deleteAll();
+        this.jdbcTemplate.execute("ALTER TABLE " + NAME_OF_THE_ENTITY_ORDER + " ALTER COLUMN " + NAME_OF_THE_COLUM_PRIMARY_KEY_OF_ORDER_ENTITY + " RESTART WITH 1");
         List<DishFromOrderRequestDto> listDishAndAmountRequest = new ArrayList<>();
         listDishAndAmountRequest.add(new DishFromOrderRequestDto(listDishEntities.get(0).getIdDish(), listDishEntities.get(0).getName(), 4));
         listDishAndAmountRequest.add(new DishFromOrderRequestDto(listDishEntities.get(1).getIdDish(), listDishEntities.get(1).getName(), 2));
         CreateOrderRequestDto createOrderRequest = new CreateOrderRequestDto(1L, listDishAndAmountRequest);
+        User userAuthenticatedByToken = new User();
+        userAuthenticatedByToken.setIdUser(1L);
+        when(this.jwtProvider.getAuthentication("+ token")).thenReturn(new UsernamePasswordAuthenticationToken(USERNAME_CUSTOMER, null, null));
+        when(this.userGateway.getUserByEmailInTheToken(USERNAME_CUSTOMER, TOKE_WITH_PREFIX_BEARER)).thenReturn(userAuthenticatedByToken);
         this.mockMvc.perform(post(REGISTER_ORDER_API_PATH)
                         .header(HttpHeaders.AUTHORIZATION, TOKE_WITH_PREFIX_BEARER)
                         .content(this.objectMapper.writeValueAsString(createOrderRequest))
@@ -191,48 +208,61 @@ class CustomerControllerTest {
                 .andExpect(jsonPath("$.idOrder").value(1));
     }
 
+    @Transactional
     @WithMockUser(username = USERNAME_CUSTOMER, password = PASSWORD, roles = {ROLE_CUSTOMER})
     @Test
-    void test_createOrderInTheCustomerService_withExistingInProgressOrderAndTokenValid_ShouldReturnStatusConflict() throws Exception {
+    void test_createOrderInTheCustomerService_withExistingInProgressOrderAndTokenValid_ShouldResponseAStatusConflict() throws Exception {
         List<DishFromOrderRequestDto> listDishAndAmountRequest = new ArrayList<>();
         listDishAndAmountRequest.add(new DishFromOrderRequestDto(listDishEntities.get(0).getIdDish(), listDishEntities.get(0).getName(), 4));
         listDishAndAmountRequest.add(new DishFromOrderRequestDto(listDishEntities.get(1).getIdDish(), listDishEntities.get(1).getName(), 2));
-        CreateOrderRequestDto createOrderRequest = new CreateOrderRequestDto(1L, listDishAndAmountRequest);
+        CreateOrderRequestDto createOrderRequest = new CreateOrderRequestDto(2L, listDishAndAmountRequest);
+        User userAuthenticatedByToken = new User();
+        userAuthenticatedByToken.setIdUser(1L);
+        when(this.jwtProvider.getAuthentication("+ token")).thenReturn(new UsernamePasswordAuthenticationToken(USERNAME_CUSTOMER, null, null));
+        when(this.userGateway.getUserByEmailInTheToken(USERNAME_CUSTOMER, TOKE_WITH_PREFIX_BEARER)).thenReturn(userAuthenticatedByToken);
         this.mockMvc.perform(post(REGISTER_ORDER_API_PATH)
                         .header(HttpHeaders.AUTHORIZATION, TOKE_WITH_PREFIX_BEARER)
                         .content(this.objectMapper.writeValueAsString(createOrderRequest))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
+                .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").value(ExceptionResponse.ORDER_IN_PROCESS.getMessage()));
     }
 
     @WithMockUser(username = USERNAME_CUSTOMER, password = PASSWORD, roles = {ROLE_CUSTOMER})
     @Test
-    void test_createOrderInTheCustomerService_WithNonexistentRestaurantIdAndValidToken_ShouldReturnStatusNotFound() throws Exception {
+    void test_createOrderInTheCustomerService_withNonexistentRestaurantIdAndValidToken_ShouldResponseAStatusNotFound() throws Exception {
         List<DishFromOrderRequestDto> listDishAndAmountRequest = new ArrayList<>();
         listDishAndAmountRequest.add(new DishFromOrderRequestDto(listDishEntities.get(0).getIdDish(), listDishEntities.get(0).getName(), 4));
         listDishAndAmountRequest.add(new DishFromOrderRequestDto(listDishEntities.get(1).getIdDish(), listDishEntities.get(1).getName(), 2));
         CreateOrderRequestDto createOrderRequest = new CreateOrderRequestDto(3L, listDishAndAmountRequest);
+        User userAuthenticatedByToken = new User();
+        userAuthenticatedByToken.setIdUser(1L);
+        when(this.jwtProvider.getAuthentication("+ token")).thenReturn(new UsernamePasswordAuthenticationToken(USERNAME_CUSTOMER, null, null));
+        when(this.userGateway.getUserByEmailInTheToken(USERNAME_CUSTOMER, TOKE_WITH_PREFIX_BEARER)).thenReturn(userAuthenticatedByToken);
         this.mockMvc.perform(post(REGISTER_ORDER_API_PATH)
                         .header(HttpHeaders.AUTHORIZATION, TOKE_WITH_PREFIX_BEARER)
                         .content(this.objectMapper.writeValueAsString(createOrderRequest))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.message").value(ExceptionResponse.OBJECT_NOT_FOUND));
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value(ExceptionResponse.OBJECT_NOT_FOUND.getMessage()));
     }
 
     @WithMockUser(username = USERNAME_CUSTOMER, password = PASSWORD, roles = {ROLE_CUSTOMER})
     @Test
     void test_createOrderInTheCustomerService_withNonexistentDishIdAndValidToken_ShouldReturnStatusNotFound()  throws Exception {
+        User userCustomer = new User();
+        userCustomer.setIdUser(2L);
+        when(this.jwtProvider.getAuthentication("+ token")).thenReturn(new UsernamePasswordAuthenticationToken(USERNAME_CUSTOMER, null));
+        when(this.userGateway.getUserByEmailInTheToken(USERNAME_CUSTOMER, TOKE_WITH_PREFIX_BEARER)).thenReturn(userCustomer);
         List<DishFromOrderRequestDto> listDishAndAmountRequest = new ArrayList<>();
-        listDishAndAmountRequest.add(new DishFromOrderRequestDto(10L, listDishEntities.get(0).getName(), 4));
+        listDishAndAmountRequest.add(new DishFromOrderRequestDto(20L, listDishEntities.get(0).getName(), 4));
         listDishAndAmountRequest.add(new DishFromOrderRequestDto(listDishEntities.get(1).getIdDish(), listDishEntities.get(1).getName(), 2));
         CreateOrderRequestDto createOrderRequest = new CreateOrderRequestDto(1L, listDishAndAmountRequest);
         this.mockMvc.perform(post(REGISTER_ORDER_API_PATH)
                         .header(HttpHeaders.AUTHORIZATION, TOKE_WITH_PREFIX_BEARER)
                         .content(this.objectMapper.writeValueAsString(createOrderRequest))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.message").value(ExceptionResponse.DISH_NOT_EXISTS));
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value(ExceptionResponse.DISH_NOT_EXISTS.getMessage()));
     }
 }

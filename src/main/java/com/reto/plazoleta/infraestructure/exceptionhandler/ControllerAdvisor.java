@@ -1,8 +1,6 @@
 package com.reto.plazoleta.infraestructure.exceptionhandler;
 
-import com.reto.plazoleta.domain.exception.DishNotExistsException;
-import com.reto.plazoleta.domain.exception.EmptyFieldsException;
-import com.reto.plazoleta.domain.exception.InvalidDataException;
+import com.reto.plazoleta.domain.exception.*;
 import com.reto.plazoleta.infraestructure.configuration.security.exception.AuthenticationFailedException;
 import com.reto.plazoleta.infraestructure.configuration.security.exception.UserDoesNotExistException;
 import com.reto.plazoleta.infraestructure.exception.NoDataFoundException;
@@ -47,6 +45,13 @@ public class ControllerAdvisor {
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.DISH_NOT_EXISTS.getMessage()));
     }
 
+    @ExceptionHandler(ObjectNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleObjectNotFoundException(
+            ObjectNotFoundException objectNotFoundException) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.OBJECT_NOT_FOUND.getMessage()));
+    }
+
     @ExceptionHandler(AuthenticationFailedException.class)
     public ResponseEntity<Map<String, String>> handleAuthenticationFailedException(
             AuthenticationFailedException ignoredAuthenticationFailedException) {
@@ -74,4 +79,10 @@ public class ControllerAdvisor {
                 .body(Collections.singletonMap(MESSAGE, authenticationException.getMessage()));
     }
 
+    @ExceptionHandler(CustomerHasAOrderInProcessException.class)
+    public ResponseEntity<Map<String, String>> handleCustomerCanNotOrderException(
+            CustomerHasAOrderInProcessException ignoredCustomerCanNotOrderException) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ORDER_IN_PROCESS.getMessage()));
+    }
 }
