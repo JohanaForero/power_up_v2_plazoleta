@@ -76,4 +76,5 @@ public class OwnerRestaurantController {
                                                                                     @RequestHeader(HttpHeaders.AUTHORIZATION) String tokenWithBearerPrefix) {
         return new ResponseEntity<>(this.ownerRestaurantService.saveUserEmployeeInTheRestaurant(requestEmployeeAccountDto, tokenWithBearerPrefix), HttpStatus.CREATED);
     }
+
 }

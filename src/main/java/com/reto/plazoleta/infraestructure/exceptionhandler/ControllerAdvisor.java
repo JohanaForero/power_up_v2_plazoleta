@@ -85,4 +85,18 @@ public class ControllerAdvisor {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ORDER_IN_PROCESS.getMessage()));
     }
+
+    @ExceptionHandler(OrderNotExistsException.class)
+    public ResponseEntity<Map<String, String>> handleOrderNotExistsException(
+            OrderNotExistsException ignoredOrderNotExistsException) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ORDER_NOT_FOUND.getMessage()));
+    }
+
+    @ExceptionHandler(OrderInProcessException.class)
+    public ResponseEntity<Map<String, String>> handleOrderInProcessException(
+            OrderInProcessException orderInProcessException) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Collections.singletonMap(MESSAGE, orderInProcessException.getMessage()));
+    }
 }

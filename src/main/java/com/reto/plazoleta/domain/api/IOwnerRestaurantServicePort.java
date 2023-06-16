@@ -10,6 +10,4 @@ public interface IOwnerRestaurantServicePort {
     DishModel updateDish(DishModel dishModel);
 
     DishModel updateStateDish(DishModel dishModel);
-
-    EmployeeRestaurantModel saveEmployeeRestaurant(EmployeeRestaurantModel employeeRestaurantModel, String tokenWithBearerPrefix);
 }

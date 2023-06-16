@@ -31,4 +31,14 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
         return orderRepository.findByIdUserCustomerAndRestaurantEntityIdRestaurant(idUser, idRestaurant).stream()
                 .map(orderEntityMapper::toOrderModel).collect(Collectors.toList());
     }
+
+    @Override
+    public Page<OrderModel> findAllByRestaurantEntityIdRestaurantAndStatusOrder(Pageable pageable, Long idRestaurant, StatusOrder status) {
+        return this.orderRepository.findAllByRestaurantEntityIdRestaurantAndStatus(pageable, idRestaurant, status).map(orderEntityMapper::toOrderModel);
+    }
+
+    @Override
+    public OrderModel findByIdOrder(Long idOrder) {
+        return this.orderEntityMapper.toOrderModel(this.orderRepository.findById(idOrder).orElse(null));
+    }
 }

@@ -1,12 +1,12 @@
 package com.reto.plazoleta.infraestructure.configuration;
 
 import com.reto.plazoleta.domain.api.ICustomerServicePort;
+import com.reto.plazoleta.domain.api.IEmployeeRestaurantServicePort;
+import com.reto.plazoleta.domain.api.IOwnerRestaurantServicePort;
 import com.reto.plazoleta.domain.gateways.IUserGateway;
-import com.reto.plazoleta.domain.spi.IDishPersistencePort;
-import com.reto.plazoleta.domain.spi.IOrderDishPersistencePort;
-import com.reto.plazoleta.domain.spi.IOrderPersistencePort;
-import com.reto.plazoleta.domain.spi.IRestaurantPersistencePort;
+import com.reto.plazoleta.domain.spi.*;
 import com.reto.plazoleta.domain.usecase.CustomerUseCase;
+import com.reto.plazoleta.domain.usecase.OwnerRestaurantUseCase;
 import com.reto.plazoleta.infraestructure.configuration.security.jwt.JwtProvider;
 import com.reto.plazoleta.infraestructure.drivenadapter.mapper.IOrderEntityMapper;
 import com.reto.plazoleta.infraestructure.drivenadapter.persistence.OrderDishJpaAdapter;
@@ -28,6 +28,7 @@ public class OrderBeanConfiguration {
     private final IDishPersistencePort dishPersistencePort;
     private final JwtProvider jwtProvider;
     private final IOrderDishRepository orderDishRepository;
+
 
     @Bean
     public IOrderPersistencePort orderPersistencePort() {

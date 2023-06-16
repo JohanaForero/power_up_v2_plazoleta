@@ -9,7 +9,10 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResponseToCreateRestaurantDto {
+public class ResponseOrdersDishesDto {
 
-    private Long idRestaurant;
+    private Long idDish;
+    private String name;
+    private String imageDish;
+    private String descriptionDish;
 }

@@ -51,11 +51,11 @@ public class CustomerController {
     @PreAuthorize(value = "hasRole('CLIENTE')")
     @PostMapping(value = "order")
     public ResponseEntity<CreateOrderResponseDto> registerOrder(@Parameter(
-            description = "Object to make an order",
+            description = "object to create an order",
             required = true,
             schema = @Schema(implementation = CreateOrderRequestDto.class))
                                                                 @RequestBody CreateOrderRequestDto orderRequestDto, @Parameter(
-            description = "The authentication token with Bearer prefix for search the idUserCustomer",
+            description = "The authentication token with Bearer prefix for search the id del Customer",
             required = true, schema = @Schema(type = "String", format = "jwt"))
                                                                 @RequestHeader(HttpHeaders.AUTHORIZATION) String tokenWithBearerPrefix) {
         final CreateOrderResponseDto orderRegistered = this.customerService.saveOrder(orderRequestDto, tokenWithBearerPrefix);

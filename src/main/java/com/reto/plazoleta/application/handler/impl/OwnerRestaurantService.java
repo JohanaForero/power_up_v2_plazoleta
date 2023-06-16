@@ -13,6 +13,7 @@ import com.reto.plazoleta.application.dto.response.UpdateStateDishResponseDto;
 import com.reto.plazoleta.application.handler.IOwnerRestaurantService;
 import com.reto.plazoleta.application.mapper.requestmapper.IDishRequestMapper;
 import com.reto.plazoleta.application.mapper.responsemapper.IDishResponseMapper;
+import com.reto.plazoleta.domain.api.IEmployeeRestaurantServicePort;
 import com.reto.plazoleta.domain.api.IOwnerRestaurantServicePort;
 import com.reto.plazoleta.domain.model.EmployeeRestaurantModel;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class OwnerRestaurantService implements IOwnerRestaurantService {
     private final IOwnerRestaurantServicePort ownerRestaurantServicePort;
     private final IDishRequestMapper dishRequestMapper;
     private final IDishResponseMapper dishResponseMapper;
+    private final IEmployeeRestaurantServicePort employeeRestaurantServicePort;
     private final IEmployeeRestaurantRequestMapper employeeRestaurantRequestMapper;
     private final IEmployeeResponseMapper employeeResponseMapper;
 
@@ -54,7 +56,7 @@ public class OwnerRestaurantService implements IOwnerRestaurantService {
     @Override
     public ResponseEmployeeAccountDto saveUserEmployeeInTheRestaurant(RequestEmployeeAccountDto requestEmployeeAccountDto, String tokenWithBearerPrefix) {
         final EmployeeRestaurantModel employeeRestaurantRequestModel = this.employeeRestaurantRequestMapper.toEmployeeRestaurantModel(requestEmployeeAccountDto);
-        final EmployeeRestaurantModel employeeRestaurantSavedModel = this.ownerRestaurantServicePort.saveEmployeeRestaurant(
+        final EmployeeRestaurantModel employeeRestaurantSavedModel = this.employeeRestaurantServicePort.saveEmployeeRestaurant(
                 employeeRestaurantRequestModel, tokenWithBearerPrefix);
         return this.employeeResponseMapper.toRestaurantEmployeeResponseDto(employeeRestaurantSavedModel);
     }

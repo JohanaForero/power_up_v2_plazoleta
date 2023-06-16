@@ -21,19 +21,12 @@ public class OwnerRestaurantUseCase implements IOwnerRestaurantServicePort {
     private final IDishPersistencePort dishPersistencePort;
     private final IRestaurantPersistencePort restaurantPersistencePort;
     private final ICategoryPersistencePort categoryPersistencePort;
-    private final IEmployeeRestaurantPersistencePort employeeRestaurantPersistencePort;
-
-    private final IUserGateway userGateway;
-    private final JwtProvider jwtProvider;
 
     public OwnerRestaurantUseCase(IDishPersistencePort dishPersistencePort, IRestaurantPersistencePort restaurantPersistencePort,
-                                  ICategoryPersistencePort categoryPersistencePort, IEmployeeRestaurantPersistencePort employeeRestaurantPersistencePort, IUserGateway userGateway, JwtProvider jwtProvider) {
+                                  ICategoryPersistencePort categoryPersistencePort) {
         this.dishPersistencePort = dishPersistencePort;
-        this.employeeRestaurantPersistencePort = employeeRestaurantPersistencePort;
         this.restaurantPersistencePort = restaurantPersistencePort;
         this.categoryPersistencePort = categoryPersistencePort;
-        this.userGateway = userGateway;
-        this.jwtProvider = jwtProvider;
     }
 
     @Override
@@ -92,17 +85,5 @@ public class OwnerRestaurantUseCase implements IOwnerRestaurantServicePort {
         updateStateDishModel.setStateDish(dishModel.getStateDish());
 
         return dishPersistencePort.updateDish(updateStateDishModel);
-    }
-
-    @Override
-    public EmployeeRestaurantModel saveEmployeeRestaurant(EmployeeRestaurantModel employeeRestaurantModel, String tokenWithBearerPrefix) {
-        String emailFromUserOwnerOfARestaurant = jwtProvider.getAuthentication(tokenWithBearerPrefix.replace("Bearer ", "").trim()).getPrincipal().toString();
-        User userOwnerFound = userGateway.getUserByEmailInTheToken(emailFromUserOwnerOfARestaurant, tokenWithBearerPrefix);
-        final RestaurantModel restaurantFoundModelByIdRestaurant = this.restaurantPersistencePort.findByIdRestaurant(employeeRestaurantModel.getIdRestaurant());
-        if (restaurantFoundModelByIdRestaurant == null || !restaurantFoundModelByIdRestaurant.getIdOwner().equals(userOwnerFound.getIdUser())) {
-            throw new ObjectNotFoundException("Restaurant not Exist");
-        }
-        employeeRestaurantModel.setIdRestaurant(restaurantFoundModelByIdRestaurant.getIdRestaurant());
-        return this.employeeRestaurantPersistencePort.saveEmployeeRestaurant(employeeRestaurantModel);
     }
 }
