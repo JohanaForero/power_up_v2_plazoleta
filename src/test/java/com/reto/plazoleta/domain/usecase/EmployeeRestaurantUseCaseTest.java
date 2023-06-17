@@ -61,7 +61,7 @@ class EmployeeRestaurantUseCaseTest {
     private static final String STATUS_FROM_ORDER = "PENDIENTE";
 
     @Test
-    void test_saveEmployeeRestaurant_withValidFieldIdUserEmployeeInTheObjectAsEmployeeRestaurantModelAndLongAsIdOwnerHasARestaurant_shouldReturnAEmployeeRestaurantSavedModel() {
+    void test_saveEmployeeRestaurant_withValidField_shouldReturnAEmployeeRestaurantSavedModel() {
         //Given
         final RestaurantModel restaurantFoundExpected = new RestaurantModel(1L, "Puro sabor mexicano", "Libertadores Av, 18 st - 60",
                 "+573112421021", "http://puro.sabot.com/mexicano.jpeg", 1234324454L, 1L );
@@ -87,7 +87,7 @@ class EmployeeRestaurantUseCaseTest {
     }
 
     @Test
-    void test_saveEmployeeRestaurant_withIdOwnerFieldDoesNotOwnTheRestaurantSearchedForTheParameterOfTheIdRestaurantFieldInTheRequest_shouldThrowObjectNotFoundException() {
+    void test_saveEmployeeRestaurant_withInvalidIdOwner_shouldThrowObjectNotFoundException() {
         //Given
         Long idOwnerFromRestaurantExpected = 1L;
         Long idOwnerFoundByEmail = 2L;

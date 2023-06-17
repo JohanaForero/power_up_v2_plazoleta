@@ -40,7 +40,7 @@ public class CustomerController {
         return ResponseEntity.ok(customerService.getAllRestaurantsByOrderByNameAsc(numberPage, sizeItemsByPages));
     }
 
-    @Operation(summary = "Make an order")
+    @Operation(summary = "order")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Registered order"),
             @ApiResponse(responseCode = "403", description = "Role other than customer"),
