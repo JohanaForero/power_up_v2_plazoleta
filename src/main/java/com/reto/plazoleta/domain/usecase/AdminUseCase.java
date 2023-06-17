@@ -7,17 +7,17 @@ import com.reto.plazoleta.domain.gateways.IUserGateway;
 import com.reto.plazoleta.domain.model.RestaurantModel;
 import com.reto.plazoleta.domain.spi.IRestaurantPersistencePort;
 import com.reto.plazoleta.infraestructure.drivenadapter.gateways.User;
-import com.reto.plazoleta.infraestructure.exception.NoDataFoundException;
+import com.reto.plazoleta.infraestructure.exception.DataMissingException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.AccessDeniedException;
 
-public class RestaurantUseCase implements IRestaurantServicePort {
+public class AdminUseCase implements IRestaurantServicePort {
 
     private final IRestaurantPersistencePort restaurantPersistencePort;
     private final IUserGateway userGateway;
 
-    public RestaurantUseCase(IRestaurantPersistencePort restaurantPersistencePort, IUserGateway userGateway) {
+    public AdminUseCase(IRestaurantPersistencePort restaurantPersistencePort, IUserGateway userGateway) {
         this.restaurantPersistencePort = restaurantPersistencePort;
         this.userGateway = userGateway;
     }
@@ -68,7 +68,7 @@ public class RestaurantUseCase implements IRestaurantServicePort {
     public Page<RestaurantModel> findAllByOrderByNameAsc(int numberPage, int sizeItems) {
         Page<RestaurantModel> resultRestaurantsPageable = restaurantPersistencePort.findAllByOrderByNameAsc(
                 PageRequest.of(numberPage, sizeItems));
-        if (resultRestaurantsPageable.isEmpty()) throw new NoDataFoundException();
+        if (resultRestaurantsPageable.isEmpty()) throw new DataMissingException();
         return resultRestaurantsPageable;
     }
 }

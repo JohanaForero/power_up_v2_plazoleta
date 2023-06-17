@@ -11,7 +11,9 @@ public enum ExceptionResponse {
 
     DISH_NOT_EXISTS("he dish not exist"),
 
-    OBJECT_NOT_FOUND("The restaurant not exist");
+    OBJECT_NOT_FOUND("The restaurant not exist"),
+    ORDER_IN_PROCESS("The user has an order in process"),
+    ORDER_NOT_FOUND("Order not exist");
 
     private final String message;
 

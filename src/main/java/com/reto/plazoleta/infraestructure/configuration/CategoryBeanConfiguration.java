@@ -1,6 +1,5 @@
 package com.reto.plazoleta.infraestructure.configuration;
 
-
 import com.reto.plazoleta.domain.spi.ICategoryPersistencePort;
 import com.reto.plazoleta.infraestructure.drivenadapter.mapper.ICategoryEntityMapper;
 import com.reto.plazoleta.infraestructure.drivenadapter.persistence.CategoryJpaAdapter;

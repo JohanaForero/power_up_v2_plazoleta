@@ -1,7 +1,6 @@
 package com.reto.plazoleta.domain.api;
 
 import com.reto.plazoleta.domain.model.DishModel;
-import com.reto.plazoleta.domain.model.EmployeeRestaurantModel;
 
 public interface IOwnerRestaurantServicePort {
 
@@ -10,6 +9,4 @@ public interface IOwnerRestaurantServicePort {
     DishModel updateDish(DishModel dishModel);
 
     DishModel updateStateDish(DishModel dishModel);
-
-    EmployeeRestaurantModel saveEmployeeRestaurant(EmployeeRestaurantModel employeeRestaurantModel, String tokenWithBearerPrefix);
 }
