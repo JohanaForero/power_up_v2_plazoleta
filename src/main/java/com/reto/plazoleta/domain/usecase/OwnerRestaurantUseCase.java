@@ -4,17 +4,12 @@ import com.reto.plazoleta.domain.api.IOwnerRestaurantServicePort;
 import com.reto.plazoleta.domain.exception.DishNotExistsException;
 import com.reto.plazoleta.domain.exception.InvalidDataException;
 import com.reto.plazoleta.domain.exception.ObjectNotFoundException;
-import com.reto.plazoleta.domain.gateways.IUserGateway;
 import com.reto.plazoleta.domain.model.CategoryModel;
 import com.reto.plazoleta.domain.model.DishModel;
-import com.reto.plazoleta.domain.model.EmployeeRestaurantModel;
 import com.reto.plazoleta.domain.model.RestaurantModel;
 import com.reto.plazoleta.domain.spi.ICategoryPersistencePort;
 import com.reto.plazoleta.domain.spi.IDishPersistencePort;
-import com.reto.plazoleta.domain.spi.IEmployeeRestaurantPersistencePort;
 import com.reto.plazoleta.domain.spi.IRestaurantPersistencePort;
-import com.reto.plazoleta.infraestructure.configuration.security.jwt.JwtProvider;
-import com.reto.plazoleta.infraestructure.drivenadapter.gateways.User;
 
 public class OwnerRestaurantUseCase implements IOwnerRestaurantServicePort {
 
