@@ -3,7 +3,7 @@ package com.reto.plazoleta.infraestructure.exceptionhandler;
 import com.reto.plazoleta.domain.exception.*;
 import com.reto.plazoleta.infraestructure.configuration.security.exception.AuthenticationFailedException;
 import com.reto.plazoleta.infraestructure.configuration.security.exception.UserDoesNotExistException;
-import com.reto.plazoleta.infraestructure.exception.NoDataFoundException;
+import com.reto.plazoleta.infraestructure.exception.DataMissingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -19,7 +19,7 @@ public class ControllerAdvisor {
 
     private static final String MESSAGE = "message";
 
-    @ExceptionHandler(NoDataFoundException.class)
+    @ExceptionHandler(DataMissingException.class)
     public ResponseEntity<Void> handleNoDataFoundException() {
         return ResponseEntity.noContent().build();
     }

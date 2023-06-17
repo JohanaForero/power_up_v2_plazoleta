@@ -55,15 +55,9 @@ public class CustomerUseCase implements ICustomerServicePort {
         orderModelRequest.setDate(LocalDate.now());
         orderModelRequest.setStatus(StatusOrder.PENDIENTE);
         orderModelRequest.setOrdersDishesModel(new ArrayList<>());
-        //primera transaccion me guarda el pedido
         OrderModel orderModelSaved = this.orderPersistencePort.saveOrder(orderModelRequest);
-        //problematica: si despues de aqui se produce un error el pedido quedo guardado
-        //pero no la lista de pedidos_platos
-        //Agrego el pedido guardado
         orderModelSaved.setOrdersDishesModel(ordersDishesModelsRequest);
         List<OrderDishModel> addOrderAndAmountOfDish = createOrdersDishesComplete(orderModelSaved);
-
-        //Guardo la lista de detalles del pedido osea pedidos_platos
         List<OrderDishModel> orderDishModelsSaved = this.orderDishPersistencePort.saveAllOrdersDishes(addOrderAndAmountOfDish);
         orderModelSaved.setOrdersDishesModel(orderDishModelsSaved);
         return orderModelSaved;

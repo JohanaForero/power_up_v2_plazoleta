@@ -13,7 +13,7 @@ import com.reto.plazoleta.domain.spi.IRestaurantPersistencePort;
 import com.reto.plazoleta.infraestructure.configuration.security.jwt.JwtProvider;
 import com.reto.plazoleta.infraestructure.drivenadapter.entity.StatusOrder;
 import com.reto.plazoleta.infraestructure.drivenadapter.gateways.User;
-import com.reto.plazoleta.domain.exception.NoDataFoundException;
+import com.reto.plazoleta.infraestructure.exception.DataMissingException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -156,7 +156,7 @@ class EmployeeRestaurantUseCaseTest {
                 "http://image-logo.com", 10297345345L, 2L));
         when(this.orderPersistencePort.findAllByRestaurantEntityIdRestaurantAndStatusOrder(PageRequest.of(0, 1), restaurantFromEmployeeFound.getIdRestaurant(), status)).thenReturn(Page.empty());
         //When & Then
-        assertThrows(NoDataFoundException.class,
+        assertThrows(DataMissingException.class,
                 () -> this.employeeRestaurantUseCase.getAllOrdersFilterByStatusAndSizeItemsByPage(1, 0, STATUS_FROM_ORDER, TOKEN_WITH_PREFIX_BEARER)
         );
         verify(this.jwtProvider, times(1)).getAuthentication(TOKEN_WITH_PREFIX_BEARER);

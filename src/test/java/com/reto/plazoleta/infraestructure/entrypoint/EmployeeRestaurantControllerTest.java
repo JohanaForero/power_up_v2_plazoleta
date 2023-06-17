@@ -33,7 +33,13 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@SpringBootTest
+@ActiveProfiles("test")
+@AutoConfigureMockMvc
+@DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class EmployeeRestaurantControllerTest {
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -93,7 +99,7 @@ class EmployeeRestaurantControllerTest {
 
     @WithMockUser(username = EMAIL_EMPLOYEE, password = PASSWORD_EMPLOYEE, roles = {ROL_EMPLOYEE})
     @Test
-    void test_getAllOrdersFilterByStatus_withTheFieldsSizeItemsAndStatusValidAndTokenValid_shouldReturnAStatusOKAndListFromOrdersPaginatedByStatus() throws Exception {
+    void test_getAllOrdersFilterByStatus_withFieldsSizeByStatusAndValidToken_shouldReturnAStatusOKAndListFromOrdersPaginatedByStatus() throws Exception {
         User userEmployeeFound = new User(1L, "name", "lastName", 10937745L, "3094369283", EMAIL_EMPLOYEE, PASSWORD_EMPLOYEE, ROL_EMPLOYEE);
 
         when(this.jwtProvider.getAuthentication("+ token")).thenReturn(new UsernamePasswordAuthenticationToken(EMAIL_EMPLOYEE, null));

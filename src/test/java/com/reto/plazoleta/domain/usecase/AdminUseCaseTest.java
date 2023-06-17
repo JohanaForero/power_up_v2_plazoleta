@@ -6,7 +6,7 @@ import com.reto.plazoleta.domain.gateways.IUserGateway;
 import com.reto.plazoleta.domain.model.RestaurantModel;
 import com.reto.plazoleta.domain.spi.IRestaurantPersistencePort;
 import com.reto.plazoleta.infraestructure.drivenadapter.gateways.User;
-import com.reto.plazoleta.infraestructure.exception.NoDataFoundException;
+import com.reto.plazoleta.infraestructure.exception.DataMissingException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -168,7 +168,7 @@ class AdminUseCaseTest {
         when(restaurantPersistencePort.findAllByOrderByNameAsc(PageRequest.of(numberPage, sizeItems))).thenReturn(emptyRestaurantPage);
         // When & Then
         Assertions.assertThrows(
-                NoDataFoundException.class,
+                DataMissingException.class,
                 () -> adminUseCase.findAllByOrderByNameAsc(numberPage, sizeItems)
         );
     }

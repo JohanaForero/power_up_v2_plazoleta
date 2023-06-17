@@ -14,7 +14,7 @@ import com.reto.plazoleta.domain.spi.IRestaurantPersistencePort;
 import com.reto.plazoleta.infraestructure.configuration.security.jwt.JwtProvider;
 import com.reto.plazoleta.infraestructure.drivenadapter.entity.StatusOrder;
 import com.reto.plazoleta.infraestructure.drivenadapter.gateways.User;
-import com.reto.plazoleta.infraestructure.exception.NoDataFoundException;
+import com.reto.plazoleta.infraestructure.exception.DataMissingException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -57,7 +57,7 @@ public class EmployeeRestaurantUseCase implements IEmployeeRestaurantServicePort
         Page<OrderModel> ordersPaginatedByFieldStatus = this.orderPersistencePort
                 .findAllByRestaurantEntityIdRestaurantAndStatusOrder(PageRequest.of(pageNumber, sizeItems), employeeFromRestaurantFound.getIdRestaurant(), statusOrder);
         if (ordersPaginatedByFieldStatus.isEmpty())
-            throw new NoDataFoundException();
+            throw new DataMissingException();
         return ordersPaginatedByFieldStatus;
     }
 
