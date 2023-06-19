@@ -1,9 +1,7 @@
 package com.reto.plazoleta.domain.usecase;
 
 import com.reto.plazoleta.domain.api.ICustomerServicePort;
-import com.reto.plazoleta.domain.exception.CustomerHasAOrderInProcessException;
-import com.reto.plazoleta.domain.exception.DishNotExistsException;
-import com.reto.plazoleta.domain.exception.ObjectNotFoundException;
+import com.reto.plazoleta.domain.exception.*;
 import com.reto.plazoleta.domain.gateways.IUserGateway;
 import com.reto.plazoleta.domain.model.DishModel;
 import com.reto.plazoleta.domain.model.OrderDishModel;
@@ -61,6 +59,26 @@ public class CustomerUseCase implements ICustomerServicePort {
         List<OrderDishModel> orderDishModelsSaved = this.orderDishPersistencePort.saveAllOrdersDishes(addOrderAndAmountOfDish);
         orderModelSaved.setOrdersDishesModel(orderDishModelsSaved);
         return orderModelSaved;
+    }
+
+    private void validateStatusFromOrderAndIfBelongTheUserAuthenticated(OrderModel orderModelToValidate, Long idUserAuthenticated) {
+        if (orderModelToValidate == null) {
+            throw new OrderNotExistsException("The order not exist");
+        } else if (!orderModelToValidate.getIdUserCustomer().equals(idUserAuthenticated)) {
+            throw new OrderNotExistsException("The order does not belong to the user");
+        } else if (!orderModelToValidate.getStatus().equals(StatusOrder.PENDIENTE)) {
+            throw new OrderInProcessException("Lo sentimos, tu pedido ya está en preparación y no puede cancelarse");
+        }
+    }
+
+    @Override
+    public OrderModel orderCanceled(Long idOrder, String tokenWithPrefixBearer) {
+        String emailFromUserAuthenticated = getEmailFromUserAuthenticatedByTokenWithPrefixBearer(tokenWithPrefixBearer);
+        final User userCustomerAuthenticated = getUserByEmail(emailFromUserAuthenticated, tokenWithPrefixBearer);
+        OrderModel orderModelToChangeStatusToCanceled = this.orderPersistencePort.findByIdOrder(idOrder);
+        validateStatusFromOrderAndIfBelongTheUserAuthenticated(orderModelToChangeStatusToCanceled, userCustomerAuthenticated.getIdUser());
+        orderModelToChangeStatusToCanceled.setStatus(StatusOrder.CANCELADO);
+        return this.orderPersistencePort.saveOrder(orderModelToChangeStatusToCanceled);
     }
 
     private String getEmailFromUserAuthenticatedByTokenWithPrefixBearer(String tokenWithPrefixBearer) {

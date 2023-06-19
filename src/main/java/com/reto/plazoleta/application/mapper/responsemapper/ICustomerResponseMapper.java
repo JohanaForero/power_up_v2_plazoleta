@@ -1,5 +1,6 @@
 package com.reto.plazoleta.application.mapper.responsemapper;
 
+import com.reto.plazoleta.application.dto.response.CanceledOrderResponseDto;
 import com.reto.plazoleta.application.dto.response.CreateOrderResponseDto;
 import com.reto.plazoleta.application.dto.response.ResponseOrdersDishesDto;
 import com.reto.plazoleta.application.dto.response.ResponseOrdersPaginatedDto;
@@ -25,4 +26,7 @@ public interface ICustomerResponseMapper {
     @Mapping(target = "imageDish", source = "dishModel.imageDish")
     @Mapping(target = "descriptionDish", source = "dishModel.descriptionDish")
     ResponseOrdersDishesDto orderModelToOrdersPaginatedResponseDto(OrderDishModel orderDishModel);
+
+    @Mapping(target = "idCustomer", source = "idUserCustomer")
+    CanceledOrderResponseDto orderModelToOrderCanceledResponseDto(OrderModel orderModel);
 }
