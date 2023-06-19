@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reto.plazoleta.application.dto.request.CreateOrderRequestDto;
 import com.reto.plazoleta.application.dto.request.DishFromOrderRequestDto;
 import com.reto.plazoleta.domain.gateways.IUserGateway;
+import org.springframework.http.HttpHeaders;
 import com.reto.plazoleta.infraestructure.configuration.security.jwt.JwtProvider;
 import com.reto.plazoleta.infraestructure.drivenadapter.entity.*;
 import com.reto.plazoleta.infraestructure.drivenadapter.gateways.User;
@@ -12,6 +13,7 @@ import com.reto.plazoleta.infraestructure.exceptionhandler.ExceptionResponse;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,10 +35,10 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
@@ -87,9 +89,10 @@ class CustomerControllerTest {
     private static final String RESTAURANT_API_PATH = "/micro-small-square/restaurants";
     private static final String PAGE_SIZE_PARAM = "sizeItemsByPages";
     private static final String REGISTER_ORDER_API_PATH = "/micro-small-square/order";
-    private static final String TOKE_WITH_PREFIX_BEARER = "Bearer + token";
+    private static final String TOKEN_WITH_PREFIX_BEARER = "Bearer + token";
     private static final String NAME_OF_THE_ENTITY_ORDER = "pedidos";
     private static final String NAME_OF_THE_COLUM_PRIMARY_KEY_OF_ORDER_ENTITY = "id_pedido";
+    private static final String CANCEL_ORDER_API_PATH = "/micro-small-square/order/cancel/";
 
     @BeforeAll
     void initializeTestEnvironment() {
@@ -196,9 +199,9 @@ class CustomerControllerTest {
         User userAuthenticatedByToken = new User();
         userAuthenticatedByToken.setIdUser(1L);
         when(this.jwtProvider.getAuthentication("+ token")).thenReturn(new UsernamePasswordAuthenticationToken(USERNAME_CUSTOMER, null, null));
-        when(this.userGateway.getUserByEmailInTheToken(USERNAME_CUSTOMER, TOKE_WITH_PREFIX_BEARER)).thenReturn(userAuthenticatedByToken);
+        when(this.userGateway.getUserByEmailInTheToken(USERNAME_CUSTOMER, TOKEN_WITH_PREFIX_BEARER)).thenReturn(userAuthenticatedByToken);
         this.mockMvc.perform(post(REGISTER_ORDER_API_PATH)
-                        .header(HttpHeaders.AUTHORIZATION, TOKE_WITH_PREFIX_BEARER)
+                        .header(HttpHeaders.AUTHORIZATION, TOKEN_WITH_PREFIX_BEARER)
                         .content(this.objectMapper.writeValueAsString(createOrderRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -216,9 +219,9 @@ class CustomerControllerTest {
         User userAuthenticatedByToken = new User();
         userAuthenticatedByToken.setIdUser(1L);
         when(this.jwtProvider.getAuthentication("+ token")).thenReturn(new UsernamePasswordAuthenticationToken(USERNAME_CUSTOMER, null, null));
-        when(this.userGateway.getUserByEmailInTheToken(USERNAME_CUSTOMER, TOKE_WITH_PREFIX_BEARER)).thenReturn(userAuthenticatedByToken);
+        when(this.userGateway.getUserByEmailInTheToken(USERNAME_CUSTOMER, TOKEN_WITH_PREFIX_BEARER)).thenReturn(userAuthenticatedByToken);
         this.mockMvc.perform(post(REGISTER_ORDER_API_PATH)
-                        .header(HttpHeaders.AUTHORIZATION, TOKE_WITH_PREFIX_BEARER)
+                        .header(HttpHeaders.AUTHORIZATION, TOKEN_WITH_PREFIX_BEARER)
                         .content(this.objectMapper.writeValueAsString(createOrderRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
@@ -235,9 +238,9 @@ class CustomerControllerTest {
         User userAuthenticatedByToken = new User();
         userAuthenticatedByToken.setIdUser(1L);
         when(this.jwtProvider.getAuthentication("+ token")).thenReturn(new UsernamePasswordAuthenticationToken(USERNAME_CUSTOMER, null, null));
-        when(this.userGateway.getUserByEmailInTheToken(USERNAME_CUSTOMER, TOKE_WITH_PREFIX_BEARER)).thenReturn(userAuthenticatedByToken);
+        when(this.userGateway.getUserByEmailInTheToken(USERNAME_CUSTOMER, TOKEN_WITH_PREFIX_BEARER)).thenReturn(userAuthenticatedByToken);
         this.mockMvc.perform(post(REGISTER_ORDER_API_PATH)
-                        .header(HttpHeaders.AUTHORIZATION, TOKE_WITH_PREFIX_BEARER)
+                        .header(HttpHeaders.AUTHORIZATION, TOKEN_WITH_PREFIX_BEARER)
                         .content(this.objectMapper.writeValueAsString(createOrderRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
@@ -246,20 +249,69 @@ class CustomerControllerTest {
 
     @WithMockUser(username = USERNAME_CUSTOMER, password = PASSWORD, roles = {ROLE_CUSTOMER})
     @Test
-    void test_createOrderInTheCustomerService_withNonexistentDishIdAndValidToken_ShouldReturnStatusNotFound()  throws Exception {
+    void test_createOrderInTheCustomerService_withNonexistentDishIdAndValidToken_ShouldReturnStatusNotFound() throws Exception {
         User userCustomer = new User();
         userCustomer.setIdUser(2L);
         when(this.jwtProvider.getAuthentication("+ token")).thenReturn(new UsernamePasswordAuthenticationToken(USERNAME_CUSTOMER, null));
-        when(this.userGateway.getUserByEmailInTheToken(USERNAME_CUSTOMER, TOKE_WITH_PREFIX_BEARER)).thenReturn(userCustomer);
+        when(this.userGateway.getUserByEmailInTheToken(USERNAME_CUSTOMER, TOKEN_WITH_PREFIX_BEARER)).thenReturn(userCustomer);
         List<DishFromOrderRequestDto> listDishAndAmountRequest = new ArrayList<>();
         listDishAndAmountRequest.add(new DishFromOrderRequestDto(20L, listDishEntities.get(0).getName(), 4));
         listDishAndAmountRequest.add(new DishFromOrderRequestDto(listDishEntities.get(1).getIdDish(), listDishEntities.get(1).getName(), 2));
         CreateOrderRequestDto createOrderRequest = new CreateOrderRequestDto(1L, listDishAndAmountRequest);
         this.mockMvc.perform(post(REGISTER_ORDER_API_PATH)
-                        .header(HttpHeaders.AUTHORIZATION, TOKE_WITH_PREFIX_BEARER)
+                        .header(HttpHeaders.AUTHORIZATION, TOKEN_WITH_PREFIX_BEARER)
                         .content(this.objectMapper.writeValueAsString(createOrderRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value(ExceptionResponse.DISH_NOT_EXISTS.getMessage()));
+    }
+
+    @Transactional
+    @WithMockUser(username = USERNAME_CUSTOMER, password = PASSWORD, roles = {ROLE_CUSTOMER})
+    @Test
+    void test_CanceledOrder_withValidIdOrderAndCorrectToken_ShouldReturnOkStatusAndOrderIdInResponse() throws Exception {
+        User userAuthenticatedByToken = new User();
+        userAuthenticatedByToken.setIdUser(1L);
+        RestaurantEntity restaurantEntityFromOrder = new RestaurantEntity();
+        restaurantEntityFromOrder.setIdRestaurant(1L);
+        this.orderRepository.save(new OrderEntity(2L, userAuthenticatedByToken.getIdUser(), LocalDate.now(), StatusOrder.PENDIENTE, null, restaurantEntityFromOrder, null));
+        long idOrderValid = 2L;
+        when(this.jwtProvider.getAuthentication("+ token")).thenReturn(new UsernamePasswordAuthenticationToken(USERNAME_CUSTOMER, null, null));
+        when(this.userGateway.getUserByEmailInTheToken(USERNAME_CUSTOMER, TOKEN_WITH_PREFIX_BEARER)).thenReturn(userAuthenticatedByToken);
+
+        this.mockMvc.perform(patch(CANCEL_ORDER_API_PATH + idOrderValid)
+                        .header(HttpHeaders.AUTHORIZATION, TOKEN_WITH_PREFIX_BEARER))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.idOrder").value(idOrderValid));
+    }
+
+    @WithMockUser(username = USERNAME_CUSTOMER, password = PASSWORD, roles = {ROLE_CUSTOMER})
+    @Test
+    void test_CanceledOrder_withNonExistingIdOrderAndCorrectToken_shouldReturnNotFoundStatus() throws Exception {
+        User userAuthenticatedByToken = new User();
+        userAuthenticatedByToken.setIdUser(1L);
+        long idOrderInvalid = 2000000L;
+        when(this.jwtProvider.getAuthentication("+ token")).thenReturn(new UsernamePasswordAuthenticationToken(USERNAME_CUSTOMER, null, null));
+        when(this.userGateway.getUserByEmailInTheToken(USERNAME_CUSTOMER, TOKEN_WITH_PREFIX_BEARER)).thenReturn(userAuthenticatedByToken);
+
+        this.mockMvc.perform(patch(CANCEL_ORDER_API_PATH + idOrderInvalid)
+                        .header(HttpHeaders.AUTHORIZATION, TOKEN_WITH_PREFIX_BEARER))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value(ExceptionResponse.ORDER_NOT_FOUND.getMessage()));
+    }
+
+    @WithMockUser(username = USERNAME_CUSTOMER, password = PASSWORD, roles = {ROLE_CUSTOMER})
+    @Test
+    void test_CanceledOrder_withValidIdOrderButNonPendingStatusAndCorrectToken_shouldReturnConflictStatus() throws Exception {
+        User userAuthenticatedByToken = new User();
+        userAuthenticatedByToken.setIdUser(1L);
+        long idOrderInvalidItsStatusIsInPreparation = 1L;
+        when(this.jwtProvider.getAuthentication("+ token")).thenReturn(new UsernamePasswordAuthenticationToken(USERNAME_CUSTOMER, null, null));
+        when(this.userGateway.getUserByEmailInTheToken(USERNAME_CUSTOMER, TOKEN_WITH_PREFIX_BEARER)).thenReturn(userAuthenticatedByToken);
+
+        this.mockMvc.perform(patch(CANCEL_ORDER_API_PATH + idOrderInvalidItsStatusIsInPreparation)
+                        .header(HttpHeaders.AUTHORIZATION, TOKEN_WITH_PREFIX_BEARER))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("Lo sentimos, tu pedido ya está en preparación y no puede cancelarse"));
     }
 }
