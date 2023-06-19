@@ -63,7 +63,6 @@ public class OwnerRestaurantController {
         return new ResponseEntity<>(stateDishResponseDto,HttpStatus.OK);
     }
 
-
     @Operation(summary = "Add a new User employee in a restaurant")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "restaurant employee created"),
@@ -72,8 +71,9 @@ public class OwnerRestaurantController {
     })
     @PreAuthorize(value = "hasRole('PROPIETARIO')")
     @PostMapping(value = "/employee")
-    public ResponseEntity<ResponseEmployeeAccountDto> saveUserEmployeeInARestaurant(@RequestBody RequestEmployeeAccountDto requestEmployeeAccountDto,
-                                                                                    @RequestHeader(HttpHeaders.AUTHORIZATION) String tokenWithBearerPrefix) {
+    public ResponseEntity<ResponseEmployeeAccountDto> saveUserEmployeeInARestaurant(
+            @RequestBody RequestEmployeeAccountDto requestEmployeeAccountDto,
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String tokenWithBearerPrefix) {
         return new ResponseEntity<>(this.ownerRestaurantService.saveUserEmployeeInTheRestaurant(requestEmployeeAccountDto, tokenWithBearerPrefix), HttpStatus.CREATED);
     }
 }

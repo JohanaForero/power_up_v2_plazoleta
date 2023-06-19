@@ -5,12 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
 @Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RestaurantResponsePageableDto {
+public class CanceledOrderResponseDto {
 
-    private String name;
-    private String urlLogo;
+    private Long idOrder;
+    private Long idCustomer;
 }

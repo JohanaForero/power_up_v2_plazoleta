@@ -9,7 +9,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResponseToCreateRestaurantDto {
+public class RestaurantResponsePaginatedDto {
 
-    private Long idRestaurant;
+    private String name;
+    private String urlLogo;
 }

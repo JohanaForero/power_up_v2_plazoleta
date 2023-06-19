@@ -3,7 +3,7 @@ package com.reto.plazoleta.infraestructure.configuration;
 import com.reto.plazoleta.domain.api.IRestaurantServicePort;
 import com.reto.plazoleta.domain.gateways.IUserGateway;
 import com.reto.plazoleta.domain.spi.IRestaurantPersistencePort;
-import com.reto.plazoleta.domain.usecase.RestaurantUseCase;
+import com.reto.plazoleta.domain.usecase.AdminUseCase;
 import com.reto.plazoleta.infraestructure.drivenadapter.mapper.IRestaurantEntityMapper;
 import com.reto.plazoleta.infraestructure.drivenadapter.persistence.RestaurantJpaAdapter;
 import com.reto.plazoleta.infraestructure.drivenadapter.repository.IRestaurantRepository;
@@ -26,6 +26,6 @@ public class RestaurantBeanConfiguration {
 
     @Bean
     public IRestaurantServicePort restaurantUseCase() {
-        return new RestaurantUseCase(restaurantPersistencePort(), userGateway);
+        return new AdminUseCase(restaurantPersistencePort(), userGateway);
     }
 }

@@ -1,7 +1,8 @@
 package com.reto.plazoleta.infraestructure.drivenadapter.gateways;
 
-import com.reto.plazoleta.infraestructure.configuration.security.exception.UserDoesNotExistException;
 import com.reto.plazoleta.domain.gateways.IUserGateway;
+import com.reto.plazoleta.infraestructure.configuration.security.exception.UserDoesNotExistException;
+import com.reto.plazoleta.infraestructure.exception.UserInTokenIsInvalidException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,8 @@ public class UserGatewayImpl implements IUserGateway {
                 .exchangeToMono( clientResponse -> {
                     if(clientResponse.statusCode().is2xxSuccessful()) {
                         return clientResponse.bodyToMono(User.class);
+                    } else if(clientResponse.statusCode().equals(HttpStatus.UNAUTHORIZED)) {
+                        return Mono.error(new UserInTokenIsInvalidException("Username or role in the token is invalid"));
                     } else if (clientResponse.statusCode().equals(HttpStatus.NOT_FOUND)) {
                         return Mono.error(new UserDoesNotExistException("User not found"));
                     } else {

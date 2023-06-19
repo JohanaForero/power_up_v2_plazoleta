@@ -1,11 +1,10 @@
 package com.reto.plazoleta.infraestructure.configuration;
 
-
-import com.reto.plazoleta.domain.api.ICustomerServicePort;
+import com.reto.plazoleta.domain.api.IOwnerRestaurantServicePort;
 import com.reto.plazoleta.domain.spi.ICategoryPersistencePort;
 import com.reto.plazoleta.domain.spi.IDishPersistencePort;
 import com.reto.plazoleta.domain.spi.IRestaurantPersistencePort;
-import com.reto.plazoleta.domain.usecase.CustomerUseCase;
+import com.reto.plazoleta.domain.usecase.OwnerRestaurantUseCase;
 import com.reto.plazoleta.infraestructure.drivenadapter.mapper.IDishEntityMapper;
 import com.reto.plazoleta.infraestructure.drivenadapter.persistence.DishJpaAdapter;
 import com.reto.plazoleta.infraestructure.drivenadapter.repository.IDishRepository;
@@ -19,6 +18,7 @@ public class DishBeanConfiguration {
 
     private final IDishRepository dishRepository;
     private final IDishEntityMapper dishEntityMapper;
+    private final ICategoryPersistencePort categoryPersistencePort;
     private final IRestaurantPersistencePort restaurantPersistencePort;
 
     @Bean
@@ -27,7 +27,8 @@ public class DishBeanConfiguration {
     }
 
     @Bean
-    public ICustomerServicePort customerServicePort() {
-        return new CustomerUseCase(dishPersistencePort(), restaurantPersistencePort);
+    public IOwnerRestaurantServicePort ownerRestaurantServicePort(){
+        return new OwnerRestaurantUseCase(dishPersistencePort(), restaurantPersistencePort, categoryPersistencePort);
     }
+
 }

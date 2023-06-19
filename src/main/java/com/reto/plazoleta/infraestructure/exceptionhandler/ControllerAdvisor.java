@@ -1,11 +1,9 @@
 package com.reto.plazoleta.infraestructure.exceptionhandler;
 
-import com.reto.plazoleta.domain.exception.DishNotExistsException;
-import com.reto.plazoleta.domain.exception.EmptyFieldsException;
-import com.reto.plazoleta.domain.exception.InvalidDataException;
+import com.reto.plazoleta.domain.exception.*;
 import com.reto.plazoleta.infraestructure.configuration.security.exception.AuthenticationFailedException;
 import com.reto.plazoleta.infraestructure.configuration.security.exception.UserDoesNotExistException;
-import com.reto.plazoleta.infraestructure.exception.NoDataFoundException;
+import com.reto.plazoleta.infraestructure.exception.DataMissingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -21,7 +19,7 @@ public class ControllerAdvisor {
 
     private static final String MESSAGE = "message";
 
-    @ExceptionHandler(NoDataFoundException.class)
+    @ExceptionHandler(DataMissingException.class)
     public ResponseEntity<Void> handleNoDataFoundException() {
         return ResponseEntity.noContent().build();
     }
@@ -45,6 +43,13 @@ public class ControllerAdvisor {
             DishNotExistsException dishNotExistsException) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.DISH_NOT_EXISTS.getMessage()));
+    }
+
+    @ExceptionHandler(ObjectNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleObjectNotFoundException(
+            ObjectNotFoundException objectNotFoundException) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.OBJECT_NOT_FOUND.getMessage()));
     }
 
     @ExceptionHandler(AuthenticationFailedException.class)
@@ -74,4 +79,24 @@ public class ControllerAdvisor {
                 .body(Collections.singletonMap(MESSAGE, authenticationException.getMessage()));
     }
 
+    @ExceptionHandler(CustomerHasAOrderInProcessException.class)
+    public ResponseEntity<Map<String, String>> handleCustomerCanNotOrderException(
+            CustomerHasAOrderInProcessException ignoredCustomerCanNotOrderException) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ORDER_IN_PROCESS.getMessage()));
+    }
+
+    @ExceptionHandler(OrderNotExistsException.class)
+    public ResponseEntity<Map<String, String>> handleOrderNotExistsException(
+            OrderNotExistsException ignoredOrderNotExistsException) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ORDER_NOT_FOUND.getMessage()));
+    }
+
+    @ExceptionHandler(OrderInProcessException.class)
+    public ResponseEntity<Map<String, String>> handleOrderInProcessException(
+            OrderInProcessException orderInProcessException) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Collections.singletonMap(MESSAGE, orderInProcessException.getMessage()));
+    }
 }
