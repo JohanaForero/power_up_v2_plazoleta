@@ -7,5 +7,7 @@ import java.util.List;
 public interface IOrderDishPersistencePort {
 
     List<OrderDishModel> saveAllOrdersDishes(List<OrderDishModel> orderDishModelList);
+
+    Boolean existsByIdAndEstado(Long id, String estado);
 }
 

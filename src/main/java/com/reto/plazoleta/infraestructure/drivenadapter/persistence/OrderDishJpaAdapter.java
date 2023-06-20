@@ -22,4 +22,9 @@ public class OrderDishJpaAdapter implements IOrderDishPersistencePort {
         List<OrderDishEntity> orderDishEntitiesSaved = this.orderDishRepository.saveAll(orderDishEntitiesToSave);
         return orderDishEntitiesSaved.stream().map(this.orderEntityMapper::toOrderDishModel).collect(Collectors.toList());
     }
+
+    @Override
+    public Boolean existsByIdAndEstado(Long id, String estado) {
+        return null;
+    }
 }

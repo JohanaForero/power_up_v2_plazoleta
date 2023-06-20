@@ -11,9 +11,17 @@ public class OrderModel {
     private Long idUserCustomer;
     private LocalDate date;
     private StatusOrder status;
+    private String estado;
     private EmployeeRestaurantModel employeeRestaurantModel;
     private RestaurantModel restaurantModel;
     private List<OrderDishModel> ordersDishesModel;
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
 
     public OrderModel() {
     }

@@ -1,16 +1,25 @@
 package com.reto.plazoleta.domain.usecase;
 
 import com.reto.plazoleta.domain.api.IEmployeeRestaurantServicePort;
+import com.reto.plazoleta.domain.exception.NoDataFoundException;
 import com.reto.plazoleta.domain.exception.ObjectNotFoundException;
 import com.reto.plazoleta.domain.exception.OrderInProcessException;
 import com.reto.plazoleta.domain.exception.OrderNotExistsException;
+import com.reto.plazoleta.domain.exception.OrderRestaurantMustBeEqualsEmployeeRestaurantException;
+import com.reto.plazoleta.domain.exception.RestaurantEmployeeNotExistException;
+import com.reto.plazoleta.domain.exception.UserNotAuthenticatedException;
 import com.reto.plazoleta.domain.gateways.IUserGateway;
 import com.reto.plazoleta.domain.model.EmployeeRestaurantModel;
 import com.reto.plazoleta.domain.model.OrderModel;
 import com.reto.plazoleta.domain.model.RestaurantModel;
+import com.reto.plazoleta.domain.model.SmsMessageModel;
+import com.reto.plazoleta.domain.model.UserModel;
 import com.reto.plazoleta.domain.spi.IEmployeeRestaurantPersistencePort;
 import com.reto.plazoleta.domain.spi.IOrderPersistencePort;
 import com.reto.plazoleta.domain.spi.IRestaurantPersistencePort;
+import com.reto.plazoleta.domain.spi.IToken;
+import com.reto.plazoleta.domain.spi.ITwilioFeignClientPort;
+import com.reto.plazoleta.domain.spi.IUserFeignClientPort;
 import com.reto.plazoleta.infraestructure.configuration.security.jwt.JwtProvider;
 import com.reto.plazoleta.infraestructure.drivenadapter.entity.StatusOrder;
 import com.reto.plazoleta.infraestructure.drivenadapter.gateways.User;
@@ -26,15 +35,21 @@ public class EmployeeRestaurantUseCase implements IEmployeeRestaurantServicePort
     private final IRestaurantPersistencePort restaurantPersistencePort;
     private final IUserGateway userGateway;
     private final JwtProvider jwtProvider;
+    private final IToken token;
     private final IOrderPersistencePort orderPersistencePort;
+    private final ITwilioFeignClientPort twilioFeignClientPort;
+    private final IUserFeignClientPort userFeignClientPort;
 
     public EmployeeRestaurantUseCase(IEmployeeRestaurantPersistencePort employeeRestaurantPersistencePort, IRestaurantPersistencePort restaurantPersistencePort,
-                                     IUserGateway userGateway, JwtProvider jwtProvider, IOrderPersistencePort orderPersistencePort) {
+                                     IUserGateway userGateway, JwtProvider jwtProvider, IToken token, IOrderPersistencePort orderPersistencePort, ITwilioFeignClientPort twilioFeignClientPort, IUserFeignClientPort userFeignClientPort) {
         this.employeeRestaurantPersistencePort = employeeRestaurantPersistencePort;
         this.restaurantPersistencePort = restaurantPersistencePort;
         this.userGateway = userGateway;
         this.jwtProvider = jwtProvider;
+        this.token = token;
         this.orderPersistencePort = orderPersistencePort;
+        this.twilioFeignClientPort = twilioFeignClientPort;
+        this.userFeignClientPort = userFeignClientPort;
     }
 
     @Override
@@ -103,4 +118,46 @@ public class EmployeeRestaurantUseCase implements IEmployeeRestaurantServicePort
             throw new OrderNotExistsException("The restaurant no belongs to this restaurant");
         }
     }
+
+    @Override
+    public void updateAndNotifyOrderReady(Long idOrder) {
+        if(Boolean.FALSE.equals(orderPersistencePort.existsByIdAndEstado(idOrder, "EN_PREPARACION"))) throw new NoDataFoundException();
+        String bearerToken = token.getBearerToken();
+        if(bearerToken==null) throw new UserNotAuthenticatedException("no permitido");
+        Long idEmployeeAuth = token.getUsuarioAutenticadoId(bearerToken);
+        EmployeeRestaurantModel restaurantEmployeeModel= employeeRestaurantPersistencePort.findByIdUserEmployee(idEmployeeAuth);
+        if(restaurantEmployeeModel==null) throw new RestaurantEmployeeNotExistException("The employee not exist");
+        OrderModel orderModel= orderPersistencePort.findByIdOrder(idOrder);
+        if(orderModel==null) throw new OrderNotExistsException("order not exist");
+
+        Long idRestaurantEmployeeAuth = Long.valueOf(restaurantEmployeeModel.getIdRestaurant());
+        Long idRestaurantOrder = orderModel.getRestaurantModel().getIdRestaurant();
+
+        if(idRestaurantEmployeeAuth!=idRestaurantOrder) throw new OrderRestaurantMustBeEqualsEmployeeRestaurantException("no exist");
+
+        orderModel.setEstado("LISTO");
+        orderPersistencePort.saveOrder(orderModel);
+
+        UserModel userModel = userFeignClientPort.getUserById(orderModel.getIdUserCustomer());
+        String nombreCliente = userModel.getNombre();
+        String pin = validatePin(userModel);
+
+        String mensaje = "Buen día, señor(a) " + nombreCliente.toUpperCase() + ", su pedido ya está listo para recoger.\nRecuerda mostrar el siguiente pin " + pin + " para poder entregar tu pedido.";
+        String numeroCelular = "+57";
+        // No coloco el celular del cliente, ya que Twilio solo deja enviar mensajes al celular de la cuenta creada
+        // String numeroCel = userModel.getCelular();
+
+        SmsMessageModel smsMessageModel = new SmsMessageModel(numeroCelular, mensaje);
+
+        twilioFeignClientPort.sendSmsMessage(smsMessageModel);
+    }
+
+    public String validatePin(UserModel userModel){
+        String pinDocumento = userModel.getDocumentoDeIdentidad();
+        String pinNombre = userModel.getNombre();
+        String pinApellido = userModel.getApellido();
+        String pin = pinNombre.substring(pinNombre.length()-2)+pinDocumento.substring(pinDocumento.length()-4)+pinApellido.substring(pinApellido.length()-2);
+        return  pin;
+    }
+
 }

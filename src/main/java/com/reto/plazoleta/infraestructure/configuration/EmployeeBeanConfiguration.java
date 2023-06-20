@@ -21,6 +21,9 @@ public class EmployeeBeanConfiguration {
     private final IRestaurantPersistencePort restaurantPersistencePort;
     private final IUserGateway userGateway;
     private final JwtProvider jwtProvider;
+    private final IToken token;
+    private final IUserFeignClientPort userFeignClientPort;
+    private final ITwilioFeignClientPort twilioFeignClientPort;
     private final IOrderPersistencePort orderPersistencePort;
 
     @Bean
@@ -30,6 +33,6 @@ public class EmployeeBeanConfiguration {
 
     @Bean
     public IEmployeeRestaurantServicePort employeeRestaurantServicePort() {
-        return new EmployeeRestaurantUseCase(employeeRestaurantPersistencePort(), this.restaurantPersistencePort, this.userGateway, this.jwtProvider, this.orderPersistencePort);
+        return new EmployeeRestaurantUseCase(employeeRestaurantPersistencePort(), this.restaurantPersistencePort, this.userGateway, this.jwtProvider, token, this.orderPersistencePort, twilioFeignClientPort, userFeignClientPort);
     }
 }
