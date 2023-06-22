@@ -12,4 +12,6 @@ public interface IEmployeeRestaurantServicePort {
     Page<OrderModel> getAllOrdersFilterByStatusAndSizeItemsByPage(Integer sizeItems, Integer pageNumber, String status, String tokenWithPrefixBearer);
 
     List<OrderModel> assignEmployeeToOrderAndChangeStatusToInPreparation(List<Long> idOrders, String tokenWithPrefixBearer);
+
+    OrderModel changeOrderStatusToDelivered(Long orderPin, String tokenWithPrefixBearer);
 }
