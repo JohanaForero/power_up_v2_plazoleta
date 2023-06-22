@@ -14,6 +14,8 @@ import com.reto.plazoleta.domain.spi.IRestaurantPersistencePort;
 import com.reto.plazoleta.infraestructure.configuration.security.jwt.JwtProvider;
 import com.reto.plazoleta.infraestructure.drivenadapter.entity.StatusOrder;
 import com.reto.plazoleta.infraestructure.drivenadapter.gateways.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -69,6 +71,20 @@ public class CustomerUseCase implements ICustomerServicePort {
         } else if (!orderModelToValidate.getStatus().equals(StatusOrder.PENDIENTE)) {
             throw new OrderInProcessException("Lo sentimos, tu pedido ya está en preparación y no puede cancelarse");
         }
+    }
+
+    @Override
+    public Page<DishModel> getAllDishesActivePaginatedFromARestaurantOrderByCategoryAscending(Integer numberPage, Integer sizeItems, Long idRestaurant) {
+        validateRestaurant(idRestaurant);
+        Page<DishModel> dishesPaginatedAndOrderByCategory = this.dishPersistencePort
+                .getAllDishesActiveOfARestaurantOrderByCategoryAscending(PageRequest.of(numberPage, sizeItems), idRestaurant);
+        checkIfListIsEmpty(dishesPaginatedAndOrderByCategory.isEmpty());
+        return dishesPaginatedAndOrderByCategory;
+    }
+
+    private void checkIfListIsEmpty(boolean isTheListEmpty) {
+        if (isTheListEmpty)
+            throw new NoDataFoundException();
     }
 
     @Override

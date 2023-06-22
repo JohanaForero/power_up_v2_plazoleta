@@ -3,7 +3,14 @@ package com.reto.plazoleta.infraestructure.entrypoint;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reto.plazoleta.application.dto.request.CreateOrderRequestDto;
 import com.reto.plazoleta.application.dto.request.DishFromOrderRequestDto;
+import com.reto.plazoleta.domain.exception.NoDataFoundException;
 import com.reto.plazoleta.domain.gateways.IUserGateway;
+import com.reto.plazoleta.domain.model.CategoryModel;
+import com.reto.plazoleta.domain.model.DishModel;
+import com.reto.plazoleta.domain.model.RestaurantModel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import com.reto.plazoleta.infraestructure.configuration.security.jwt.JwtProvider;
 import com.reto.plazoleta.infraestructure.drivenadapter.entity.*;
@@ -33,6 +40,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -314,4 +323,5 @@ class CustomerControllerTest {
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").value("Lo sentimos, tu pedido ya está en preparación y no puede cancelarse"));
     }
+
 }

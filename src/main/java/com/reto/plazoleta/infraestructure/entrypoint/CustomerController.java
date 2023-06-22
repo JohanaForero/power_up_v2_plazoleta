@@ -2,6 +2,7 @@ package com.reto.plazoleta.infraestructure.entrypoint;
 
 import com.reto.plazoleta.application.dto.request.CreateOrderRequestDto;
 import com.reto.plazoleta.application.dto.response.CanceledOrderResponseDto;
+import com.reto.plazoleta.application.dto.response.CategoryFromDishesPaginatedResponseDto;
 import com.reto.plazoleta.application.dto.response.CreateOrderResponseDto;
 import com.reto.plazoleta.application.dto.response.RestaurantResponsePaginatedDto;
 import com.reto.plazoleta.application.handler.ICustomerService;
@@ -39,6 +40,19 @@ public class CustomerController {
             @RequestParam(name = "sizeItemsByPages", required = true, defaultValue = "5") Integer sizeItemsByPages) {
         int numberPage = 0;
         return ResponseEntity.ok(customerService.getAllRestaurantsByOrderByNameAsc(numberPage, sizeItemsByPages));
+    }
+
+    @Operation(summary = "get dishes paginated by a number of elements and grouped by category from a restaurant")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "list from dishes from a restaurant grouped by category"),
+            @ApiResponse(responseCode = "204", description = "No data found"),
+            @ApiResponse(responseCode = "404", description = "Restaurant not found")
+    })
+    @GetMapping(value = "/restaurant/{idRestaurant}")
+    @PreAuthorize(value = "hasRole('CLIENTE')")
+    public ResponseEntity<Page<CategoryFromDishesPaginatedResponseDto>> getDishesFromARestaurantAndGroupedByCategoryPaginated(@RequestParam(name = "sizePage", defaultValue = "5") Integer sizeItems,
+                                                                                                                              @PathVariable(name = "idRestaurant") Long idRestaurant, @RequestParam(name = "numberPage", defaultValue = "0") Integer numberPage) {
+        return ResponseEntity.ok(this.customerService.getDishesFromARestaurantAndGroupedByCategoryPaginated(numberPage, sizeItems, idRestaurant));
     }
 
     @Operation(summary = "order")

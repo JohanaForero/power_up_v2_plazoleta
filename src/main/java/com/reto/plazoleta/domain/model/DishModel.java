@@ -61,10 +61,6 @@ public class DishModel {
         return imageDish;
     }
 
-    public void setImageDish(String imageDish) {
-        this.imageDish = imageDish;
-    }
-
     public Boolean getStateDish() {
         return stateDish;
     }
