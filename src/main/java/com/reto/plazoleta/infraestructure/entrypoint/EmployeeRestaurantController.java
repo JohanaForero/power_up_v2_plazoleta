@@ -1,6 +1,7 @@
 package com.reto.plazoleta.infraestructure.entrypoint;
 
 import com.reto.plazoleta.application.dto.response.AssignedOrdersResponseDto;
+import com.reto.plazoleta.application.dto.response.OrderDeliveredResponseDto;
 import com.reto.plazoleta.application.dto.response.ResponseOrdersPaginatedDto;
 import com.reto.plazoleta.application.handler.IEmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -63,5 +64,23 @@ public class EmployeeRestaurantController {
             @RequestHeader(HttpHeaders.AUTHORIZATION) String tokenWithPrefixBearer) {
         return new ResponseEntity<>(this.employeeRestaurantService
                 .assignOrderAndChangeStatusToInPreparation(idOrders, tokenWithPrefixBearer), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Change order status to delivered")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Updated order with delivered status"),
+            @ApiResponse(responseCode = "403", description = "Role other than employee"),
+            @ApiResponse(responseCode = "404", description = "Order not found"),
+            @ApiResponse(responseCode = "404", description = "The restaurant that the employee belongs to does not exist"),
+            @ApiResponse(responseCode = "409", description = "The order has a status other than ready")
+    })
+    @PatchMapping(value = "restaurant/order/status/delivered/{pin}")
+    @PreAuthorize(value = "hasRole('EMPLEADO')")
+    public ResponseEntity<OrderDeliveredResponseDto> changeOrderStatusToDelivered(@Parameter( description = "numeric value where the order identifier was encrypted",
+            schema = @Schema(implementation = Long.class)) @PathVariable(name = "pin") Long orderPin, @Parameter(
+            description = "Token to validate if the employee belongs to the restaurant of the order in which he works",
+            required = true, schema = @Schema(type = "String", format = "jwt"))
+                                                                                  @RequestHeader(HttpHeaders.AUTHORIZATION) String tokenWithPrefixBearer ) {
+        return ResponseEntity.ok(this.employeeRestaurantService.changeOrderStatusToDelivered(orderPin, tokenWithPrefixBearer));
     }
 }
