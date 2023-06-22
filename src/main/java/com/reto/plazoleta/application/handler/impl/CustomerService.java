@@ -2,6 +2,7 @@ package com.reto.plazoleta.application.handler.impl;
 
 import com.reto.plazoleta.application.dto.request.CreateOrderRequestDto;
 import com.reto.plazoleta.application.dto.response.CanceledOrderResponseDto;
+import com.reto.plazoleta.application.dto.response.CategoryFromDishesPaginatedResponseDto;
 import com.reto.plazoleta.application.dto.response.CreateOrderResponseDto;
 import com.reto.plazoleta.application.dto.response.RestaurantResponsePaginatedDto;
 import com.reto.plazoleta.application.handler.ICustomerService;
@@ -14,6 +15,8 @@ import com.reto.plazoleta.domain.model.OrderDishModel;
 import com.reto.plazoleta.domain.model.OrderModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,6 +35,19 @@ public class CustomerService implements ICustomerService {
     @Override
     public Page<RestaurantResponsePaginatedDto> getAllRestaurantsByOrderByNameAsc(int numberPage, int sizeItems) {
         return restaurantServicePort.findAllByOrderByNameAsc(numberPage, sizeItems).map(restaurantRequestMapper::toRestaurantResponse);
+    }
+
+    @Override
+    public Page<CategoryFromDishesPaginatedResponseDto> getDishesFromARestaurantAndGroupedByCategoryPaginated(Integer numberPage, Integer sizeItems, Long idRestaurant) {
+        return this.customerServicePort.getAllDishesActivePaginatedFromARestaurantOrderByCategoryAscending(numberPage, sizeItems, idRestaurant)
+                .stream()
+                .collect(Collectors.groupingBy(
+                        dishModelResponse -> dishModelResponse.getCategoryModel().getIdCategory()
+                ))
+                .entrySet()
+                .stream()
+                .map(this.customerResponseMapper::mapEntryToCategoryFromDishesPaginatedResponseDto)
+                .collect(Collectors.collectingAndThen(Collectors.toList(), content -> new PageImpl<>(content, PageRequest.of(numberPage, sizeItems), content.size())));
     }
 
     @Override
