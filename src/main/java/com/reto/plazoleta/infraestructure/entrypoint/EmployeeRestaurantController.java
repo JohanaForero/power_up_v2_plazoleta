@@ -2,6 +2,7 @@ package com.reto.plazoleta.infraestructure.entrypoint;
 
 import com.reto.plazoleta.application.dto.response.AssignedOrdersResponseDto;
 import com.reto.plazoleta.application.dto.response.OrderDeliveredResponseDto;
+import com.reto.plazoleta.application.dto.response.OrderDto;
 import com.reto.plazoleta.application.dto.response.ResponseOrdersPaginatedDto;
 import com.reto.plazoleta.application.handler.IEmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -83,4 +84,10 @@ public class EmployeeRestaurantController {
                                                                                   @RequestHeader(HttpHeaders.AUTHORIZATION) String tokenWithPrefixBearer ) {
         return ResponseEntity.ok(this.employeeRestaurantService.changeOrderStatusToDelivered(orderPin, tokenWithPrefixBearer));
     }
+
+    @GetMapping(name = "take-order")
+    public ResponseEntity<OrderDto> takeOrder() {
+        return ResponseEntity.ok().build();
+    }
+
 }

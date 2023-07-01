@@ -5,7 +5,7 @@ import com.reto.plazoleta.domain.exception.DishNotExistsException;
 import com.reto.plazoleta.domain.exception.InvalidDataException;
 import com.reto.plazoleta.domain.exception.ObjectNotFoundException;
 import com.reto.plazoleta.domain.model.CategoryModel;
-import com.reto.plazoleta.domain.model.DishModel;
+import com.reto.plazoleta.domain.model.dishes.DishModel;
 import com.reto.plazoleta.domain.model.RestaurantModel;
 import com.reto.plazoleta.domain.spi.ICategoryPersistencePort;
 import com.reto.plazoleta.domain.spi.IDishPersistencePort;

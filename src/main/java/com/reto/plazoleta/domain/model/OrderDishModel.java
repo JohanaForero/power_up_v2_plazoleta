@@ -1,5 +1,7 @@
 package com.reto.plazoleta.domain.model;
 
+import com.reto.plazoleta.domain.model.dishes.DishModel;
+
 public class OrderDishModel {
 
     private Long idOrderDish;

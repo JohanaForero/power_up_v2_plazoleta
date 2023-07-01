@@ -16,4 +16,8 @@ public interface IOrderPersistencePort {
     Page<OrderModel> findAllByRestaurantEntityIdRestaurantAndStatusOrder(Pageable pageable, Long idRestaurant, StatusOrder status);
 
     OrderModel findByIdOrder(Long idOrder);
+
+    List<OrderModel> getOrders();
+
+    void removeOrder(OrderModel order);
 }

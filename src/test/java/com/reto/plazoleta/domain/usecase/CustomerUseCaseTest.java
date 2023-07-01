@@ -3,7 +3,7 @@ package com.reto.plazoleta.domain.usecase;
 import com.reto.plazoleta.domain.exception.*;
 import com.reto.plazoleta.domain.gateways.IUserGateway;
 import com.reto.plazoleta.domain.model.CategoryModel;
-import com.reto.plazoleta.domain.model.DishModel;
+import com.reto.plazoleta.domain.model.dishes.DishModel;
 import com.reto.plazoleta.domain.model.OrderDishModel;
 import com.reto.plazoleta.domain.model.OrderModel;
 import com.reto.plazoleta.domain.model.RestaurantModel;

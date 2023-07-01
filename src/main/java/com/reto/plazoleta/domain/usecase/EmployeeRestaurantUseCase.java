@@ -6,8 +6,10 @@ import com.reto.plazoleta.domain.exception.OrderInProcessException;
 import com.reto.plazoleta.domain.exception.OrderNotExistsException;
 import com.reto.plazoleta.domain.gateways.IUserGateway;
 import com.reto.plazoleta.domain.model.EmployeeRestaurantModel;
+import com.reto.plazoleta.domain.model.OrderDishModel;
 import com.reto.plazoleta.domain.model.OrderModel;
 import com.reto.plazoleta.domain.model.RestaurantModel;
+import com.reto.plazoleta.domain.model.dishes.Meat;
 import com.reto.plazoleta.domain.spi.IEmployeeRestaurantPersistencePort;
 import com.reto.plazoleta.domain.spi.IOrderPersistencePort;
 import com.reto.plazoleta.domain.spi.IRestaurantPersistencePort;
@@ -20,7 +22,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.PriorityQueue;
 
 public class EmployeeRestaurantUseCase implements IEmployeeRestaurantServicePort {
     private final IEmployeeRestaurantPersistencePort employeeRestaurantPersistencePort;
@@ -153,6 +157,57 @@ public class EmployeeRestaurantUseCase implements IEmployeeRestaurantServicePort
             throw new OrderNotExistsException("The employee no belongs to this restaurant");
         }
     }
+
+    @Override
+    public OrderModel getTakeOrdersPriority() {
+        List<OrderModel> orders = this.orderPersistencePort.getOrders();
+        PriorityQueue<OrderModel> orderQueue = new PriorityQueue<>(Comparator.comparingInt(this::getOrderPriority));
+
+        for (OrderModel order : orders) {
+            orderQueue.add(order);
+        }
+
+        if (!orderQueue.isEmpty()) {
+            OrderModel nextOrder = orderQueue.poll();
+            this.orderPersistencePort.removeOrder(nextOrder);
+            return nextOrder;
+        } else {
+            return null;
+        }
+    }
+
+    private int getOrderPriority(OrderModel order) {
+        int priority = 0;
+        if (order instanceof Sopa) {
+            Sopa sopa = (Sopa) order;
+            switch (sopa.getAccompaniment()) {
+                case "yuca":
+                    priority += 3;
+                    break;
+                case "papa":
+                    priority += 2;
+                    break;
+                case "arroz":
+                    priority += 1;
+                    break;
+            }
+            priority += 2; // Prioridad para las sopas
+        } else if (order instanceof Carne) {
+            priority += 3; // Prioridad para las carnes
+            // Aquí puedes agregar la lógica adicional para el peso de las carnes
+        } else if (order instanceof Postre) {
+            Postre postre = (Postre) order;
+            if (postre.getSubType().equalsIgnoreCase("flan")) {
+                priority += 2; // Prioridad para los flanes
+            } else {
+                priority += 1; // Prioridad para los helados
+            }
+        }
+        return priority;
+    }
+
+
+
 
 }
 
