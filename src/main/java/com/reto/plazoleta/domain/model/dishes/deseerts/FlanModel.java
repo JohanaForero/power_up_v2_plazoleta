@@ -3,7 +3,7 @@ package com.reto.plazoleta.domain.model.dishes.deseerts;
 import com.reto.plazoleta.domain.model.CategoryModel;
 import com.reto.plazoleta.domain.model.RestaurantModel;
 
-public class FlanModel extends Desserts{
+public class FlanModel extends Desserts {
 
     private String accompaniment;
 

@@ -1,19 +1,38 @@
 package com.reto.plazoleta.domain.model.dishes.deseerts;
 
-public class IceCreamModel extends Desserts{
+import com.reto.plazoleta.domain.model.CategoryModel;
+import com.reto.plazoleta.domain.model.RestaurantModel;
 
-    private String accompaniment;
+public class IceCreamModel extends Desserts {
+
+    private String flavor;
 
 
-    public IceCreamModel(String dessertType) {
-        super(dessertType);
+    public String getFlavor() {
+        return flavor;
     }
 
-    public String getAccompaniment() {
-        return accompaniment;
+    public void setFlavor(String flavor) {
+        this.flavor = flavor;
     }
 
-    public void setAccompaniment(String accompaniment) {
-        this.accompaniment = accompaniment;
+    public IceCreamModel() {
+    }
+
+    public IceCreamModel(String flavor) {
+        this.flavor = flavor;
+    }
+
+    public IceCreamModel(Long idDish, String name, String descriptionDish, Double price,
+                               String imageDish, Boolean stateDish, RestaurantModel restaurantModel,
+                               CategoryModel categoryModel) {
+        super(idDish, name, descriptionDish, price, imageDish, stateDish, restaurantModel, categoryModel);
+    }
+
+    public IceCreamModel(Long idDish, String name, String descriptionDish, Double price,
+                               String imageDish, Boolean stateDish, RestaurantModel restaurantModel,
+                               CategoryModel categoryModel, String flavor) {
+        super(idDish, name, descriptionDish, price, imageDish, stateDish, restaurantModel, categoryModel);
+        this.flavor = flavor;
     }
 }

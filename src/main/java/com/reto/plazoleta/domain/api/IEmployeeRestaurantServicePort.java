@@ -15,7 +15,5 @@ public interface IEmployeeRestaurantServicePort {
 
     OrderModel changeOrderStatusToDelivered(Long orderPin, String tokenWithPrefixBearer);
 
-    OrderModel getTakeOrdersPriority();
-
-    void
+    OrderModel takeOrderByPriorityInStatusEarring();
 }

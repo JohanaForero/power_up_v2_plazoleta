@@ -1,14 +1,26 @@
 package com.reto.plazoleta.domain.model.dishes;
 
-public class Soup extends DishModel{
+import com.reto.plazoleta.domain.model.CategoryModel;
+import com.reto.plazoleta.domain.model.RestaurantModel;
 
-    private String accompanist;
+public class Soup extends DishModel {
 
-    public String getAccompanist() {
-        return accompanist;
+    private String accompaniment;
+
+    public String getAccompaniment() {
+        return accompaniment;
     }
 
-    public void setAccompanist(String accompanist) {
-        this.accompanist = accompanist;
+    public void setAccompaniment(String accompaniment) {
+        this.accompaniment = accompaniment;
+    }
+
+    public Soup(String accompaniment) {
+        this.accompaniment = accompaniment;
+    }
+
+    public Soup(Long idDish, String name, String descriptionDish, Double price, String imageDish, Boolean stateDish, RestaurantModel restaurantModel, CategoryModel categoryModel, String accompaniment) {
+        super(idDish, name, descriptionDish, price, imageDish, stateDish, restaurantModel, categoryModel);
+        this.accompaniment = accompaniment;
     }
 }

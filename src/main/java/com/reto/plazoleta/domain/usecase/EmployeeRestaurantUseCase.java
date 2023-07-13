@@ -1,15 +1,18 @@
 package com.reto.plazoleta.domain.usecase;
 
 import com.reto.plazoleta.domain.api.IEmployeeRestaurantServicePort;
+import com.reto.plazoleta.domain.exception.NoDataFoundException;
 import com.reto.plazoleta.domain.exception.ObjectNotFoundException;
 import com.reto.plazoleta.domain.exception.OrderInProcessException;
 import com.reto.plazoleta.domain.exception.OrderNotExistsException;
 import com.reto.plazoleta.domain.gateways.IUserGateway;
-import com.reto.plazoleta.domain.model.EmployeeRestaurantModel;
-import com.reto.plazoleta.domain.model.OrderDishModel;
-import com.reto.plazoleta.domain.model.OrderModel;
-import com.reto.plazoleta.domain.model.RestaurantModel;
+import com.reto.plazoleta.domain.model.*;
+import com.reto.plazoleta.domain.model.dishes.DishModel;
 import com.reto.plazoleta.domain.model.dishes.Meat;
+import com.reto.plazoleta.domain.model.dishes.Soup;
+import com.reto.plazoleta.domain.model.dishes.deseerts.Desserts;
+import com.reto.plazoleta.domain.model.dishes.deseerts.FlanModel;
+import com.reto.plazoleta.domain.model.dishes.deseerts.IceCreamModel;
 import com.reto.plazoleta.domain.spi.IEmployeeRestaurantPersistencePort;
 import com.reto.plazoleta.domain.spi.IOrderPersistencePort;
 import com.reto.plazoleta.domain.spi.IRestaurantPersistencePort;
@@ -22,7 +25,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -49,7 +51,7 @@ public class EmployeeRestaurantUseCase implements IEmployeeRestaurantServicePort
         String emailFromUserOwnerOfARestaurant = jwtProvider.getAuthentication(tokenWithBearerPrefix.replace("Bearer ", "").trim()).getPrincipal().toString();
         User userOwnerFound = userGateway.getUserByEmailInTheToken(emailFromUserOwnerOfARestaurant, tokenWithBearerPrefix);
         final RestaurantModel restaurantFoundModelByIdRestaurant = this.restaurantPersistencePort.findByIdRestaurant(employeeRestaurantModel.getIdRestaurant());
-        if(restaurantFoundModelByIdRestaurant == null || !restaurantFoundModelByIdRestaurant.getIdOwner().equals(userOwnerFound.getIdUser())) {
+        if (restaurantFoundModelByIdRestaurant == null || !restaurantFoundModelByIdRestaurant.getIdOwner().equals(userOwnerFound.getIdUser())) {
             throw new ObjectNotFoundException("Restaurant not Exist");
         }
         employeeRestaurantModel.setIdRestaurant(restaurantFoundModelByIdRestaurant.getIdRestaurant());
@@ -122,6 +124,8 @@ public class EmployeeRestaurantUseCase implements IEmployeeRestaurantServicePort
         return this.orderPersistencePort.saveOrder(orderModelToUpdateStatus);
     }
 
+
+
     private Long decryptOrderPin(String pinEncryption) {
         StringBuilder decryptPinFromOrder = new StringBuilder();
         for (int index = 0; index < pinEncryption.length(); index++) {
@@ -148,6 +152,11 @@ public class EmployeeRestaurantUseCase implements IEmployeeRestaurantServicePort
         return this.userGateway.getUserByEmailInTheToken(emailFromUser, tokenWithPrefixBearer);
     }
 
+
+    private User getUserAuthenticated(String tokenWithPrefixBearer) {
+        return this.userGateway.getUserByEmailInTheToken(getEmailFromUserAuthenticatedByToken(tokenWithPrefixBearer), tokenWithPrefixBearer);
+    }
+
     private EmployeeRestaurantModel getRestaurantEmployeeWhereWorksByIdUserEmployee(Long idEmployee) {
         return this.employeeRestaurantPersistencePort.findByIdUserEmployee(idEmployee);
     }
@@ -159,56 +168,28 @@ public class EmployeeRestaurantUseCase implements IEmployeeRestaurantServicePort
     }
 
     @Override
-    public OrderModel getTakeOrdersPriority() {
-        List<OrderModel> orders = this.orderPersistencePort.getOrders();
-        PriorityQueue<OrderModel> orderQueue = new PriorityQueue<>(Comparator.comparingInt(this::getOrderPriority));
-
-        for (OrderModel order : orders) {
-            orderQueue.add(order);
-        }
-
-        if (!orderQueue.isEmpty()) {
-            OrderModel nextOrder = orderQueue.poll();
-            this.orderPersistencePort.removeOrder(nextOrder);
-            return nextOrder;
-        } else {
-            return null;
-        }
+    public OrderModel takeOrderByPriorityInStatusEarring() {
+        String token = this.token.getTokenWithPrefixBearerFromUserAuthenticated();
+        User authenticatedEmployeeData = getUserAuthenticated(token);
+        EmployeeRestaurantModel restaurantEmployeeData = getRestaurantEmployeeWhereWorksByIdUserEmployee(authenticatedEmployeeData.getIdUser());
+        List<OrderModel> ordersFromARestaurantWithoutOrganizing = getAllOrdersForARestaurantInPendingStatus(restaurantEmployeeData.getIdRestaurant());
+        PriorityQueue<OrderModel> highestPriorityOrderQueue = new PriorityQueue<>(ordersFromARestaurantWithoutOrganizing.size(), new OrderDishComparator().reversed());
+        highestPriorityOrderQueue.addAll(ordersFromARestaurantWithoutOrganizing);
+        OrderModel orderWithHighestPriority = highestPriorityOrderQueue.poll();
+        System.out.println("llena " + orderWithHighestPriority.getOrdersDishesModel().isEmpty());
+        return addEmployeeToOrderAndChangeTheirStatusInPreparation(orderWithHighestPriority, restaurantEmployeeData);
     }
 
-    private int getOrderPriority(OrderModel order) {
-        int priority = 0;
-        if (order instanceof Sopa) {
-            Sopa sopa = (Sopa) order;
-            switch (sopa.getAccompaniment()) {
-                case "yuca":
-                    priority += 3;
-                    break;
-                case "papa":
-                    priority += 2;
-                    break;
-                case "arroz":
-                    priority += 1;
-                    break;
-            }
-            priority += 2; // Prioridad para las sopas
-        } else if (order instanceof Carne) {
-            priority += 3; // Prioridad para las carnes
-            // Aquí puedes agregar la lógica adicional para el peso de las carnes
-        } else if (order instanceof Postre) {
-            Postre postre = (Postre) order;
-            if (postre.getSubType().equalsIgnoreCase("flan")) {
-                priority += 2; // Prioridad para los flanes
-            } else {
-                priority += 1; // Prioridad para los helados
-            }
-        }
-        return priority;
+    private List<OrderModel> getAllOrdersForARestaurantInPendingStatus(Long idRestaurantWhereWorkEmployee) {
+        List<OrderModel> orders = this.orderPersistencePort.findAllOrderByRestaurantIdAndStatusOrderEarring(idRestaurantWhereWorkEmployee);
+        if (orders.isEmpty())
+            throw new NoDataFoundException();
+        return orders;
     }
 
-
-
-
+    private OrderModel addEmployeeToOrderAndChangeTheirStatusInPreparation(OrderModel orderModelToUpdated, EmployeeRestaurantModel chef) {
+        orderModelToUpdated.setStatus(StatusOrder.EN_PREPARACION);
+        orderModelToUpdated.setEmployeeRestaurantModel(chef);
+        return this.orderPersistencePort.saveOrder(orderModelToUpdated);
+    }
 }
-
-

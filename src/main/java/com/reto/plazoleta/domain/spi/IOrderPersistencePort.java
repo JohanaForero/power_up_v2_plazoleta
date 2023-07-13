@@ -1,5 +1,6 @@
 package com.reto.plazoleta.domain.spi;
 
+import com.reto.plazoleta.domain.model.OrderDishModel;
 import com.reto.plazoleta.domain.model.OrderModel;
 import com.reto.plazoleta.infraestructure.drivenadapter.entity.StatusOrder;
 import org.springframework.data.domain.Page;
@@ -17,7 +18,6 @@ public interface IOrderPersistencePort {
 
     OrderModel findByIdOrder(Long idOrder);
 
-    List<OrderModel> getOrders();
+    List<OrderModel> findAllOrderByRestaurantIdAndStatusOrderEarring(Long idRestaurant);
 
-    void removeOrder(OrderModel order);
 }
