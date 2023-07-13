@@ -30,4 +30,11 @@ public class OrderDishEntity {
 
     @Column(name = "cantidad")
     private Integer amount;
+
+    @Column(name = "gramos")
+    private Integer grams;
+    @Column(name = "acompañante_plato")
+    private String Accompaniment;
+    @Column(name = "sabor_postre")
+    private String flavor;
 }

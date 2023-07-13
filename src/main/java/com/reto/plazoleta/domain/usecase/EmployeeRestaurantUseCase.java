@@ -1,12 +1,14 @@
 package com.reto.plazoleta.domain.usecase;
 
 import com.reto.plazoleta.domain.api.IEmployeeRestaurantServicePort;
+import com.reto.plazoleta.domain.exception.NoDataFoundException;
 import com.reto.plazoleta.domain.exception.ObjectNotFoundException;
 import com.reto.plazoleta.domain.exception.OrderInProcessException;
 import com.reto.plazoleta.domain.exception.OrderNotExistsException;
 import com.reto.plazoleta.domain.gateways.IUserGateway;
 import com.reto.plazoleta.domain.model.EmployeeRestaurantModel;
 import com.reto.plazoleta.domain.model.OrderModel;
+import com.reto.plazoleta.domain.model.OrderPriorityOrganizer;
 import com.reto.plazoleta.domain.model.RestaurantModel;
 import com.reto.plazoleta.domain.spi.IEmployeeRestaurantPersistencePort;
 import com.reto.plazoleta.domain.spi.IOrderPersistencePort;
@@ -21,6 +23,7 @@ import org.springframework.data.domain.PageRequest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PriorityQueue;
 
 public class EmployeeRestaurantUseCase implements IEmployeeRestaurantServicePort {
     private final IEmployeeRestaurantPersistencePort employeeRestaurantPersistencePort;
@@ -118,6 +121,17 @@ public class EmployeeRestaurantUseCase implements IEmployeeRestaurantServicePort
         return this.orderPersistencePort.saveOrder(orderModelToUpdateStatus);
     }
 
+    @Override
+    public OrderModel takeOrderByPriorityInStatusEarring() {
+        String tokenWithPrefixBearer = this.token.getTokenWithPrefixBearerFromUserAuthenticated();
+        User authenticatedEmployeeData = getUserAuthenticated(tokenWithPrefixBearer);
+        EmployeeRestaurantModel restaurantEmployeeData = getRestaurantEmployeeWhereWorksByIdUserEmployee(authenticatedEmployeeData.getIdUser());
+        List<OrderModel> ordersFromARestaurantWithoutOrganizing = getAllOrdersForARestaurantInPendingStatus(restaurantEmployeeData.getIdRestaurant());
+        PriorityQueue<OrderModel> priorityQueue = new PriorityQueue<>(ordersFromARestaurantWithoutOrganizing.size(), new OrderPriorityOrganizer());
+        priorityQueue.addAll(ordersFromARestaurantWithoutOrganizing);
+        return addEmployeeToOrderAndChangeTheirStatusInPreparation(priorityQueue.poll(), restaurantEmployeeData);
+    }
+
     private Long decryptOrderPin(String pinEncryption) {
         StringBuilder decryptPinFromOrder = new StringBuilder();
         for (int index = 0; index < pinEncryption.length(); index++) {
@@ -152,6 +166,34 @@ public class EmployeeRestaurantUseCase implements IEmployeeRestaurantServicePort
         if (!idRestaurantFromOrder.equals(idRestaurantWhereEmployeeWorks)) {
             throw new OrderNotExistsException("The employee no belongs to this restaurant");
         }
+    }
+
+    private User getUserAuthenticated(String tokenWithPrefixBearer) {
+        return this.userGateway.getUserByEmailInTheToken(getEmailFromUserAuthenticatedByToken(tokenWithPrefixBearer), tokenWithPrefixBearer);
+    }
+
+    private List<OrderModel> getAllOrdersForARestaurantInPendingStatus(Long idRestaurantWhereWorkEmployee) {
+        List<OrderModel> orders = this.orderPersistencePort.findAllOrderByRestaurantIdAndStatusOrderEarring(idRestaurantWhereWorkEmployee);
+        if (orders.isEmpty())
+            throw new NoDataFoundException();
+        return orders;
+    }
+
+    private OrderModel addEmployeeToOrderAndChangeTheirStatusInPreparation(OrderModel orderModelToUpdated, EmployeeRestaurantModel chef) {
+        orderModelToUpdated.setStatus(StatusOrder.EN_PREPARACION);
+        orderModelToUpdated.setEmployeeRestaurantModel(chef);
+        return this.orderPersistencePort.saveOrder(orderModelToUpdated);
+    }
+
+    @Override
+    public List<OrderModel> pendingOrdersWithLowPriority() {
+        String tokenWithPrefixBearer = this.token.getTokenWithPrefixBearerFromUserAuthenticated();
+        User employee = getUserAuthenticated(tokenWithPrefixBearer);
+        EmployeeRestaurantModel restaurantEmployeeData = getRestaurantEmployeeWhereWorksByIdUserEmployee(employee.getIdUser());
+        List<OrderModel> ordersFromARestaurantWithoutOrganizing = getAllOrdersForARestaurantInPendingStatus(restaurantEmployeeData.getIdRestaurant());
+        PriorityQueue<OrderModel> lowestOrderPriorityQueue = new PriorityQueue<>(ordersFromARestaurantWithoutOrganizing.size(), new OrderPriorityOrganizer());
+        lowestOrderPriorityQueue.addAll(ordersFromARestaurantWithoutOrganizing);
+        return new ArrayList<>(lowestOrderPriorityQueue);
     }
 
 }

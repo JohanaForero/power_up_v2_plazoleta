@@ -1,9 +1,7 @@
 package com.reto.plazoleta.infraestructure.drivenadapter.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -13,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 @Entity
 @Table(name = "pedidos")
 public class OrderEntity {
@@ -37,6 +36,6 @@ public class OrderEntity {
     @JoinColumn(name = "id_restaurante", referencedColumnName = "idRestaurant")
     private RestaurantEntity restaurantEntity;
 
-    @OneToMany(mappedBy = "orderEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "orderEntity", orphanRemoval = true)
     private List<OrderDishEntity> ordersDishesEntity;
 }

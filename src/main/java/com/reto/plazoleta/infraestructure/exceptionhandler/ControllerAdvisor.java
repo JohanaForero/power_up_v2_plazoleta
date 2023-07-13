@@ -1,5 +1,6 @@
 package com.reto.plazoleta.infraestructure.exceptionhandler;
 
+import com.reto.plazoleta.application.dto.response.ResponseOrderDto;
 import com.reto.plazoleta.domain.exception.*;
 import com.reto.plazoleta.infraestructure.configuration.security.exception.AuthenticationFailedException;
 import com.reto.plazoleta.infraestructure.configuration.security.exception.UserDoesNotExistException;
@@ -20,10 +21,14 @@ public class ControllerAdvisor {
     private static final String MESSAGE = "message";
 
     @ExceptionHandler(DataMissingException.class)
-    public ResponseEntity<Void> handleNoDataFoundException() {
+    public ResponseEntity<Void> DataMissingException() {
         return ResponseEntity.noContent().build();
     }
 
+    @ExceptionHandler(NoDataFoundException.class)
+    public ResponseEntity<Void>  handleNoDataFoundException() {
+        return ResponseEntity.noContent().build();
+    }
     @ExceptionHandler(EmptyFieldsException.class)
     public ResponseEntity<Map<String, String>> handleEmptyFieldsException(
             EmptyFieldsException ignoredEmptyFieldsException) {
