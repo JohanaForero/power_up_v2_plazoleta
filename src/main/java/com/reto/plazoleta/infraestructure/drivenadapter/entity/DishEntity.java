@@ -34,4 +34,5 @@ public class DishEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Category", referencedColumnName = "idCategory")
     private CategoryEntity categoryEntity;
+
 }

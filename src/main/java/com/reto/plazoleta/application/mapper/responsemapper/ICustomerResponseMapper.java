@@ -7,7 +7,7 @@ import com.reto.plazoleta.application.dto.response.DishResponseDto;
 import com.reto.plazoleta.application.dto.response.ResponseOrdersDishesDto;
 import com.reto.plazoleta.application.dto.response.ResponseOrdersPaginatedDto;
 import com.reto.plazoleta.application.dto.response.RestaurantResponsePaginatedDto;
-import com.reto.plazoleta.domain.model.DishModel;
+import com.reto.plazoleta.domain.model.dishes.DishModel;
 import com.reto.plazoleta.domain.model.OrderDishModel;
 import com.reto.plazoleta.domain.model.OrderModel;
 import com.reto.plazoleta.domain.model.RestaurantModel;

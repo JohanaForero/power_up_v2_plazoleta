@@ -3,7 +3,7 @@ package com.reto.plazoleta.application.mapper.requestmapper;
 import com.reto.plazoleta.application.dto.request.CreateDishRequestDto;
 import com.reto.plazoleta.application.dto.request.UpdateDishRequestDto;
 import com.reto.plazoleta.application.dto.request.UpdateStateDishRequestDto;
-import com.reto.plazoleta.domain.model.DishModel;
+import com.reto.plazoleta.domain.model.dishes.DishModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

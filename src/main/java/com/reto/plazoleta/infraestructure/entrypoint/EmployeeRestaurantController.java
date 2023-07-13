@@ -2,10 +2,12 @@ package com.reto.plazoleta.infraestructure.entrypoint;
 
 import com.reto.plazoleta.application.dto.response.AssignedOrdersResponseDto;
 import com.reto.plazoleta.application.dto.response.OrderDeliveredResponseDto;
+import com.reto.plazoleta.application.dto.response.ResponseOrderDto;
 import com.reto.plazoleta.application.dto.response.ResponseOrdersPaginatedDto;
 import com.reto.plazoleta.application.handler.IEmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -82,5 +84,18 @@ public class EmployeeRestaurantController {
             required = true, schema = @Schema(type = "String", format = "jwt"))
                                                                                   @RequestHeader(HttpHeaders.AUTHORIZATION) String tokenWithPrefixBearer ) {
         return ResponseEntity.ok(this.employeeRestaurantService.changeOrderStatusToDelivered(orderPin, tokenWithPrefixBearer));
+    }
+
+    @Operation(summary = "The employee takes an order by priority in pending status")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Order taken by priority and removed from the list"),
+            @ApiResponse(responseCode = "204", description = "No order found", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Role other than employee", content = @Content)
+    })
+    @GetMapping(value = "take-order")
+    @PreAuthorize(value = "hasRole('EMPLEADO')")
+    public ResponseEntity<ResponseOrderDto> takeOrderInPendingStatus() {
+        final ResponseOrderDto orderTakenWithHigherPriority = this.employeeRestaurantService.getOrderByPriority();
+        return ResponseEntity.ok(orderTakenWithHigherPriority);
     }
 }

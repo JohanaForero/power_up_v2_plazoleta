@@ -11,11 +11,13 @@ import javax.persistence.*;
 @Getter
 @Setter
 public class CategoryEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idCategory;
-    @Column
-    private String name;
+    @Column(name = "nombre")
+    @Enumerated(EnumType.STRING)
+    private TypeDish name;
     @Column
     private String description;
 }

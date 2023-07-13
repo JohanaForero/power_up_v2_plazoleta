@@ -18,6 +18,8 @@ public class EmployeeRestaurantEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idRestaurantEmployee;
+    @Column(name = "id_restaurante")
     private Long idRestaurant;
+    @Column(name = "id_usuario")
     private Long idEmployee;
 }

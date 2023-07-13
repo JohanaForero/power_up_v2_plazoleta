@@ -14,4 +14,6 @@ public interface IEmployeeRestaurantServicePort {
     List<OrderModel> assignEmployeeToOrderAndChangeStatusToInPreparation(List<Long> idOrders, String tokenWithPrefixBearer);
 
     OrderModel changeOrderStatusToDelivered(Long orderPin, String tokenWithPrefixBearer);
+
+    OrderModel takeOrderByPriorityInStatusEarring();
 }
