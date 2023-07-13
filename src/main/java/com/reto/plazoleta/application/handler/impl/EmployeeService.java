@@ -50,11 +50,8 @@ public class EmployeeService implements IEmployeeService {
     @Transactional
     @Override
     public ResponseOrderDto getOrderByPriority() {
-        OrderModel pedidoConMayorPrioridad = this.employeeRestaurantServicePort.takeOrderByPriorityInStatusEarring();
-        System.out.println(pedidoConMayorPrioridad.getIdOrder());
         return OrderMapper.orderModelToOrderTakenResponseDto(
-                pedidoConMayorPrioridad
-        );
+                this.employeeRestaurantServicePort.takeOrderByPriorityInStatusEarring() );
     }
 
 }

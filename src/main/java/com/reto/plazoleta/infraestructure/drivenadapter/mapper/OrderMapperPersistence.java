@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.stream.Collectors;
 
 @UtilityClass
-public class OrderPersistenceMapper {
+public class OrderMapperPersistence {
 
     public static OrderModel convertOrderEntityToOrderModel(OrderEntity orderEntity) {
         if (orderEntity.getOrdersDishesEntity() == null) {
@@ -28,7 +28,7 @@ public class OrderPersistenceMapper {
                 convertEntityToRestaurantModel(orderEntity.getRestaurantEntity()),
                 orderEntity.getOrdersDishesEntity()
                         .stream()
-                        .map(OrderPersistenceMapper::convertOrderDishEntityToOrderDishModel)
+                        .map(OrderMapperPersistence::convertOrderDishEntityToOrderDishModel)
                         .collect(Collectors.toList())
         );
     }

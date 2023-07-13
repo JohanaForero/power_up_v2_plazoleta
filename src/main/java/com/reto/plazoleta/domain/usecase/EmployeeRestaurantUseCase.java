@@ -129,7 +129,7 @@ public class EmployeeRestaurantUseCase implements IEmployeeRestaurantServicePort
         List<OrderModel> ordersFromARestaurantWithoutOrganizing = getAllOrdersForARestaurantInPendingStatus(restaurantEmployeeData.getIdRestaurant());
         PriorityQueue<OrderModel> priorityQueue = new PriorityQueue<>(ordersFromARestaurantWithoutOrganizing.size(), new OrderPriorityOrganizer());
         priorityQueue.addAll(ordersFromARestaurantWithoutOrganizing);
-        return addEmployeeToOrderAndChangeTheirStatusInPreparation(priorityQueue.poll(), restaurantEmployeeData);
+        return addEmployeeToOrderAndChangeTheirStatusInPreparation(priorityQueue.peek(), restaurantEmployeeData);
     }
 
     private Long decryptOrderPin(String pinEncryption) {
@@ -183,17 +183,6 @@ public class EmployeeRestaurantUseCase implements IEmployeeRestaurantServicePort
         orderModelToUpdated.setStatus(StatusOrder.EN_PREPARACION);
         orderModelToUpdated.setEmployeeRestaurantModel(chef);
         return this.orderPersistencePort.saveOrder(orderModelToUpdated);
-    }
-
-    @Override
-    public List<OrderModel> pendingOrdersWithLowPriority() {
-        String tokenWithPrefixBearer = this.token.getTokenWithPrefixBearerFromUserAuthenticated();
-        User employee = getUserAuthenticated(tokenWithPrefixBearer);
-        EmployeeRestaurantModel restaurantEmployeeData = getRestaurantEmployeeWhereWorksByIdUserEmployee(employee.getIdUser());
-        List<OrderModel> ordersFromARestaurantWithoutOrganizing = getAllOrdersForARestaurantInPendingStatus(restaurantEmployeeData.getIdRestaurant());
-        PriorityQueue<OrderModel> lowestOrderPriorityQueue = new PriorityQueue<>(ordersFromARestaurantWithoutOrganizing.size(), new OrderPriorityOrganizer());
-        lowestOrderPriorityQueue.addAll(ordersFromARestaurantWithoutOrganizing);
-        return new ArrayList<>(lowestOrderPriorityQueue);
     }
 
 }

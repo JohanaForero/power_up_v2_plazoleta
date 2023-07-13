@@ -94,7 +94,7 @@ public class EmployeeRestaurantController {
     })
     @GetMapping(value = "take-order")
     @PreAuthorize(value = "hasRole('EMPLEADO')")
-    public ResponseEntity<ResponseOrderDto> takeOrderInPendingStatus() {
+    public ResponseEntity<ResponseOrderDto> takeOrderInPriority() {
         final ResponseOrderDto orderTakenWithHigherPriority = this.employeeRestaurantService.getOrderByPriority();
         return ResponseEntity.ok(orderTakenWithHigherPriority);
     }
