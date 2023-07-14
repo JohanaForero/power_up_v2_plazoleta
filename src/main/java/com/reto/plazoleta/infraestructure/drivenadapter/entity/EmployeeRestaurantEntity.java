@@ -1,15 +1,13 @@
 package com.reto.plazoleta.infraestructure.drivenadapter.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
 @Getter
 @Setter
 @Table(name = "EmployeeRestaurant")

@@ -2,15 +2,19 @@ package com.reto.plazoleta.infraestructure.drivenadapter.persistence;
 
 import com.reto.plazoleta.domain.model.OrderModel;
 import com.reto.plazoleta.domain.spi.IOrderPersistencePort;
+import com.reto.plazoleta.infraestructure.drivenadapter.entity.OrderDishEntity;
 import com.reto.plazoleta.infraestructure.drivenadapter.entity.OrderEntity;
 import com.reto.plazoleta.infraestructure.drivenadapter.entity.StatusOrder;
 import com.reto.plazoleta.infraestructure.drivenadapter.mapper.OrderMapperPersistence;
 import com.reto.plazoleta.infraestructure.drivenadapter.mapper.IOrderEntityMapper;
+import com.reto.plazoleta.infraestructure.drivenadapter.repository.IOrderDishRepository;
 import com.reto.plazoleta.infraestructure.drivenadapter.repository.IOrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import javax.transaction.Transactional;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +23,7 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
 
     private final IOrderRepository orderRepository;
     private final IOrderEntityMapper orderEntityMapper;
+    private final IOrderDishRepository orderDishRepository;
     private OrderMapperPersistence orderMapperPersistence;
 
     @Override
@@ -48,5 +53,18 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
         return this.orderRepository.findAllByRestaurantEntityIdRestaurantAndStatus(idRestaurant, StatusOrder.PENDIENTE)
                 .stream().map(orderEntity -> orderMapperPersistence.convertOrderEntityToOrderModel(orderEntity))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    @Override
+    public OrderModel saveOrderAndOrdersDishes(OrderModel orderModel) {
+        final OrderEntity orderEntityRequest = this.orderMapperPersistence.convertOrderModelToOrderEntity(orderModel);
+        List<OrderDishEntity> ordersDishesEntities = orderEntityRequest.getOrdersDishesEntity();
+        orderEntityRequest.setOrdersDishesEntity(Collections.emptyList());
+        final OrderEntity orderEntitySaved = this.orderRepository.save(orderEntityRequest);
+        ordersDishesEntities.forEach(orderDishEntity -> orderDishEntity.setOrderEntity(orderEntitySaved));
+        final List<OrderDishEntity> ordersDishesEntitySaved = this.orderDishRepository.saveAll(ordersDishesEntities);
+        orderEntitySaved.setOrdersDishesEntity(ordersDishesEntitySaved);
+        return this.orderMapperPersistence.convertOrderEntityToOrderModel(orderEntitySaved);
     }
 }

@@ -16,4 +16,6 @@ public interface IEmployeeRestaurantServicePort {
     OrderModel changeOrderStatusToDelivered(Long orderPin, String tokenWithPrefixBearer);
 
     OrderModel takeOrderByPriorityInStatusEarring();
+    List<OrderModel> PendingOrdersUnordered();
+
 }

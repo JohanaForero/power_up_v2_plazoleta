@@ -29,7 +29,7 @@ public class OrderBeanConfiguration {
 
     @Bean
     public IOrderPersistencePort orderPersistencePort() {
-        return new OrderJpaAdapter(this.orderRepository, this.orderEntityMapper);
+        return new OrderJpaAdapter(this.orderRepository, this.orderEntityMapper,orderDishRepository);
     }
 
     @Bean

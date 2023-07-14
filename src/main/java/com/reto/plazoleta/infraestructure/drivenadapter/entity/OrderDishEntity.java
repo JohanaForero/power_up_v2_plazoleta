@@ -1,9 +1,6 @@
 package com.reto.plazoleta.infraestructure.drivenadapter.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -12,6 +9,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
+@Builder
 @Table(name = "pedidos_platos")
 public class OrderDishEntity {
 
@@ -34,7 +32,7 @@ public class OrderDishEntity {
     @Column(name = "gramos")
     private Integer grams;
     @Column(name = "acompañante_plato")
-    private String Accompaniment;
+    private String accompaniment;
     @Column(name = "sabor_postre")
     private String flavor;
 }
