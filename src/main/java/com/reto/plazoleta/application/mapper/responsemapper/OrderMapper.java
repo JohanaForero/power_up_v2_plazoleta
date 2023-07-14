@@ -1,14 +1,15 @@
 package com.reto.plazoleta.application.mapper.responsemapper;
 
-import com.reto.plazoleta.application.dto.response.PendingDishResponseDto;
-import com.reto.plazoleta.application.dto.response.PendingOrdersNotOrganizedResponseDto;
-import com.reto.plazoleta.application.dto.response.ResponseOrderDto;
-import com.reto.plazoleta.application.dto.response.ResponseTypeDishOrderDto;
+import com.reto.plazoleta.application.dto.request.SingleDishOrderRequestDto;
+import com.reto.plazoleta.application.dto.response.*;
+import com.reto.plazoleta.domain.model.RestaurantModel;
 import com.reto.plazoleta.domain.model.dishs.*;
 import com.reto.plazoleta.domain.model.OrderDishModel;
 import com.reto.plazoleta.domain.model.OrderModel;
 import lombok.experimental.UtilityClass;
 
+import java.time.LocalDate;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 @UtilityClass
@@ -154,6 +155,77 @@ public class OrderMapper {
                 .dishes(order.getOrdersDishesModel().stream()
                         .map(OrderMapper::orderDishModelToPendingDishResponseDto)
                         .collect(Collectors.toList()))
+                .build();
+    }
+
+    private RestaurantModel longAsIdRestaurantToRestaurantModel(Long idRestaurant) {
+        return new RestaurantModel(
+                idRestaurant,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+    private OrderDishModel dishFromOrderRequestDtoToOrderDishModel(SingleDishOrderRequestDto singleDishOrderRequestDto) {
+        return new OrderDishModel(
+                null,
+                null,
+                singleDishOrderRequestDtoToDishModel(singleDishOrderRequestDto),
+                1
+        );
+    }
+
+    public static OrderModel singleDishOrderRequestDtoToOrderModel(SingleDishOrderRequestDto singleDishOrderRequestDto, Long idRestaurant) {
+        return new OrderModel(
+                null,
+                null,
+                LocalDate.now(),
+                null,
+                null,
+                longAsIdRestaurantToRestaurantModel(idRestaurant),
+                Collections.singletonList(dishFromOrderRequestDtoToOrderDishModel(singleDishOrderRequestDto))
+        );
+    }
+
+    private DishModel singleDishOrderRequestDtoToDishModel(SingleDishOrderRequestDto singleDishOrderRequestDto) {
+        String typeDish = singleDishOrderRequestDto.getTypeDish();
+        if (typeDish.equalsIgnoreCase(TYPE_DISH_MEAT)) {
+            return buildSingleDishOrderRequestDtoToMeatDish(singleDishOrderRequestDto);
+        } else if (typeDish.equalsIgnoreCase(TYPE_DISH_SOUP)) {
+            return buildSingleDishOrderRequestDtoToSoupDish(singleDishOrderRequestDto);
+        } else if (typeDish.equalsIgnoreCase(TYPE_DISH_DESSERT)) {
+            String typeDessert = singleDishOrderRequestDto.getTypeDessert();
+            if (typeDessert.equalsIgnoreCase(TYPE_DISH_FLAN_DESSERT)) {
+                return buildSingleDishOrderRequestDtoToFlanDessertDish(singleDishOrderRequestDto);
+            } else if (typeDessert.equalsIgnoreCase(TYPE_DISH_ICE_CREAM_DESSERT)) {
+                return buildSingleDishOrderRequestDtoToIceCreamDessertDish(singleDishOrderRequestDto);
+            }
+        }
+        return null;
+    }
+
+    private Meat buildSingleDishOrderRequestDtoToMeatDish(SingleDishOrderRequestDto singleMeatDishRequest) {
+        return new Meat(singleMeatDishRequest.getIdDish(), singleMeatDishRequest.getGrams());
+    }
+
+    private Soup buildSingleDishOrderRequestDtoToSoupDish(SingleDishOrderRequestDto singleSoupDishRequest) {
+        return new Soup(singleSoupDishRequest.getIdDish(), singleSoupDishRequest.getAccompaniment());
+    }
+
+    private FlanModel buildSingleDishOrderRequestDtoToFlanDessertDish(SingleDishOrderRequestDto singleFlanDessertDishRequest) {
+        return new FlanModel(singleFlanDessertDishRequest.getIdDish(), singleFlanDessertDishRequest.getAccompaniment());
+    }
+
+    private IceCreamModel buildSingleDishOrderRequestDtoToIceCreamDessertDish(SingleDishOrderRequestDto singleIceCreamDessertDishRequest) {
+        return new IceCreamModel(singleIceCreamDessertDishRequest.getIdDish(), singleIceCreamDessertDishRequest.getFlavor());
+    }
+
+    public static SingleDishOrderResponseDto orderModelToSingleDishOrderResponseDto(OrderModel orderModel) {
+        return SingleDishOrderResponseDto.builder()
+                .idOrder(orderModel.getIdOrder())
                 .build();
     }
 }

@@ -27,6 +27,11 @@ public class FlanModel extends Desserts {
         this.topping = topping;
     }
 
+    public FlanModel(Long idDish, String accompaniment) {
+        super.setIdDish(idDish);
+        this.topping = accompaniment;
+    }
+
     public String getTopping() {
         return topping;
     }

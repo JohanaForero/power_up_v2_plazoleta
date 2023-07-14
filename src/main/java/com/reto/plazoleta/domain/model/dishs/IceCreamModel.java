@@ -27,6 +27,11 @@ public class IceCreamModel extends Desserts {
         this.flavor = flavor;
     }
 
+    public IceCreamModel(Long idDish, String flavor) {
+        super.setIdDish(idDish);
+        this.flavor = flavor;
+    }
+
     public String getFlavor() {
         return flavor;
     }

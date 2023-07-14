@@ -40,6 +40,6 @@ public class OrderBeanConfiguration {
     @Bean
     public ICustomerServicePort orderServicePort() {
         return new CustomerUseCase(this.orderPersistencePort(), this.restaurantPersistencePort, this.dishPersistencePort,
-                this.userGateway, this.jwtProvider, orderDishPersistencePort());
+                this.userGateway, this.jwtProvider, orderDishPersistencePort(), token);
     }
 }
