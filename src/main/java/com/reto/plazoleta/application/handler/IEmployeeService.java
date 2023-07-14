@@ -1,9 +1,6 @@
 package com.reto.plazoleta.application.handler;
 
-import com.reto.plazoleta.application.dto.response.AssignedOrdersResponseDto;
-import com.reto.plazoleta.application.dto.response.OrderDeliveredResponseDto;
-import com.reto.plazoleta.application.dto.response.ResponseOrderDto;
-import com.reto.plazoleta.application.dto.response.ResponseOrdersPaginatedDto;
+import com.reto.plazoleta.application.dto.response.*;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -17,4 +14,5 @@ public interface IEmployeeService {
     OrderDeliveredResponseDto changeOrderStatusToDelivered(Long orderPin, String tokenWithPrefixBearer);
 
     ResponseOrderDto getOrderByPriority();
+    List<PendingOrdersNotOrganizedResponseDto> pendingOrdersWithLowPriority();
 }

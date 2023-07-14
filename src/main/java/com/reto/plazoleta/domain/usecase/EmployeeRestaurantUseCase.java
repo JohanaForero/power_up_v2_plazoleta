@@ -185,6 +185,16 @@ public class EmployeeRestaurantUseCase implements IEmployeeRestaurantServicePort
         return this.orderPersistencePort.saveOrder(orderModelToUpdated);
     }
 
+    @Override
+    public List<OrderModel> PendingOrdersUnordered() {
+        String tokenWithPrefixBearer = this.token.getTokenWithPrefixBearerFromUserAuthenticated();
+        User employee = getUserAuthenticated(tokenWithPrefixBearer);
+        EmployeeRestaurantModel restaurantEmployeeData = getRestaurantEmployeeWhereWorksByIdUserEmployee(employee.getIdUser());
+        List<OrderModel> ordersFromARestaurantWithoutOrganizing = getAllOrdersForARestaurantInPendingStatus(restaurantEmployeeData.getIdRestaurant());
+        PriorityQueue<OrderModel> lowestOrderPriorityQueue = new PriorityQueue<>(ordersFromARestaurantWithoutOrganizing.size(), new OrderPriorityOrganizer());
+        lowestOrderPriorityQueue.addAll(ordersFromARestaurantWithoutOrganizing);
+        return new ArrayList<>(lowestOrderPriorityQueue);
+    }
 }
 
 
