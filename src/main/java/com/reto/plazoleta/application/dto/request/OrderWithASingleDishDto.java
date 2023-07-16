@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SingleDishOrderRequestDto {
+public class OrderWithASingleDishDto {
 
     private Long idDish;
     private String typeDish;

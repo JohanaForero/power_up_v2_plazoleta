@@ -1,7 +1,7 @@
 package com.reto.plazoleta.infraestructure.entrypoint;
 
 import com.reto.plazoleta.application.dto.request.CreateOrderRequestDto;
-import com.reto.plazoleta.application.dto.request.SingleDishOrderRequestDto;
+import com.reto.plazoleta.application.dto.request.OrderWithASingleDishDto;
 import com.reto.plazoleta.application.dto.response.*;
 import com.reto.plazoleta.application.handler.ICustomerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -109,10 +109,10 @@ public class CustomerController {
     @PreAuthorize(value = "hasRole('CLIENTE')")
     public ResponseEntity<SingleDishOrderResponseDto> addSingleDishOrder(@Parameter(
             description = "Object to add details of an order as a customer",required = true,
-            schema = @Schema(implementation = SingleDishOrderRequestDto.class))
-                                                                         @RequestBody SingleDishOrderRequestDto singleDishOrderRequestDto,
+            schema = @Schema(implementation = OrderWithASingleDishDto.class))
+                                                                         @RequestBody OrderWithASingleDishDto orderWithASingleDishDto,
                                                                          @PathVariable(name = "idRestaurant") Long idRestaurant) {
-        final SingleDishOrderResponseDto registeredSingleDishOrder = this.customerService.addSingleDishOrder(singleDishOrderRequestDto, idRestaurant);
+        final SingleDishOrderResponseDto registeredSingleDishOrder = this.customerService.addSingleDishOrder(orderWithASingleDishDto, idRestaurant);
         return new ResponseEntity<>(registeredSingleDishOrder, HttpStatus.CREATED);
     }
 }

@@ -28,11 +28,11 @@ import java.util.stream.Collectors;
 
 public class CustomerUseCase implements ICustomerServicePort {
 
-    private static final String DISH_TYPE_MEAT = "CARNE";
-    private static final String DISH_TYPE_SOUP = "SOPAS";
-    private static final String DISH_TYPE_DESSERT = "POSTRE";
-    private static final String FLAN_DESSERT_DISH_TYPE = "FLAN";
-    private static final String ICE_CREAM_DESSERT_DISH_TYPE = "HELADO";
+    private static final String TYPE_DISH_MEAT = "CARNE";
+    private static final String TYPE_DISH_SOUP = "SOPAS";
+    private static final String TYPE_DISH_DESSERT = "POSTRE";
+    private static final String TYPE_DESSERT_FLAN = "FLAN";
+    private static final String TYPE_DESSERT_ICE_CREAM = "HELADO";
     private final IOrderPersistencePort orderPersistencePort;
     private final IRestaurantPersistencePort restaurantPersistencePort;
     private final IDishPersistencePort dishPersistencePort;
@@ -59,7 +59,7 @@ public class CustomerUseCase implements ICustomerServicePort {
         String emailFromUserAuthenticated = getEmailFromUserAuthenticatedByTokenWithPrefixBearer(tokenWithPrefixBearer);
         final User userCustomerFound = getUserByEmail(emailFromUserAuthenticated, tokenWithPrefixBearer);
         validateRestaurant(orderModelRequest.getRestaurantModel().getIdRestaurant());
-        checkStatusFromUserOrdersInARestaurant(orderModelRequest.getRestaurantModel().getIdRestaurant(), userCustomerFound.getIdUser());
+        checkIfTheCustomerHasAnOrderInProcess(orderModelRequest.getRestaurantModel().getIdRestaurant(), userCustomerFound.getIdUser());
 
         List<OrderDishModel> ordersDishesModelsRequest = orderModelRequest.getOrdersDishesModel();
 
@@ -136,9 +136,9 @@ public class CustomerUseCase implements ICustomerServicePort {
 
     private void initializeMapOfTheDishes() {
         dishes = new LinkedHashMap<>();
-        dishes.put(DISH_TYPE_MEAT, new PriorityQueue<>(new ComparatorDishModel().reversed()));
-        dishes.put(DISH_TYPE_SOUP, new PriorityQueue<>(new ComparatorDishModel().reversed()));
-        dishes.put(DISH_TYPE_DESSERT, new PriorityQueue<>(new ComparatorDishModel().reversed()));
+        dishes.put(TYPE_DISH_MEAT, new PriorityQueue<>(new ComparatorDishModel().reversed()));
+        dishes.put(TYPE_DISH_SOUP, new PriorityQueue<>(new ComparatorDishModel().reversed()));
+        dishes.put(TYPE_DISH_DESSERT, new PriorityQueue<>(new ComparatorDishModel().reversed()));
     }
 
     private Meat buildMeatDish(DishModel dishTypeMeat, DishModel dishWithDataComplete) {
@@ -149,13 +149,13 @@ public class CustomerUseCase implements ICustomerServicePort {
     private DishModel getDishType(DishModel searchDishType, DishModel dishWithDataComplete) {
         CategoryModel categoryModelType = dishWithDataComplete.getCategoryModel();
         String dishType = categoryModelType.getName();
-        if (searchDishType instanceof Meat && dishType.equalsIgnoreCase(DISH_TYPE_MEAT)) {
+        if (searchDishType instanceof Meat && dishType.equalsIgnoreCase(TYPE_DISH_MEAT)) {
             return validateGramsFromMeat(buildMeatDish(searchDishType, dishWithDataComplete));
-        } else if (searchDishType instanceof Soup && dishType.equalsIgnoreCase(DISH_TYPE_SOUP)) {
+        } else if (searchDishType instanceof Soup && dishType.equalsIgnoreCase(TYPE_DISH_SOUP)) {
             return buildSoup(searchDishType, dishWithDataComplete);
-        } else if (searchDishType instanceof FlanModel && dishType.equalsIgnoreCase(FLAN_DESSERT_DISH_TYPE)) {
+        } else if (searchDishType instanceof FlanModel && dishType.equalsIgnoreCase(TYPE_DESSERT_FLAN)) {
             return buildFlanDessert(searchDishType, dishWithDataComplete);
-        } else if (searchDishType instanceof IceCreamModel && dishType.equalsIgnoreCase(ICE_CREAM_DESSERT_DISH_TYPE)) {
+        } else if (searchDishType instanceof IceCreamModel && dishType.equalsIgnoreCase(TYPE_DESSERT_ICE_CREAM)) {
             return buildIceCreamDessertDish(searchDishType, dishWithDataComplete);
         }
         throw new DishNotExistsException("");
@@ -222,7 +222,7 @@ public class CustomerUseCase implements ICustomerServicePort {
             throw new ObjectNotFoundException("The restaurant in the order does not exist");
     }
 
-    private void checkStatusFromUserOrdersInARestaurant(Long idRestaurant, Long idUserCustomer) {
+    private void checkIfTheCustomerHasAnOrderInProcess(Long idRestaurant, Long idUserCustomer) {
         final List<OrderModel> listOfOrdersFromUserFromSameRestaurant = this.orderPersistencePort.findByIdUserCustomerAndIdRestaurant(
                         idUserCustomer, idRestaurant).stream()
                 .filter(order -> !order.getStatus().equals(StatusOrder.CANCELADO) && !order.getStatus().equals(StatusOrder.ENTREGADO))

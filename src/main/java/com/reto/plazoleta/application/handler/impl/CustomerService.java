@@ -1,7 +1,7 @@
 package com.reto.plazoleta.application.handler.impl;
 
 import com.reto.plazoleta.application.dto.request.CreateOrderRequestDto;
-import com.reto.plazoleta.application.dto.request.SingleDishOrderRequestDto;
+import com.reto.plazoleta.application.dto.request.OrderWithASingleDishDto;
 import com.reto.plazoleta.application.dto.response.*;
 import com.reto.plazoleta.application.handler.ICustomerService;
 import com.reto.plazoleta.application.mapper.requestmapper.ICustomerRequestMapper;
@@ -67,8 +67,8 @@ public class CustomerService implements ICustomerService {
 
     @Transactional
     @Override
-    public SingleDishOrderResponseDto addSingleDishOrder(SingleDishOrderRequestDto singleDishOrderRequestDto, Long idRestaurant) {
-        final OrderModel orderModelRequest = orderMapper.singleDishOrderRequestDtoToOrderModel(singleDishOrderRequestDto, idRestaurant);
+    public SingleDishOrderResponseDto addSingleDishOrder(OrderWithASingleDishDto orderWithASingleDishDto, Long idRestaurant) {
+        final OrderModel orderModelRequest = orderMapper.singleDishOrderRequestDtoToOrderModel(orderWithASingleDishDto, idRestaurant);
         final OrderModel orderModelResponse = this.customerServicePort.addSingleDishOrder(orderModelRequest);
         return orderMapper.orderModelToSingleDishOrderResponseDto(orderModelResponse);
     }
