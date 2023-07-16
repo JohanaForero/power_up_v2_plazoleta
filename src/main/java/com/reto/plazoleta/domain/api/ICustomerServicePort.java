@@ -11,4 +11,6 @@ public interface ICustomerServicePort {
     OrderModel orderCanceled(Long idOrder, String tokenWithPrefixBearer);
 
     Page<DishModel> getAllDishesActivePaginatedFromARestaurantOrderByCategoryAscending(Integer numberPage, Integer sizeItems, Long idRestaurant);
+
+    OrderModel addSingleDishOrder(OrderModel orderRequest);
 }

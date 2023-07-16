@@ -90,4 +90,14 @@ public class DishModel {
     public void setCategoryModel(CategoryModel categoryModel) {
         this.categoryModel = categoryModel;
     }
+
+    public void updateAllDataFromAllFieldsFromDishModel(DishModel dishModel) {
+        this.name = dishModel.getName();
+        this.descriptionDish = dishModel.getDescriptionDish();
+        this.price = dishModel.getPrice();
+        this.imageDish = dishModel.getImageDish();
+        this.stateDish = dishModel.getStateDish();
+        this.restaurantModel = dishModel.getRestaurantModel();
+        this.categoryModel = dishModel.getCategoryModel();
+    }
 }

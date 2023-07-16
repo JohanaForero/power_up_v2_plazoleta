@@ -15,7 +15,6 @@ public class OrderPriorityOrganizer implements Comparator<OrderModel> {
     private static final int RICE_PRIORITY = 6;
     private static final int FLAN_DESSERT_PRIORITY = 4;
     private static final int ICE_CREAM_DESSERT_PRIORITY = 2;
-
     @Override
     public int compare(OrderModel order, OrderModel nextOrder) {
         int orderPriority = calculateOrderDishesPriorityTotal(order.getOrdersDishesModel());

@@ -3,11 +3,17 @@ package com.reto.plazoleta.domain.model.dishs;
 import com.reto.plazoleta.domain.model.CategoryModel;
 import com.reto.plazoleta.domain.model.RestaurantModel;
 
+
 public class Meat extends DishModel {
 
-    private int grams;
+    private Integer grams;
 
-    public int getGrams() {
+    public Meat(Long idDish, Integer grams) {
+        super.setIdDish(idDish);
+        this.grams = grams;
+    }
+
+    public Integer getGrams() {
         return grams;
     }
 

@@ -1,14 +1,13 @@
 package com.reto.plazoleta.application.handler.impl;
 
 import com.reto.plazoleta.application.dto.request.CreateOrderRequestDto;
-import com.reto.plazoleta.application.dto.response.CanceledOrderResponseDto;
-import com.reto.plazoleta.application.dto.response.CategoryFromDishesPaginatedResponseDto;
-import com.reto.plazoleta.application.dto.response.CreateOrderResponseDto;
-import com.reto.plazoleta.application.dto.response.RestaurantResponsePaginatedDto;
+import com.reto.plazoleta.application.dto.request.OrderWithASingleDishDto;
+import com.reto.plazoleta.application.dto.response.*;
 import com.reto.plazoleta.application.handler.ICustomerService;
 import com.reto.plazoleta.application.mapper.requestmapper.ICustomerRequestMapper;
 import com.reto.plazoleta.application.mapper.requestmapper.IRestaurantRequestMapper;
 import com.reto.plazoleta.application.mapper.responsemapper.ICustomerResponseMapper;
+import com.reto.plazoleta.application.mapper.responsemapper.OrderMapper;
 import com.reto.plazoleta.domain.api.ICustomerServicePort;
 import com.reto.plazoleta.domain.api.IRestaurantServicePort;
 import com.reto.plazoleta.domain.model.OrderDishModel;
@@ -18,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,6 +31,7 @@ public class CustomerService implements ICustomerService {
     private final ICustomerServicePort customerServicePort;
     private final ICustomerRequestMapper customerRequestMapper;
     private final ICustomerResponseMapper customerResponseMapper;
+    private OrderMapper orderMapper;
 
     @Override
     public Page<RestaurantResponsePaginatedDto> getAllRestaurantsByOrderByNameAsc(int numberPage, int sizeItems) {
@@ -62,5 +63,13 @@ public class CustomerService implements ICustomerService {
     public CanceledOrderResponseDto cancelOrder(Long idOrder, String tokenWithPrefixBearer) {
         final OrderModel orderCanceledModel = this.customerServicePort.orderCanceled(idOrder, tokenWithPrefixBearer);
         return this.customerResponseMapper.orderModelToOrderCanceledResponseDto(orderCanceledModel);
+    }
+
+    @Transactional
+    @Override
+    public SingleDishOrderResponseDto addSingleDishOrder(OrderWithASingleDishDto orderWithASingleDishDto, Long idRestaurant) {
+        final OrderModel orderModelRequest = orderMapper.singleDishOrderRequestDtoToOrderModel(orderWithASingleDishDto, idRestaurant);
+        final OrderModel orderModelResponse = this.customerServicePort.addSingleDishOrder(orderModelRequest);
+        return orderMapper.orderModelToSingleDishOrderResponseDto(orderModelResponse);
     }
 }

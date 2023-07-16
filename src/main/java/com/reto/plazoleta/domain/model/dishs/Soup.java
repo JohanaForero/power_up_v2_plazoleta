@@ -7,6 +7,11 @@ public class Soup extends DishModel {
 
     private String accompaniment;
 
+    public Soup(Long idDish, String accompaniment) {
+        super.setIdDish(idDish);
+        this.accompaniment = accompaniment;
+    }
+
     public String getAccompaniment() {
         return accompaniment;
     }

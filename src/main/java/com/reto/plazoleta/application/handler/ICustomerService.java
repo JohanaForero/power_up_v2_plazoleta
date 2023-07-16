@@ -1,10 +1,8 @@
 package com.reto.plazoleta.application.handler;
 
 import com.reto.plazoleta.application.dto.request.CreateOrderRequestDto;
-import com.reto.plazoleta.application.dto.response.CanceledOrderResponseDto;
-import com.reto.plazoleta.application.dto.response.CategoryFromDishesPaginatedResponseDto;
-import com.reto.plazoleta.application.dto.response.CreateOrderResponseDto;
-import com.reto.plazoleta.application.dto.response.RestaurantResponsePaginatedDto;
+import com.reto.plazoleta.application.dto.request.OrderWithASingleDishDto;
+import com.reto.plazoleta.application.dto.response.*;
 import org.springframework.data.domain.Page;
 
 public interface ICustomerService {
@@ -16,4 +14,6 @@ public interface ICustomerService {
     CanceledOrderResponseDto cancelOrder(Long idOrder, String tokenWithPrefixBearer);
 
     Page<CategoryFromDishesPaginatedResponseDto> getDishesFromARestaurantAndGroupedByCategoryPaginated(Integer numberPage, Integer sizeItems, Long idRestaurant);
+
+    SingleDishOrderResponseDto addSingleDishOrder(OrderWithASingleDishDto orderWithASingleDishDto, Long idRestaurant);
 }

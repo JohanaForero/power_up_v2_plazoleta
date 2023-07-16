@@ -1,13 +1,12 @@
 package com.reto.plazoleta.infraestructure.entrypoint;
 
 import com.reto.plazoleta.application.dto.request.CreateOrderRequestDto;
-import com.reto.plazoleta.application.dto.response.CanceledOrderResponseDto;
-import com.reto.plazoleta.application.dto.response.CategoryFromDishesPaginatedResponseDto;
-import com.reto.plazoleta.application.dto.response.CreateOrderResponseDto;
-import com.reto.plazoleta.application.dto.response.RestaurantResponsePaginatedDto;
+import com.reto.plazoleta.application.dto.request.OrderWithASingleDishDto;
+import com.reto.plazoleta.application.dto.response.*;
 import com.reto.plazoleta.application.handler.ICustomerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -96,5 +95,24 @@ public class CustomerController {
                                                                 @RequestHeader(HttpHeaders.AUTHORIZATION) String tokenWithBearerPrefix) {
         final CanceledOrderResponseDto orderCanceled = this.customerService.cancelOrder(idOrder, tokenWithBearerPrefix);
         return new ResponseEntity<>(orderCanceled, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Add single dish order")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Registered single dish order"),
+            @ApiResponse(responseCode = "403", description = "Role other than customer", content = @Content),
+            @ApiResponse(responseCode = "404", description = "The dish not exist", content = @Content),
+            @ApiResponse(responseCode = "404", description = "The restaurant not exist", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Dish type meat grams its range is different between 250 to 750", content = @Content)
+    })
+    @PostMapping(value = "{idRestaurant}/add-order")
+    @PreAuthorize(value = "hasRole('CLIENTE')")
+    public ResponseEntity<SingleDishOrderResponseDto> addSingleDishOrder(@Parameter(
+            description = "Object to add details of an order as a customer",required = true,
+            schema = @Schema(implementation = OrderWithASingleDishDto.class))
+                                                                         @RequestBody OrderWithASingleDishDto orderWithASingleDishDto,
+                                                                         @PathVariable(name = "idRestaurant") Long idRestaurant) {
+        final SingleDishOrderResponseDto registeredSingleDishOrder = this.customerService.addSingleDishOrder(orderWithASingleDishDto, idRestaurant);
+        return new ResponseEntity<>(registeredSingleDishOrder, HttpStatus.CREATED);
     }
 }
