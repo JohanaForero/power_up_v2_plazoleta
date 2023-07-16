@@ -4,8 +4,12 @@ import com.reto.plazoleta.domain.api.ICustomerServicePort;
 import com.reto.plazoleta.domain.exception.*;
 import com.reto.plazoleta.domain.gateways.IUserGateway;
 import com.reto.plazoleta.domain.model.*;
+import com.reto.plazoleta.domain.model.dishs.ComparatorDishModel;
 import com.reto.plazoleta.domain.model.dishs.DishModel;
+import com.reto.plazoleta.domain.model.dishs.FlanModel;
+import com.reto.plazoleta.domain.model.dishs.IceCreamModel;
 import com.reto.plazoleta.domain.model.dishs.Meat;
+import com.reto.plazoleta.domain.model.dishs.Soup;
 import com.reto.plazoleta.domain.spi.*;
 import com.reto.plazoleta.infraestructure.configuration.security.jwt.JwtProvider;
 import com.reto.plazoleta.infraestructure.drivenadapter.entity.StatusOrder;
@@ -15,11 +19,20 @@ import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.stream.Collectors;
 
 public class CustomerUseCase implements ICustomerServicePort {
 
+    private static final String DISH_TYPE_MEAT = "CARNE";
+    private static final String DISH_TYPE_SOUP = "SOPAS";
+    private static final String DISH_TYPE_DESSERT = "POSTRE";
+    private static final String FLAN_DESSERT_DISH_TYPE = "FLAN";
+    private static final String ICE_CREAM_DESSERT_DISH_TYPE = "HELADO";
     private final IOrderPersistencePort orderPersistencePort;
     private final IRestaurantPersistencePort restaurantPersistencePort;
     private final IDishPersistencePort dishPersistencePort;
@@ -27,6 +40,7 @@ public class CustomerUseCase implements ICustomerServicePort {
     private final JwtProvider jwtProvider;
     private final IOrderDishPersistencePort orderDishPersistencePort;
     private final IToken token;
+    private Map<String, PriorityQueue<OrderDishModel>> dishes;
 
     public CustomerUseCase(IOrderPersistencePort orderPersistencePort, IRestaurantPersistencePort restaurantPersistencePort,
                            IDishPersistencePort dishPersistencePort, IUserGateway userGateway,
@@ -98,17 +112,35 @@ public class CustomerUseCase implements ICustomerServicePort {
     }
 
     private List<OrderDishModel> getOrdersDishesOrganizedByPriority(OrderModel orderRequest) {
-        OrderPriorityOrganizer orderProcessor = new OrderPriorityOrganizer();
+        initializeMapOfTheDishes();
         for (OrderDishModel orderDishModel : orderRequest.getOrdersDishesModel()) {
             DishModel dishCompleteData = this.dishPersistencePort.findById(orderDishModel.getDishModel().getIdDish());
             validateIfDishExists(dishCompleteData);
             orderDishModel.setDishModel(getDishType(orderDishModel.getDishModel(), dishCompleteData));
             orderDishModel.setOrderModel(orderRequest);
-
-            orderProcessor.addOrderDish(orderDishModel);
+            addDish(orderDishModel);
         }
-        return orderProcessor.getOrdersDishesAsList();
+        return dishes.values().stream()
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
     }
+
+    private void addDish(OrderDishModel orderDish) {
+        String dishType = orderDish.getDishModel().getCategoryModel().getName();
+        PriorityQueue<OrderDishModel> ordersDishesOfADishType = this.dishes
+                .computeIfAbsent(dishType, value ->
+                        new PriorityQueue<>(new ComparatorDishModel().reversed()));
+        ordersDishesOfADishType.offer(orderDish);
+        this.dishes.put(dishType, ordersDishesOfADishType);
+    }
+
+    private void initializeMapOfTheDishes() {
+        dishes = new LinkedHashMap<>();
+        dishes.put(DISH_TYPE_MEAT, new PriorityQueue<>(new ComparatorDishModel().reversed()));
+        dishes.put(DISH_TYPE_SOUP, new PriorityQueue<>(new ComparatorDishModel().reversed()));
+        dishes.put(DISH_TYPE_DESSERT, new PriorityQueue<>(new ComparatorDishModel().reversed()));
+    }
+
     private Meat buildMeatDish(DishModel dishTypeMeat, DishModel dishWithDataComplete) {
         dishTypeMeat.updateAllDataFromAllFieldsFromDishModel(dishWithDataComplete);
         return ((Meat) dishTypeMeat);
@@ -117,18 +149,41 @@ public class CustomerUseCase implements ICustomerServicePort {
     private DishModel getDishType(DishModel searchDishType, DishModel dishWithDataComplete) {
         CategoryModel categoryModelType = dishWithDataComplete.getCategoryModel();
         String dishType = categoryModelType.getName();
-        if (searchDishType instanceof Meat && dishType.equalsIgnoreCase(MEAT_DISH_TYPE)) {
-            return validateGramsFromMeatDish(buildMeatDish(searchDishType, dishWithDataComplete));
-        } else if (searchDishType instanceof SoupDish && dishType.equalsIgnoreCase(SOUP_DISH_TYPE)) {
-            return buildSoupDish(searchDishType, dishWithDataComplete);
-        } else if (searchDishType instanceof FlanDessertDish && dishType.equalsIgnoreCase(FLAN_DESSERT_DISH_TYPE)) {
-            return buildFlanDessertDish(searchDishType, dishWithDataComplete);
-        } else if (searchDishType instanceof IceCreamDessertDish && dishType.equalsIgnoreCase(ICE_CREAM_DESSERT_DISH_TYPE)) {
+        if (searchDishType instanceof Meat && dishType.equalsIgnoreCase(DISH_TYPE_MEAT)) {
+            return validateGramsFromMeat(buildMeatDish(searchDishType, dishWithDataComplete));
+        } else if (searchDishType instanceof Soup && dishType.equalsIgnoreCase(DISH_TYPE_SOUP)) {
+            return buildSoup(searchDishType, dishWithDataComplete);
+        } else if (searchDishType instanceof FlanModel && dishType.equalsIgnoreCase(FLAN_DESSERT_DISH_TYPE)) {
+            return buildFlanDessert(searchDishType, dishWithDataComplete);
+        } else if (searchDishType instanceof IceCreamModel && dishType.equalsIgnoreCase(ICE_CREAM_DESSERT_DISH_TYPE)) {
             return buildIceCreamDessertDish(searchDishType, dishWithDataComplete);
         }
         throw new DishNotExistsException("");
     }
+    private IceCreamModel buildIceCreamDessertDish(DishModel dishTypeIceCreamDessertDish, DishModel dishWithDataComplete) {
+        dishTypeIceCreamDessertDish.updateAllDataFromAllFieldsFromDishModel(dishWithDataComplete);
+        return (IceCreamModel) dishTypeIceCreamDessertDish;
+    }
 
+    private FlanModel buildFlanDessert(DishModel dishTypeFlanDessertDish, DishModel dishWithDataComplete) {
+        dishTypeFlanDessertDish.updateAllDataFromAllFieldsFromDishModel(dishWithDataComplete);
+        return (FlanModel) dishTypeFlanDessertDish;
+    }
+
+    private Soup buildSoup(DishModel dishTypeSoupDish, DishModel dishWithDataComplete) {
+        dishTypeSoupDish.updateAllDataFromAllFieldsFromDishModel(dishWithDataComplete);
+        return (Soup) dishTypeSoupDish;
+    }
+
+    private Meat validateGramsFromMeat(Meat meat) {
+        if (meat.getGrams() == null) {
+            throw new EmptyFieldsException("");
+        }
+        else if ( !(meat.getGrams() >= 250 && meat.getGrams() <= 750) ) {
+            throw new DishNotExistsException("");
+        }
+        return meat;
+    }
     private void validateIfDishExists(DishModel dishToValidate) {
         if (dishToValidate == null) {
             throw new DishNotExistsException("");

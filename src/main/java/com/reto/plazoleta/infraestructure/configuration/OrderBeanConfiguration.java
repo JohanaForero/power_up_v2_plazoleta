@@ -8,6 +8,7 @@ import com.reto.plazoleta.infraestructure.configuration.security.jwt.JwtProvider
 import com.reto.plazoleta.infraestructure.drivenadapter.mapper.IOrderEntityMapper;
 import com.reto.plazoleta.infraestructure.drivenadapter.persistence.OrderDishJpaAdapter;
 import com.reto.plazoleta.infraestructure.drivenadapter.persistence.OrderJpaAdapter;
+import com.reto.plazoleta.infraestructure.drivenadapter.persistence.TokenAdapter;
 import com.reto.plazoleta.infraestructure.drivenadapter.repository.IOrderDishRepository;
 import com.reto.plazoleta.infraestructure.drivenadapter.repository.IOrderRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class OrderBeanConfiguration {
     private final IDishPersistencePort dishPersistencePort;
     private final JwtProvider jwtProvider;
     private final IOrderDishRepository orderDishRepository;
-
+    private final IToken token;
 
     @Bean
     public IOrderPersistencePort orderPersistencePort() {
