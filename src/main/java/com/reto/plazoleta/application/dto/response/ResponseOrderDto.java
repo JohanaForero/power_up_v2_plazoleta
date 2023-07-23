@@ -15,9 +15,5 @@ import java.util.List;
 public class ResponseOrderDto {
 
     private Long idOrder;
-    private Long idUserCustomer;
-    private LocalDate date;
-    private String status;
-    private Long idChef;
     private List<ResponseTypeDishOrderDto> dishes;
 }

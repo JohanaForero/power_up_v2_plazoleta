@@ -1,6 +1,7 @@
 package com.reto.plazoleta.infraestructure.entrypoint;
 
 import com.reto.plazoleta.application.dto.request.CreateOrderRequestDto;
+import com.reto.plazoleta.application.dto.request.OrderDishTypeRequestDto;
 import com.reto.plazoleta.application.dto.request.OrderWithASingleDishDto;
 import com.reto.plazoleta.application.dto.response.*;
 import com.reto.plazoleta.application.handler.ICustomerService;
@@ -17,6 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -114,5 +117,25 @@ public class CustomerController {
                                                                          @PathVariable(name = "idRestaurant") Long idRestaurant) {
         final SingleDishOrderResponseDto registeredSingleDishOrder = this.customerService.addSingleDishOrder(orderWithASingleDishDto, idRestaurant);
         return new ResponseEntity<>(registeredSingleDishOrder, HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "Add list of dishes in an order")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Order registered with your list of dishes"),
+            @ApiResponse(responseCode = "403", description = "Role other than customer", content = @Content),
+            @ApiResponse(responseCode = "404", description = "The dish not exist", content = @Content),
+            @ApiResponse(responseCode = "404", description = "The restaurant not exist", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Dish type meat grams its range is different between 250 to 750", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Found empty fields", content = @Content)
+    })
+    @PostMapping(value = "{idRestaurant}/add-orders")
+    @PreAuthorize(value = "hasRole('CLIENTE')")
+    public ResponseEntity<List<OrderDishTypeDtoResponse>> addOrderWithMultipleDishes(@Parameter(
+            description = "Dto for types of dishes in an order",required = true,
+            schema = @Schema(implementation = OrderDishTypeRequestDto.class))
+                                                                                         @RequestBody List<OrderDishTypeRequestDto> orderDishTypeRequestDto,
+                                                                                         @PathVariable(name = "idRestaurant") Long idRestaurant) {
+        final List<OrderDishTypeDtoResponse> ordersDishesTypeResponse = this.customerService.addOrderWithMultipleDishes(orderDishTypeRequestDto, idRestaurant);
+        return new ResponseEntity<>(ordersDishesTypeResponse, HttpStatus.CREATED);
     }
 }

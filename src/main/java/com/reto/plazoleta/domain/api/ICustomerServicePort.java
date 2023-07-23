@@ -13,4 +13,6 @@ public interface ICustomerServicePort {
     Page<DishModel> getAllDishesActivePaginatedFromARestaurantOrderByCategoryAscending(Integer numberPage, Integer sizeItems, Long idRestaurant);
 
     OrderModel addSingleDishOrder(OrderModel orderRequest);
+
+    OrderModel addOrderWithMultipleDishesType(OrderModel orderWithMultipleDishes);
 }
