@@ -1,6 +1,7 @@
 package com.reto.plazoleta.application.handler.impl;
 
 import com.reto.plazoleta.application.dto.request.CreateOrderRequestDto;
+import com.reto.plazoleta.application.dto.request.OrderDishTypeRequestDto;
 import com.reto.plazoleta.application.dto.request.OrderWithASingleDishDto;
 import com.reto.plazoleta.application.dto.response.*;
 import com.reto.plazoleta.application.handler.ICustomerService;
@@ -71,5 +72,13 @@ public class CustomerService implements ICustomerService {
         final OrderModel orderModelRequest = orderMapper.singleDishOrderRequestDtoToOrderModel(orderWithASingleDishDto, idRestaurant);
         final OrderModel orderModelResponse = this.customerServicePort.addSingleDishOrder(orderModelRequest);
         return orderMapper.orderModelToSingleDishOrderResponseDto(orderModelResponse);
+    }
+
+    @Transactional
+    @Override
+    public List<OrderDishTypeDtoResponse> addOrderWithMultipleDishes(List<OrderDishTypeRequestDto> ordersDishesTypeRequest, Long idRestaurantFromOrder) {
+        final OrderModel orderModelWithMultipleDishes = orderMapper.ordersDishesTypeRequestToOrderModel(ordersDishesTypeRequest, idRestaurantFromOrder);
+        final OrderModel registeredOrderWithDishType = this.customerServicePort.addOrderWithMultipleDishesType(orderModelWithMultipleDishes);
+        return orderMapper.mapOrderModelToOrderDishTypeDtoResponse(registeredOrderWithDishType);
     }
 }

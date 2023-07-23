@@ -247,4 +247,16 @@ public class CustomerUseCase implements ICustomerServicePort {
         }
         return ordersDishesModelToSave;
     }
+
+    @Override
+    public OrderModel addOrderWithMultipleDishesType(OrderModel orderWithMultipleDishes) {
+        validateIfRestaurantExists(orderWithMultipleDishes.getRestaurantModel().getIdRestaurant());
+        String tokenWithPrefixBearer = this.token.getTokenWithPrefixBearerFromUserAuthenticated();
+        User customer = getUserByEmail(getEmailFromToken(tokenWithPrefixBearer), tokenWithPrefixBearer);
+        orderWithMultipleDishes.setStatus(StatusOrder.PENDIENTE);
+        orderWithMultipleDishes.setIdUserCustomer(customer.getIdUser());
+        List<OrderDishModel> orderDishesToSave = getOrdersDishesOrganizedByPriority(orderWithMultipleDishes);
+        orderWithMultipleDishes.setOrdersDishesModel(orderDishesToSave);
+        return this.orderPersistencePort.saveOrder(orderWithMultipleDishes);
+    }
 }
